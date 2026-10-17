@@ -1,5 +1,11 @@
 # Fro (Frocus OS)
 
+![Status Version](https://img.shields.io/badge/Status-Live-blue.svg)
+![Status Version](https://img.shields.io/badge/Type-Web_OS-087f8d)
+![Status Version](https://img.shields.io/badge/Previosly_shipped_at-macondo-blue.svg)
+
+*(previously shipped to macondo ysws program)*
+
 Frocus is a productivity system that helps user live a life user always wanted to live. Frocus aims at delivering the most productive ecosystem to the user to stop them from procastinating. Among, the ecosystem;
 
 FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get to use features like Task system, Event management system, Note system, Productive Pomodoro sessions, Motivating Quotes, Weather insights to plan physical schedules (like touching grass, gym, exercise, jogging), Music app for listening to calm and peaceful music while working, Filesystem to organize notes, works, files, musics, code files, Browser for searching anything (and getting AI summary, Images, and Best links) as well as browsing productive sites (like wikipedia, gutenberg, desmos, zenpen, excalidraw, etc), calculator for calculating simple arithmetics to complex trigonometric functions (with keyboard shortcuts & memory), Terminal for fast operations (for devs), Launcher for customizations.
@@ -23,36 +29,48 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 - Tavily
 - ffmpeg
 
-## Apps
+## Apps 
+
+*(I really encourage reviewer to be chill and test different features from the webOS since there's honestly a lot and is very hard to jot them down. Ironically, If I jot them down, it would take me more than 2+ hours)*
 
 1. Frotes (Tab system, Task system, Markdown support, Multi-Tab, Storage system)
+
    <img width="764" height="514" alt="image" src="https://github.com/user-attachments/assets/e6cfc13d-2753-484e-934a-44c965d90bad" />
 
 2. Frottings (for Wallpaper change)
+
    <img width="767" height="510" alt="image" src="https://github.com/user-attachments/assets/41a3ae59-cc2f-4d2d-881f-bb97b3b12eb3" />
 
 3. Frowser (Search via tavily, and browse via Iframe containerization)
+
    <img width="751" height="507" alt="image" src="https://github.com/user-attachments/assets/42a62ee0-0387-499c-b5f7-100a5c2a44bf" />
 
 4. Frominal (with dozens of commands like ls, open [app], calc, type, fetch, hash, geo, random, note, task.[add | read | done], event.[add | read], append, write, etc)
+
    <img width="750" height="500" alt="image" src="https://github.com/user-attachments/assets/84241afa-9f4a-4602-bdfb-0c44232d570b" />
 
 5. Froculator (Complex arithmetic & trigonometric calculations with memory system and shorcuts)
+
     <img width="744" height="506" alt="image" src="https://github.com/user-attachments/assets/72aef0ae-569d-426c-8c6f-14f2ffa77bcc" />
 
 6. Frolendar (Event Management System featuring Day, Month, and Year view, with selection time blocking, drag n drop events)
+
     <img width="754" height="499" alt="image" src="https://github.com/user-attachments/assets/3a7fd3f3-c4c5-40cf-b1d9-d208490cac84" />
 
 7. Frosic (Create your own playlist and Play youtube & local musics)
+
     <img width="754" height="500" alt="image" src="https://github.com/user-attachments/assets/a30c3b34-49ae-45f1-9357-9b986db6c297" />
 
 8. Frotore (Add more widget instances)
+
     <img width="755" height="504" alt="image" src="https://github.com/user-attachments/assets/c11542f2-f001-4ae3-8f10-c038fa8e6017" />
 
 9. Froxplorer (Create, Read, Update, Delete, Drag n Drop, Upload, Move, Add to desktop, the files, folders, and open or edit their content)
+
     <img width="750" height="501" alt="image" src="https://github.com/user-attachments/assets/36ea4e7f-ec80-4d65-aa2f-0a24ad724b85" />
 
 10. Froncher (Launch any App, or Games (Supports HTML, CSS, JS and even some APIS via file with .html extension in Froxplorer))
+
     <img width="759" height="499" alt="image" src="https://github.com/user-attachments/assets/aafe0c2e-41da-4a3e-94f5-d51df123979b" />
 
 ---
@@ -127,15 +145,4 @@ Step 5 (Optional):
 
 ## AI Declarations
 
-- to ideate about the data structure to be use for the apps and windows, to use react-rnd to manage the maximum viewport a window could occupy, to make the preview of window cheap in computation, to make the drag n drop of the apps from taskbar to desired position working efficiently
-- to have a starting point for the UI of Frotting, Frowser, and Frosic
-- to make the frolendar app work seemlessly with the selected time block, and event management properly
-- in froxplorer to make the upload of the file and folder logic intact
-- to resolve and add the working logic for YouTube music in Frosic
-- Widgets drag n drop functionality
-- to investigate the issue of the todo tasks, note and fs not working properly but eventually I found an elegant solution so it's not actually AI that did the task
-
-- **The place where I used excessively is Frolendar (Calendar) and Frosic (Music Player).** 
-
-I had also stated the AI Generated code in the commit message as well as in the top of the file (if applicable).
-I may have used AI on approximately 3-4 hours of my project.
+- *(Please see AI Declarations at README-from-old-ship-at-macondo.md for any AI usages done on previous ship)*
