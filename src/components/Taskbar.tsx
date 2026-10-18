@@ -30,6 +30,27 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import WindowThumbnail from "./WindowThumbnail";
 
+function MiscellaneousPanel({ onClose }: { onClose: () => void }) {
+	useEffect(() => {
+		const handleKey = (e: KeyboardEvent) => {
+			if (e.key === "Escape") onClose();
+		};
+		window.addEventListener("keydown", handleKey);
+		return () => window.removeEventListener("keydown", handleKey);
+	}, [onClose]);
+
+	return (
+		<div
+			className="fixed bottom-0 right-0 mr-40 mb-20 h-full z-[100000002] flex"
+			onClick={(e) => {
+				if (e.target === e.currentTarget) onClose();
+			}}
+		>
+			<div className="w-75 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden"></div>
+		</div>
+	);
+}
+
 function MediaPanel({ onClose }: { onClose: () => void }) {
 	useEffect(() => {
 		const handleKey = (e: KeyboardEvent) => {
@@ -46,9 +67,7 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 				if (e.target === e.currentTarget) onClose();
 			}}
 		>
-			<div className="w-75 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden">
-				
-			</div>
+			<div className="w-75 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden"></div>
 		</div>
 	);
 }
@@ -290,8 +309,12 @@ function Taskbar() {
 		unpinApp,
 	} = useWindowStore();
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
-	const [searchTriggered, setSearchTriggered] = useState<boolean>(false);
-	const [mediaTriggered, setMediaTriggered] = useState<boolean>(false);
+	const [searchPanelTriggered, setSearchPanelTriggered] =
+		useState<boolean>(false);
+	const [mediaPanelTriggered, setMediaPanelTriggered] =
+		useState<boolean>(false);
+	const [miscellaneousPanelTriggered, setMiscellaneousPanelTriggered] =
+		useState<boolean>(false);
 	const [searchQuery, setSearchQuery] = useState("");
 
 	useEffect(() => {
@@ -360,13 +383,18 @@ function Taskbar() {
 
 	return (
 		<>
-			{searchTriggered && (
-				<SearchPanel onClose={() => setSearchTriggered(false)} />
+			{searchPanelTriggered && (
+				<SearchPanel onClose={() => setSearchPanelTriggered(false)} />
 			)}
-			{mediaTriggered && (
-				<MediaPanel onClose={() => setMediaTriggered(false)} />
+			{mediaPanelTriggered && (
+				<MediaPanel onClose={() => setMediaPanelTriggered(false)} />
 			)}
-			<footer className="bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white h-16 w-[80dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl z-100000000">
+			{miscellaneousPanelTriggered && (
+				<MiscellaneousPanel
+					onClose={() => setMiscellaneousPanelTriggered(false)}
+				/>
+			)}
+			<footer className="bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white h-16 w-[90dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl z-100000000">
 				<section className="flex items-center gap-4 h-full">
 					<button
 						type="button"
@@ -387,7 +415,7 @@ function Taskbar() {
 					</button>
 
 					<div
-						onClick={() => setSearchTriggered((prev) => !prev)}
+						onClick={() => setSearchPanelTriggered((prev) => !prev)}
 						className="relative flex items-center"
 					>
 						<PiMagnifyingGlassDuotone className="absolute left-3 top-1/2 -translate-y-1/2 text-white pointer-events-none" />
@@ -514,7 +542,7 @@ function Taskbar() {
 
 				<section className="flex items-center gap-5 h-full">
 					<div
-						onClick={() => setMediaTriggered((prev) => !prev)}
+						onClick={() => setMediaPanelTriggered((prev) => !prev)}
 						className="flex items-center gap-3 text-white text-lg px-2 py-4 rounded-xl transition-colors duration-150 hover:bg-white/5 cursor-pointer"
 					>
 						<Tooltip>
@@ -543,7 +571,10 @@ function Taskbar() {
 						</Tooltip>
 					</div>
 
-					<div className="flex items-center gap-3 pl-3 border-l border-border/30">
+					<div
+						onClick={() => setMiscellaneousPanelTriggered((prev) => !prev)}
+						className="flex items-center gap-3 px-2 py-2 rounded-xl transition-colors duration-150 hover:bg-white/5 cursor-pointer"
+					>
 						<div className="flex flex-col items-end leading-tight">
 							<p className="text-sm font-semibold text-white">
 								{dateTimeData.time}
