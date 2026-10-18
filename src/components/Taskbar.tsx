@@ -4,12 +4,20 @@ import { HiSpeakerWave } from "react-icons/hi2";
 import { MdOutlineClose } from "react-icons/md";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
 import { RiUnpinLine } from "react-icons/ri";
+import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 import {
 	cn,
 	getDateTime,
 	parseFileName,
 	searchFileAssociatesThroughExtension,
 } from "#/lib/utils.ts";
+import { useBrowserStore } from "#/store/browser.tsx";
+import { useCalculatorStore } from "#/store/calculator.tsx";
+import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
+import { useLauncherStore } from "#/store/launcher.tsx";
+import { useMusicStore } from "#/store/music.tsx";
+import { useNoteStore } from "#/store/note.tsx";
+import { useTerminalStore } from "#/store/terminal.tsx";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
 import type { AppId, AppInstance, WindowInstance } from "../constants/apps";
 import {
@@ -21,14 +29,29 @@ import {
 } from "./ui/context-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import WindowThumbnail from "./WindowThumbnail";
-import { useFileSystemStore, type FileNode } from "#/store/fs.tsx";
-import { useNoteStore } from "#/store/note.tsx";
-import { useLauncherStore } from "#/store/launcher.tsx";
-import { useCalculatorStore } from "#/store/calculator.tsx";
-import { useBrowserStore } from "#/store/browser.tsx";
-import { useTerminalStore } from "#/store/terminal.tsx";
-import { useMusicStore } from "#/store/music.tsx";
-import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
+
+function MediaPanel({ onClose }: { onClose: () => void }) {
+	useEffect(() => {
+		const handleKey = (e: KeyboardEvent) => {
+			if (e.key === "Escape") onClose();
+		};
+		window.addEventListener("keydown", handleKey);
+		return () => window.removeEventListener("keydown", handleKey);
+	}, [onClose]);
+
+	return (
+		<div
+			className="fixed bottom-0 right-0 mr-40 mb-20 h-80 z-[100000002] flex"
+			onClick={(e) => {
+				if (e.target === e.currentTarget) onClose();
+			}}
+		>
+			<div className="w-75 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden">
+				
+			</div>
+		</div>
+	);
+}
 
 function SearchPanel({ onClose }: { onClose: () => void }) {
 	const [query, setQuery] = useState("");
@@ -268,6 +291,7 @@ function Taskbar() {
 	} = useWindowStore();
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
 	const [searchTriggered, setSearchTriggered] = useState<boolean>(false);
+	const [mediaTriggered, setMediaTriggered] = useState<boolean>(false);
 	const [searchQuery, setSearchQuery] = useState("");
 
 	useEffect(() => {
@@ -338,6 +362,9 @@ function Taskbar() {
 		<>
 			{searchTriggered && (
 				<SearchPanel onClose={() => setSearchTriggered(false)} />
+			)}
+			{mediaTriggered && (
+				<MediaPanel onClose={() => setMediaTriggered(false)} />
 			)}
 			<footer className="bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white h-16 w-[80dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl z-100000000">
 				<section className="flex items-center gap-4 h-full">
@@ -486,7 +513,10 @@ function Taskbar() {
 				</section>
 
 				<section className="flex items-center gap-5 h-full">
-					<div className="flex items-center gap-3 text-white text-lg">
+					<div
+						onClick={() => setMediaTriggered((prev) => !prev)}
+						className="flex items-center gap-3 text-white text-lg px-2 py-4 rounded-xl transition-colors duration-150 hover:bg-white/5 cursor-pointer"
+					>
 						<Tooltip>
 							<TooltipTrigger className="cursor-default">
 								<FaWifi className="" />
