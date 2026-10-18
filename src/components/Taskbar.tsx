@@ -41,7 +41,7 @@ function MiscellaneousPanel({ onClose }: { onClose: () => void }) {
 
 	return (
 		<div
-			className="fixed bottom-0 right-0 mr-40 mb-20 h-full z-[100000002] flex"
+			className="fixed bottom-0 right-0 mr-19 mb-20 h-[87%] z-[100000002] flex"
 			onClick={(e) => {
 				if (e.target === e.currentTarget) onClose();
 			}}
@@ -62,7 +62,7 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 
 	return (
 		<div
-			className="fixed bottom-0 right-0 mr-40 mb-20 h-80 z-[100000002] flex"
+			className="fixed bottom-0 right-0 mr-25 mb-20 h-80 z-[100000002] flex"
 			onClick={(e) => {
 				if (e.target === e.currentTarget) onClose();
 			}}
@@ -203,7 +203,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 
 	return (
 		<div
-			className="fixed inset-0 pt-8 pl-[calc(10vw)] pb-[82px] z-[100000002] flex"
+			className="fixed inset-0 pt-8 pl-[calc(5vw)] pb-[82px] z-[100000002] flex"
 			onClick={(e) => {
 				if (e.target === e.currentTarget) onClose();
 			}}
