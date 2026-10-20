@@ -1,13 +1,16 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { targetAssets, themeBundle } from "#/constants/theme.tsx";
 import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
-import { themeBundle } from "#/constants/theme.tsx";
+
+type Theme = (typeof themeBundle)[0] &
+	Record<keyof typeof targetAssets, string>;
 
 interface SettingStore {
 	backgroundImage: Record<"url" | "position", string>;
 	location: string;
-	theme: unknown;
+	theme: Theme;
 	setBackgroundImage: (imageUrl: string, position: string) => void;
 	setLocation: (location: string) => void;
 	setTheme: (themeName: string) => void;
@@ -21,7 +24,7 @@ export const useSettingStore = create<SettingStore>()(
 				position: "bottom",
 			},
 			location: "Butwal",
-			theme: "Halloween",
+			theme: setThemeOutside("Default"),
 
 			setBackgroundImage: (imageUrl, position) =>
 				set((state) => {
@@ -40,17 +43,7 @@ export const useSettingStore = create<SettingStore>()(
 
 			setTheme: (themeName) =>
 				set((state) => {
-					let hasFound: boolean = false;
-					themeBundle.forEach((theme) => {
-						if (theme.name === themeName) {
-							state.theme = theme;
-							hasFound = true;
-						}
-					})
-
-					if (!hasFound) {
-						state.theme = themeBundle[0];
-					}
+					state.theme = setThemeOutside(themeName);
 				}),
 		})),
 		{
@@ -59,3 +52,19 @@ export const useSettingStore = create<SettingStore>()(
 		},
 	),
 );
+
+function setThemeOutside(themeName: string): Theme {
+	let foundTheme = themeBundle.find((theme) => theme.name === themeName) ?? themeBundle[0];
+	let requiredTheme = { ...foundTheme } as Theme;
+
+	foundTheme.targetIncludes.forEach((asset) => {
+				if (asset.additivePath) {
+					requiredTheme[asset.name] = foundTheme.target + asset.additivePath;
+				} else {
+					requiredTheme[asset.name] = asset.absolutePath;
+				}
+			}
+	)
+
+	return requiredTheme;
+}

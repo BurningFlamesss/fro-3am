@@ -101,15 +101,27 @@ export const backgrounds = [
 	},
 ];
 
+export const targetAssets = {
+	logo: {
+		name: "logo",
+		additivePath: "/logo.png",
+		absolutePath: ""
+	}
+}
+
+const defaultTargetAssets = [targetAssets.logo]
+
 export const themeBundle = [
     {
         id: 1,
         name: "Default",
-        target: "/theme/default"
-    }
+        target: "/theme/default",
+		targetIncludes: defaultTargetAssets
+    },
     {
         id: 2,
         name: "Halloween",
-        target: "/theme/halloween"
+        target: "/theme/halloween",
+		targetIncludes: defaultTargetAssets
     }
 ]
