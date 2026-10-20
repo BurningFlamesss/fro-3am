@@ -29,8 +29,11 @@ import {
 } from "./ui/context-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import WindowThumbnail from "./WindowThumbnail";
+import { useSettingStore } from "#/store/setting.tsx";
 
 function MiscellaneousPanel({ onClose }: { onClose: () => void }) {
+	const theme = useSettingStore((state) => state.theme);
+
 	useEffect(() => {
 		const handleKey = (e: KeyboardEvent) => {
 			if (e.key === "Escape") onClose();
@@ -46,12 +49,16 @@ function MiscellaneousPanel({ onClose }: { onClose: () => void }) {
 				if (e.target === e.currentTarget) onClose();
 			}}
 		>
-			<div className="w-75 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden"></div>
+			<div
+				className={cn("w-75 rounded-2xl overflow-hidden", theme.colourScheme)}
+			></div>
 		</div>
 	);
 }
 
 function MediaPanel({ onClose }: { onClose: () => void }) {
+	const theme = useSettingStore((state) => state.theme);
+
 	useEffect(() => {
 		const handleKey = (e: KeyboardEvent) => {
 			if (e.key === "Escape") onClose();
@@ -67,7 +74,9 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 				if (e.target === e.currentTarget) onClose();
 			}}
 		>
-			<div className="w-75 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden"></div>
+			<div
+				className={cn("w-75 rounded-2xl overflow-hidden", theme.colourScheme)}
+			></div>
 		</div>
 	);
 }
@@ -77,6 +86,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const { apps, openApp } = useWindowStore();
+	const theme = useSettingStore((state) => state.theme);
 	const { nodes } = useFileSystemStore();
 	const { tabs, selectTab, addTab } = useNoteStore();
 	const { launchables, launch } = useLauncherStore();
@@ -208,7 +218,12 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 				if (e.target === e.currentTarget) onClose();
 			}}
 		>
-			<div className="w-120 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden">
+			<div
+				className={cn(
+					"w-120 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden",
+					theme.colourScheme,
+				)}
+			>
 				<div className="flex items-center px-4 py-3 border-b border-white/10">
 					<PiMagnifyingGlassDuotone className="text-white/60 mr-2" />
 					<input
@@ -308,6 +323,7 @@ function Taskbar() {
 		closeWindow,
 		unpinApp,
 	} = useWindowStore();
+	const theme = useSettingStore((state) => state.theme);
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
 	const [searchPanelTriggered, setSearchPanelTriggered] =
 		useState<boolean>(false);
@@ -409,7 +425,7 @@ function Taskbar() {
 					>
 						<img
 							className="w-8 h-8 object-contain"
-							src="/logo.png"
+							src={theme.logo}
 							alt="Logo"
 						/>
 					</button>

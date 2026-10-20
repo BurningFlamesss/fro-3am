@@ -9,6 +9,7 @@ import {
 import { useCalculatorStore } from "#/store/calculator.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { WindowInstance } from "../constants/apps";
+import { useSettingStore } from "#/store/setting.tsx";
 
 type ButtonType =
 	| "number"
@@ -238,6 +239,7 @@ function Froculator({ windowId }: { windowId: string }) {
 		mode,
 		setCalculatorExpression,
 	} = useCalculatorStore();
+	const theme = useSettingStore((state) => state.theme);
 	const [expression, setExpression] = useState<string>(exp);
 	const [result, setResult] = useState<string>("");
 	const [error, setError] = useState<string>("");
@@ -453,7 +455,7 @@ function Froculator({ windowId }: { windowId: string }) {
 
 	return (
 		<div className="flex flex-col p-4 gap-2 select-none">
-			<div className="display bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white p-3 rounded-xl text-right flex flex-col justify-end gap-y-1 min-h-24">
+			<div className={cn("display text-white p-3 rounded-xl text-right flex flex-col justify-end gap-y-1 min-h-24", theme.colourScheme)}>
 				<p
 					className={cn(
 						"text-2xl break-all transition-all ease-in-out duration-75",
@@ -474,13 +476,14 @@ function Froculator({ windowId }: { windowId: string }) {
 						type="button"
 						onClick={() => handleButtonClick(element.value)}
 						className={cn(
-							"rounded-md font-medium text-sm flex justify-center items-center p-1 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white cursor-pointer",
+							"rounded-md font-medium text-sm flex justify-center items-center p-1 text-white cursor-pointer",
 							element.label === "Deg" && angleMode === "Deg"
 								? "text-green-400"
 								: "",
 							element.label === "Rad" && angleMode === "Rad"
 								? "text-green-400"
 								: "",
+								theme.colourScheme
 						)}
 					>
 						{element.label}

@@ -116,12 +116,14 @@ export const themeBundle = [
         id: 1,
         name: "Default",
         target: "/theme/default",
-		targetIncludes: defaultTargetAssets
+		targetIncludes: defaultTargetAssets,
+		colourScheme: "bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
     },
     {
         id: 2,
         name: "Halloween",
         target: "/theme/halloween",
-		targetIncludes: defaultTargetAssets
+		targetIncludes: defaultTargetAssets,
+		colourScheme: "bg-orange-700/15 backdrop-blur-[20px] border border-orange-700/30"
     }
 ]

@@ -18,7 +18,7 @@ interface SettingStore {
 }
 
 export const useSettingStore = create<SettingStore>()(
-	persist(
+	// persist(
 		immer((set) => ({
 			backgroundImage: {
 				url: "/backgrounds/halloween.gif",
@@ -47,11 +47,11 @@ export const useSettingStore = create<SettingStore>()(
 					state.theme = setThemeOutside(themeName);
 				}),
 		})),
-		{
-			name: "frottings-storage",
-			storage: createDebouncedStorage(1000),
-		},
-	),
+	// 	{
+	// 		name: "frottings-storage",
+	// 		storage: createDebouncedStorage(1000),
+	// 	},
+	// ),
 );
 
 function setThemeOutside(themeName: string): Theme {

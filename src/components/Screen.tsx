@@ -29,6 +29,7 @@ import {
 	ContextMenuSubTrigger,
 	ContextMenuTrigger,
 } from "./ui/context-menu";
+import { useSettingStore } from "#/store/setting.tsx";
 
 function Screen() {
 	const { apps, openApp, windows, focusWindow, pinApp } = useWindowStore();
@@ -40,6 +41,8 @@ function Screen() {
 		addToDesktop,
 		renameNode,
 	} = useFileSystemStore();
+	const theme = useSettingStore((state) => state.theme);
+
 	const { widgets } = useWidgetStore();
 
 	const [renameTarget, setRenameTarget] = useState<{
@@ -288,7 +291,7 @@ function Screen() {
 										alt={app.name}
 										draggable={false}
 									/>
-									<p className="text-white bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
+									<p className={cn("text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none", theme.colourScheme)}>
 										{app.name}
 									</p>
 								</button>
@@ -358,7 +361,7 @@ function Screen() {
 												type="text"
 											/>
 										) : (
-											<p className="text-white bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none">
+											<p className={cn("text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none", theme.colourScheme)}>
 												{container.name}
 											</p>
 										)}

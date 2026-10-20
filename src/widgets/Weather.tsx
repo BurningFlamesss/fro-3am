@@ -28,6 +28,7 @@ const iconsMap = {
 
 function Weather() {
 	const { location, setLocation } = useSettingStore();
+	const theme = useSettingStore((state) => state.theme)
 	const [value, setValue] = useState("");
 	const [focused, setFocused] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -80,7 +81,7 @@ function Weather() {
 	}, []);
 
 	return (
-		<div className="p-2 min-h-full bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white">
+		<div className={cn("p-2 min-h-full  text-white", theme.colourScheme)}>
 			<div className="relative z-20 flex w-full flex-row items-center justify-center">
 				<div
 					className={cn(

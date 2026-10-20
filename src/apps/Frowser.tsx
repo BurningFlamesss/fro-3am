@@ -22,6 +22,7 @@ import {
 	type TabState,
 	useBrowserStore,
 } from "#/store/browser.tsx";
+import { useSettingStore } from "#/store/setting.tsx";
 
 const STATE_META: Record<
 	TabState,
@@ -402,6 +403,8 @@ function ResultsView({
 }
 
 function SurfingView({ tab }: { tab: Tab }) {
+	const theme = useSettingStore((state) => state.theme);
+
 	const [canEmbed, setCanEmbed] = useState<boolean>(true);
 
 	useEffect(() => {
@@ -445,7 +448,9 @@ function SurfingView({ tab }: { tab: Tab }) {
 					<p>This site cannot be reached.</p>
 
 					<a
-						className="px-3 py-2 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white rounded-xl"
+						className={cn(
+							"px-3 py-2 text-white rounded-xl", theme.colourScheme
+						)}
 						href={tab.url}
 						target="_blank"
 					>
