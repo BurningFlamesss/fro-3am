@@ -39,6 +39,7 @@ import {
 import { Input } from "#/components/ui/input";
 import { cn } from "#/lib/utils";
 import { type CalendarEvent, useCalendarStore } from "#/store/calendar";
+import { useSettingStore } from "#/store/setting.tsx";
 
 export const EVENT_COLORS = [
 	"#3B82F6",
@@ -69,6 +70,8 @@ const Toolbar = memo(function Toolbar({
 	onNavigate: (date: Date) => void;
 	onToday: () => void;
 }) {
+		const theme = useSettingStore((state) => state.theme)
+
 	const title = useMemo(() => {
 		if (view === "month") return format(date, "MMMM yyyy");
 		if (view === "week")
@@ -89,7 +92,7 @@ const Toolbar = memo(function Toolbar({
 	}, [view, date, onNavigate]);
 
 	return (
-		<div className="flex items-center justify-between px-4 py-2 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white select-none">
+		<div className={cn("flex items-center justify-between px-4 py-2 text-white select-none", theme.extraColourScheme.calBar)}>
 			<div className="flex items-center gap-2">
 				<button
 					type="button"
@@ -149,6 +152,7 @@ const NewEventDialog = memo(function NewEventDialog({
 	defaultStart: Date;
 	defaultEnd: Date;
 }) {
+	const theme = useSettingStore((state) => state.theme)
 	const [title, setTitle] = useState("");
 	const [color, setColor] = useState(EVENT_COLORS[0]);
 	const [startTime, setStartTime] = useState(
@@ -241,10 +245,10 @@ const NewEventDialog = memo(function NewEventDialog({
 					</div>
 				</div>
 				<DialogFooter>
-					<Button variant="ghost" onClick={onClose} className="cursor-pointer">
+					<Button variant="ghost" onClick={onClose} className="cursor-pointer hover:bg-white/10">
 						Cancel
 					</Button>
-					<Button onClick={handleSave} className="cursor-pointer">
+					<Button onClick={handleSave} className={cn("cursor-pointer", theme.extraColourScheme.bg, theme.extraColourScheme.bgHover)}>
 						Save
 					</Button>
 				</DialogFooter>

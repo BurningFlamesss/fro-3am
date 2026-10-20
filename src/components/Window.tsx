@@ -4,6 +4,7 @@ import { Rnd } from "react-rnd";
 import { cn } from "#/lib/utils.ts";
 import { useWindowStore } from "#/store/window.tsx";
 import type { WindowInstance } from "../constants/apps";
+import { useSettingStore } from "#/store/setting.tsx";
 
 export const WindowIdContext = createContext<string>("");
 
@@ -34,6 +35,7 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 		updateWindowRect,
 		setPreview,
 	} = useWindowStore();
+	const theme = useSettingStore((state) => state.theme)
 
 	const contentRef = useRef<HTMLDivElement>(null);
 	const debounceTimer = useRef<ReturnType<typeof setTimeout>>();
@@ -192,9 +194,8 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 					bottomRight: { cursor: "nwse-resize" },
 				}}
 				className={cn(
-					"border backdrop-blur-3xl",
-					"shadow-2xl shadow-black/30 transition-shadow duration-200",
-					"border-white/10 shadow-white/5",
+					theme.extraColourScheme.window,
+					"transition-shadow duration-200",
 					maximized ? "rounded-none" : "rounded-xl ",
 				)}
 			>
@@ -211,7 +212,7 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 						onKeyUp={focusWindow.bind(null, id)}
 						className={cn(
 							"window-drag-handle flex items-center justify-between h-10 pl-3 w-full",
-							"bg-black/20 backdrop-blur-md border-b border-white/5",
+							theme.extraColourScheme.windowBar,
 							"select-none cursor-grab active:cursor-grabbing",
 							maximized && "cursor-auto active:cursor-auto",
 						)}

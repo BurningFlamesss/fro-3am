@@ -105,25 +105,45 @@ export const targetAssets = {
 	logo: {
 		name: "logo",
 		additivePath: "/logo.png",
-		absolutePath: ""
-	}
-}
+		absolutePath: "",
+	},
+};
 
-const defaultTargetAssets = [targetAssets.logo]
+const defaultTargetAssets = [targetAssets.logo];
 
 export const themeBundle = [
-    {
-        id: 1,
-        name: "Default",
-        target: "/theme/default",
+	{
+		id: 1,
+		name: "Default",
+		target: "/theme/default",
 		targetIncludes: defaultTargetAssets,
-		colourScheme: "bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
-    },
-    {
-        id: 2,
-        name: "Halloween",
-        target: "/theme/halloween",
+		colourScheme:
+			"bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)]",
+		extraColourScheme: {
+			window:
+				"border backdrop-blur-3xl shadow-2xl shadow-black/30 border-white/10 shadow-white/5",
+			windowBar: "bg-black/20 backdrop-blur-md border-b border-white/5",
+			calBar:
+				"bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 shadow-[0_8px_32px_rgba(0,0,0,0.2)]",
+			bg: "bg-[#6ABF40]/80",
+			bgHover: "hover:bg-[#6ABF40]",
+		},
+	},
+	{
+		id: 2,
+		name: "Halloween",
+		target: "/theme/halloween",
 		targetIncludes: defaultTargetAssets,
-		colourScheme: "bg-orange-700/15 backdrop-blur-[20px] border border-orange-700/30"
-    }
-]
+		colourScheme:
+			"bg-orange-700/15 backdrop-blur-[20px] border border-orange-700/30",
+		extraColourScheme: {
+			window:
+				"border bg-orange-700/15 backdrop-blur-3xl shadow-2xl shadow-orange-700/30 border-white/10 shadow-orange-700/5",
+			windowBar:
+				"bg-orange-700/20 backdrop-blur-[20px] border border-orange-700/30",
+			calBar: "",
+			bg: "bg-orange-700/80",
+			bgHover: "hover:bg-orange-700",
+		},
+	},
+];
