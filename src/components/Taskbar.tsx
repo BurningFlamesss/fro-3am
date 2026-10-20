@@ -17,6 +17,7 @@ import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
 import { useLauncherStore } from "#/store/launcher.tsx";
 import { useMusicStore } from "#/store/music.tsx";
 import { useNoteStore } from "#/store/note.tsx";
+import { useSettingStore } from "#/store/setting.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
 import type { AppId, AppInstance, WindowInstance } from "../constants/apps";
@@ -29,7 +30,6 @@ import {
 } from "./ui/context-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import WindowThumbnail from "./WindowThumbnail";
-import { useSettingStore } from "#/store/setting.tsx";
 
 function MiscellaneousPanel({ onClose }: { onClose: () => void }) {
 	const theme = useSettingStore((state) => state.theme);
@@ -44,14 +44,21 @@ function MiscellaneousPanel({ onClose }: { onClose: () => void }) {
 
 	return (
 		<div
-			className="fixed bottom-0 right-0 mr-19 mb-20 h-[87%] z-[100000002] flex"
+			className="fixed inset-0 z-[100000002]"
 			onClick={(e) => {
 				if (e.target === e.currentTarget) onClose();
 			}}
 		>
 			<div
-				className={cn("w-75 rounded-2xl overflow-hidden", theme.colourScheme)}
-			></div>
+				className="absolute bottom-0 right-0 mr-19 mb-20 h-[87%] z-[100000002] flex"
+				onClick={(e) => {
+					if (e.target === e.currentTarget) onClose();
+				}}
+			>
+				<div
+					className={cn("w-75 rounded-2xl overflow-hidden", theme.colourScheme)}
+				></div>
+			</div>
 		</div>
 	);
 }
@@ -69,14 +76,16 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 
 	return (
 		<div
-			className="fixed bottom-0 right-0 mr-25 mb-20 h-80 z-[100000002] flex"
+			className="fixed inset-0 z-[100000002]"
 			onClick={(e) => {
 				if (e.target === e.currentTarget) onClose();
 			}}
 		>
-			<div
-				className={cn("w-75 rounded-2xl overflow-hidden", theme.colourScheme)}
-			></div>
+			<div className="absolute bottom-0 right-0 mr-25 mb-20 h-80 flex">
+				<div
+					className={cn("w-75 rounded-2xl overflow-hidden", theme.colourScheme)}
+				></div>
+			</div>
 		</div>
 	);
 }
@@ -219,10 +228,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 			}}
 		>
 			<div
-				className={cn(
-					"w-120 rounded-2xl overflow-hidden",
-					theme.colourScheme,
-				)}
+				className={cn("w-120 rounded-2xl overflow-hidden", theme.colourScheme)}
 			>
 				<div className="flex items-center px-4 py-3 border-b border-white/10">
 					<PiMagnifyingGlassDuotone className="text-white/60 mr-2" />
@@ -410,7 +416,12 @@ function Taskbar() {
 					onClose={() => setMiscellaneousPanelTriggered(false)}
 				/>
 			)}
-			<footer className={cn("text-white h-16 w-[90dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl z-100000000", theme.colourScheme)}>
+			<footer
+				className={cn(
+					"text-white h-16 w-[90dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl z-100000000",
+					theme.colourScheme,
+				)}
+			>
 				<section className="flex items-center gap-4 h-full">
 					<button
 						type="button"
