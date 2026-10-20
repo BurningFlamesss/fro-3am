@@ -12,41 +12,49 @@ interface SettingStore {
 	backgroundImage: Record<"url" | "position", string>;
 	location: string;
 	theme: Theme;
+	brightness: number;
 	setBackgroundImage: (imageUrl: string, position: string) => void;
 	setLocation: (location: string) => void;
 	setTheme: (themeName: string) => void;
+	setBrightness: (brightness: number) => void;
 }
 
 export const useSettingStore = create<SettingStore>()(
 	// persist(
-		immer((set) => ({
-			backgroundImage: {
-				url: "/backgrounds/halloween.gif",
-				position: "bottom",
-			},
-			location: "Butwal",
-			theme: setThemeOutside("Halloween"),
+	immer((set) => ({
+		backgroundImage: {
+			url: "/backgrounds/halloween.gif",
+			position: "bottom",
+		},
+		location: "Butwal",
+		theme: setThemeOutside("Halloween"),
+		brightness: 50,
 
-			setBackgroundImage: (imageUrl, position) =>
-				set((state) => {
-					state.backgroundImage.url = imageUrl;
-					state.backgroundImage.position = position;
-				}),
+		setBackgroundImage: (imageUrl, position) =>
+			set((state) => {
+				state.backgroundImage.url = imageUrl;
+				state.backgroundImage.position = position;
+			}),
 
-			setLocation: (location) =>
-				set((state) => {
-					const trimmed = location.trim();
-					if (!trimmed) {
-						return;
-					}
-					state.location = trimmed;
-				}),
+		setLocation: (location) =>
+			set((state) => {
+				const trimmed = location.trim();
+				if (!trimmed) {
+					return;
+				}
+				state.location = trimmed;
+			}),
 
-			setTheme: (themeName) =>
-				set((state) => {
-					state.theme = setThemeOutside(themeName);
-				}),
-		})),
+		setTheme: (themeName) =>
+			set((state) => {
+				state.theme = setThemeOutside(themeName);
+			}),
+
+		setBrightness: (brightness) =>
+			set((state) => {
+				state.brightness = brightness;
+			}),
+	})),
 	// 	{
 	// 		name: "frottings-storage",
 	// 		storage: createDebouncedStorage(1000),

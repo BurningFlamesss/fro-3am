@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { FaBatteryThreeQuarters, FaWifi } from "react-icons/fa6";
+import {
+	FaBatteryThreeQuarters,
+	FaVolumeHigh,
+	FaVolumeXmark,
+	FaWifi,
+} from "react-icons/fa6";
 import { HiSpeakerWave } from "react-icons/hi2";
 import { MdOutlineClose } from "react-icons/md";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
@@ -30,6 +35,7 @@ import {
 } from "./ui/context-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import WindowThumbnail from "./WindowThumbnail";
+import { TbSunHighFilled, TbSunLow } from "react-icons/tb";
 
 function MiscellaneousPanel({ onClose }: { onClose: () => void }) {
 	const theme = useSettingStore((state) => state.theme);
@@ -65,6 +71,9 @@ function MiscellaneousPanel({ onClose }: { onClose: () => void }) {
 
 function MediaPanel({ onClose }: { onClose: () => void }) {
 	const theme = useSettingStore((state) => state.theme);
+	const brightness = useSettingStore((state) => state.brightness);
+	const setBrightness = useSettingStore((state) => state.setBrightness);
+	const musicStore = useMusicStore();
 
 	useEffect(() => {
 		const handleKey = (e: KeyboardEvent) => {
@@ -84,7 +93,54 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 			<div className="absolute bottom-0 right-0 mr-25 mb-20 h-80 flex">
 				<div
 					className={cn("w-75 rounded-2xl overflow-hidden", theme.colourScheme)}
-				></div>
+				>
+					<div className="flex items-center gap-1">
+						<button
+							onClick={() => {}}
+							className="cursor-pointer text-white/60 hover:text-white"
+						>
+							{brightness === 0 ? (
+								<TbSunLow size={14} />
+							) : (
+								<TbSunHighFilled size={14} />
+							)}
+						</button>
+						<input
+							type="range"
+							min="0"
+							max="100"
+							step="0.05"
+							value={brightness}
+							onChange={(event) =>
+								setBrightness(parseFloat(event.target.value))
+							}
+							className="w-12 h-1 accent-white/60 cursor-pointer"
+						/>
+					</div>
+					<div className="flex items-center gap-1">
+						<button
+							onClick={() => musicStore.setMuted(!musicStore.muted)}
+							className="cursor-pointer text-white/60 hover:text-white"
+						>
+							{musicStore.muted || musicStore.volume === 0 ? (
+								<FaVolumeXmark size={14} />
+							) : (
+								<FaVolumeHigh size={14} />
+							)}
+						</button>
+						<input
+							type="range"
+							min="0"
+							max="1"
+							step="0.05"
+							value={musicStore.muted ? 0 : musicStore.volume}
+							onChange={(event) =>
+								musicStore.setVolume(parseFloat(event.target.value))
+							}
+							className="w-12 h-1 accent-white/60 cursor-pointer"
+						/>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
