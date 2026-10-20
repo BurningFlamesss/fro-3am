@@ -8,6 +8,7 @@ import {
 import { Rnd } from "react-rnd";
 import { WidgetAppDefinitions } from "#/constants/widgetsAppDefinition.tsx";
 import { cn } from "#/lib/utils.ts";
+import { useSettingStore } from "#/store/setting.tsx";
 import { useWidgetStore } from "#/store/widget.tsx";
 import type { WidgetInstance } from "../constants/widgets";
 
@@ -48,6 +49,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 		updateWidgetRect,
 		removeWidget,
 	} = useWidgetStore();
+	const theme = useSettingStore((state) => state.theme);
 
 	const {
 		id,
@@ -158,7 +160,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 	if (minimized) {
 		return (
 			<div
-				className="absolute bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white px-3 py-1 cursor-pointer pointer-events-auto"
+				className={cn("absolute text-white px-3 py-1 cursor-pointer pointer-events-auto", theme.colourScheme)}
 				style={{ left: x, top: y }}
 				onClick={() => restoreWidget(id)}
 			>
@@ -203,7 +205,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 				)}
 			>
 				<div
-					className="flex items-center gap-1 cursor-auto bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white"
+					className={cn("flex items-center gap-1 cursor-auto text-white", theme.colourScheme)}
 					onMouseDown={stopPropagation}
 					onClick={stopPropagation}
 				>
@@ -219,9 +221,7 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 						type="button"
 						onClick={() => lockWidget(id, !locked)}
 						className={`w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-yellow-400/20 ${
-							locked
-								? "text-yellow-400"
-								: "text-white/60 hover:text-white"
+							locked ? "text-yellow-400" : "text-white/60 hover:text-white"
 						} text-sm`}
 						title={locked ? "Unlock" : "Lock"}
 					>
@@ -236,7 +236,9 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 						<FaXmark />
 					</button>
 				</div>
-				<span className="text-xs font-medium text-white/80 truncate">{name}</span>
+				<span className="text-xs font-medium text-white/80 truncate">
+					{name}
+				</span>
 			</div>
 
 			<div className="w-full h-[calc(100%-2rem)] overflow-auto border border-dashed border-transparent group-hover:border-black">

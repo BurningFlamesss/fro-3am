@@ -220,7 +220,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 		>
 			<div
 				className={cn(
-					"w-120 bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden",
+					"w-120 rounded-2xl overflow-hidden",
 					theme.colourScheme,
 				)}
 			>
@@ -410,7 +410,7 @@ function Taskbar() {
 					onClose={() => setMiscellaneousPanelTriggered(false)}
 				/>
 			)}
-			<footer className="bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white h-16 w-[90dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl z-100000000">
+			<footer className={cn("text-white h-16 w-[90dvw] flex items-center justify-between px-4 absolute bottom-3 left-1/2 -translate-x-1/2 rounded-2xl z-100000000", theme.colourScheme)}>
 				<section className="flex items-center gap-4 h-full">
 					<button
 						type="button"

@@ -1,7 +1,9 @@
 import { memo } from "react";
 import { useMusicStore } from "#/store/music.tsx";
+import { useSettingStore } from "#/store/setting.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import type { WindowInstance } from "../constants/apps";
+import { cn } from "#/lib/utils.ts";
 
 interface Props {
 	win: WindowInstance;
@@ -11,6 +13,8 @@ const THUMB_WIDTH = 160;
 const THUMB_HEIGHT = 100;
 
 const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
+	const theme = useSettingStore((state) => state.theme);
+
 	const { closeWindow, focusWindow, previewCache } = useWindowStore();
 	const { stopPlayback } = useMusicStore();
 	if (!win) return null;
@@ -29,7 +33,7 @@ const WindowThumbnail = memo(function WindowThumbnail({ win }: Props) {
 
 	return (
 		<div
-			className="shrink-0 rounded-lg overflow-hidden border border-white/10 shadow-lg bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white cursor-pointer hover:border-white/20 transition-all duration-150"
+			className={cn("shrink-0 rounded-lg overflow-hidden border border-white/10 shadow-lg text-white cursor-pointer hover:border-white/20 transition-all duration-150", theme.colourScheme)}
 			style={{ width: THUMB_WIDTH }}
 			onClick={handleThumbnailClick}
 			role="button"

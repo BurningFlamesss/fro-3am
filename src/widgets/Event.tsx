@@ -1,8 +1,11 @@
-import { formatEventRange, parseDate } from "#/lib/utils.ts";
+import { cn, formatEventRange, parseDate } from "#/lib/utils.ts";
 import { useCalendarStore } from "#/store/calendar.tsx";
+import { useSettingStore } from "#/store/setting.tsx";
 
 function Event() {
 	const { events } = useCalendarStore();
+	const theme = useSettingStore((state) => state.theme);
+
 	const now = new Date();
 	const upcoming = events
 		.filter((event) => parseDate(event.end) >= now)
@@ -14,7 +17,7 @@ function Event() {
 		.slice(0, 5);
 
 	return upcoming.length > 0 ? (
-		<ul className="p-4 min-h-full w-full bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white">
+		<ul className={cn("p-4 min-h-full w-full text-white", theme.colourScheme)}>
 			{upcoming.map((tab, index) => (
 				<li key={tab.id}>
 					{index + 1}. {tab.title}
@@ -26,7 +29,7 @@ function Event() {
 			))}
 		</ul>
 	) : (
-		<div className="bg-black/15 backdrop-blur-[20px] backdrop-saturate-150 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)] text-white h-full w-full flex flex-row items-center justify-center">
+		<div className={cn("text-white h-full w-full flex flex-row items-center justify-center", theme.colourScheme)}>
 			No Any Upcoming Events
 		</div>
 	);
