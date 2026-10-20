@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { targetAssets, themeBundle } from "#/constants/theme.tsx";
+import type { targetAssets } from "#/constants/theme.tsx";
+import { themeBundle } from "#/constants/theme.tsx";
 import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
 
 type Theme = (typeof themeBundle)[0] &
@@ -24,7 +25,7 @@ export const useSettingStore = create<SettingStore>()(
 				position: "bottom",
 			},
 			location: "Butwal",
-			theme: setThemeOutside("Default"),
+			theme: setThemeOutside("Halloween"),
 
 			setBackgroundImage: (imageUrl, position) =>
 				set((state) => {
@@ -54,17 +55,18 @@ export const useSettingStore = create<SettingStore>()(
 );
 
 function setThemeOutside(themeName: string): Theme {
-	let foundTheme = themeBundle.find((theme) => theme.name === themeName) ?? themeBundle[0];
-	let requiredTheme = { ...foundTheme } as Theme;
+	const foundTheme =
+		themeBundle.find((theme) => theme.name === themeName) ?? themeBundle[0];
+	const requiredTheme = { ...foundTheme } as Theme;
 
 	foundTheme.targetIncludes.forEach((asset) => {
-				if (asset.additivePath) {
-					requiredTheme[asset.name] = foundTheme.target + asset.additivePath;
-				} else {
-					requiredTheme[asset.name] = asset.absolutePath;
-				}
-			}
-	)
+		const key = asset.name as keyof typeof targetAssets;
+		if (asset.additivePath) {
+			requiredTheme[key] = foundTheme.target + asset.additivePath;
+		} else {
+			requiredTheme[key] = asset.absolutePath;
+		}
+	});
 
 	return requiredTheme;
 }
