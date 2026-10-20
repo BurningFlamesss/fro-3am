@@ -5,8 +5,8 @@ import path from "path";
 import { execSync } from "child_process";
 import ffmpegPath from "ffmpeg-static";
 
-const dir = "./backgrounds";
-const previewDir = "./backgrounds/previews";
+const dir = "./public/backgrounds";
+const previewDir = "./public/backgrounds/previews";
 
 fs.mkdirSync(previewDir, { recursive: true });
 

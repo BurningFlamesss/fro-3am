@@ -9,8 +9,8 @@ function Clock() {
 	}, []);
 
 	return (
-		<section className="relative aspect-square max-h-full rounded-full border-4 overflow-hidden flex justify-center items-center">
-            <img className="z-1 absolute top-0 right-0 w-full h-full scale-110 opacity-60" src="/android-chrome-512x512.png" alt="" />
+		<section className="relative aspect-square max-h-full rounded-full border-4 border-black overflow-hidden flex justify-center items-center">
+            <img className="z-1 absolute top-0 right-0 w-full h-full scale-110 opacity-60 bg-black" src="/logo.png" alt="" />
 			<div className="z-2 font-black text-xl text-white">{time.getHours() % 12} / {time.getMinutes()} / {time.getSeconds()} {time.getHours() > 12 ? "PM" : "AM"}</div>
 		</section>
 	);
