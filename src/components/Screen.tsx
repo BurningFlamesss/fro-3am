@@ -11,14 +11,17 @@ import {
 } from "#/lib/utils.ts";
 import { useBrowserStore } from "#/store/browser.tsx";
 import { useCalculatorStore } from "#/store/calculator.tsx";
+import { useFrayStore } from "#/store/fray.tsx";
 import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
 import { useLauncherStore } from "#/store/launcher.tsx";
 import { useMusicStore } from "#/store/music.tsx";
 import { useNoteStore } from "#/store/note.tsx";
+import { useSettingStore } from "#/store/setting.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWidgetStore } from "#/store/widget.tsx";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
 import type { AppId, AppInstance, WindowInstance } from "../constants/apps";
+import FrayRenderer from "./FrayRenderer";
 import {
 	ContextMenu,
 	ContextMenuContent,
@@ -29,7 +32,6 @@ import {
 	ContextMenuSubTrigger,
 	ContextMenuTrigger,
 } from "./ui/context-menu";
-import { useSettingStore } from "#/store/setting.tsx";
 
 function Screen() {
 	const { apps, openApp, windows, focusWindow, pinApp } = useWindowStore();
@@ -44,6 +46,8 @@ function Screen() {
 	const theme = useSettingStore((state) => state.theme);
 
 	const { widgets } = useWidgetStore();
+
+	const fraysInUse = useFrayStore((state) => state.fraysInUse);
 
 	const [renameTarget, setRenameTarget] = useState<{
 		id: string;
@@ -291,7 +295,12 @@ function Screen() {
 										alt={app.name}
 										draggable={false}
 									/>
-									<p className={cn("text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none", theme.colourScheme)}>
+									<p
+										className={cn(
+											"text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none",
+											theme.colourScheme,
+										)}
+									>
 										{app.name}
 									</p>
 								</button>
@@ -361,7 +370,12 @@ function Screen() {
 												type="text"
 											/>
 										) : (
-											<p className={cn("text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none", theme.colourScheme)}>
+											<p
+												className={cn(
+													"text-white py-0.5 px-2 rounded-sm text-xs truncate max-w-full select-none",
+													theme.colourScheme,
+												)}
+											>
 												{container.name}
 											</p>
 										)}
@@ -396,6 +410,14 @@ function Screen() {
 				>
 					{widgetsRenderables.map(([key, value]) => (
 						<WidgetRenderer key={key} widget={value} />
+					))}
+				</div>
+				<div
+					id="fray-area"
+					className="absolute inset-0 z-10 h-screen w-full overflow-hidden pointer-events-none"
+				>
+					{fraysInUse.map((fray) => (
+						<FrayRenderer key={`rendered-fray-${fray.id}`} fray={fray} />
 					))}
 				</div>
 			</ContextMenuTrigger>

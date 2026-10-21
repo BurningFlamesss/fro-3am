@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-interface FrayEntries {
+export interface FrayInstance {
 	id: number;
 	name: string;
 	rotations: Array<{
@@ -29,7 +29,7 @@ interface FrayEntries {
 	};
 }
 
-const Frays: Array<FrayEntries> = [
+const Frays: Array<FrayInstance> = [
 	{
 		id: 1,
 		name: "frokk",
@@ -91,13 +91,22 @@ const Frays: Array<FrayEntries> = [
 ];
 
 interface FrayStore {
-	frays: Array<FrayEntries>;
-	fraysInUse: Array<FrayEntries>;
+	frays: Array<FrayInstance>;
+	fraysInUse: Array<FrayInstance>;
+	updateFrayPosition: (id: number, rectangle: { x: number; y: number }) => void;
 }
 
 export const useFrayStore = create<FrayStore>()(
 	immer((set) => ({
 		frays: Frays,
 		fraysInUse: Frays,
+		updateFrayPosition: (id, rectangle) =>
+			set((state) => {
+				const fray = state.fraysInUse[id - 1]; // I know it needs to be robust but it works for now
+				if (fray) {
+					fray.position.x = rectangle.x;
+					fray.position.y = rectangle.y;
+				}
+			}),
 	})),
 );
