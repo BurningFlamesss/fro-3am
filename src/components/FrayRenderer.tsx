@@ -29,8 +29,10 @@ const getCanvasRect = (): DOMRect | null => {
 export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 	const updateFrayPosition = useFrayStore((state) => state.updateFrayPosition);
 	const { id, name, position, rotations, size } = fray;
-	const [currentRotation, setCurrentRotation] = useState(rotations[0]);
-	const [source, setSource] = useState(currentRotation.source);
+	const [rotationIndex, setRotationIndex] = useState(0);
+	const [currentRotation, setCurrentRotation] = useState(
+		rotations[rotationIndex],
+	);
 	const rndRef = useRef<Rnd>(null);
 
 	const lastClampedPos = useRef({ x: position.x, y: position.y });
@@ -92,50 +94,41 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 		return () => window.removeEventListener("resize", sync);
 	}, [handleDragStop, position.x, position.y]);
 
-	const handleReactionMouseEnter = () => {
-		if (currentRotation.reactions.includes("change")) {
-			const target = currentRotation.change.changeTo;
+	const handleRotation = (event: "mouseenter" | "mouseleave") => {
+		if (
+			!currentRotation.reactions.includes("change") ||
+			currentRotation.change.at !== event
+		)
+			return;
 
-			switch (target) {
-				case "random":
-					break;
-				case "next":
-					break;
-				case "previous":
-					break;
+		const target = currentRotation.change.changeTo;
+		let newRotationIndex: number = rotationIndex;
 
-				default:
-					if (currentRotation.change.at === "mouseenter") {
-						const index = +target.replaceAll("index-", "") as number;
-						setCurrentRotation(rotations[index]);
-						setSource(rotations[index].source);
+		switch (target) {
+			case "random":
+				newRotationIndex = Math.floor(Math.random() * rotations.length);
+				break;
+			case "next":
+				newRotationIndex = (rotationIndex + 1) % rotations.length;
+				break;
+			case "previous":
+				newRotationIndex =
+					(rotationIndex - 1 + rotations.length) % rotations.length;
+				break;
+
+			default:
+				if (target.startsWith("index-")) {
+					const index = +target.replaceAll("index-", "") as number;
+					if (!Number.isNaN(index) && rotations?.[index]) {
+						newRotationIndex = index;
 					}
-					break;
-			}
+				}
+
+				break;
 		}
-	};
 
-	const handleReactionMouseLeave = () => {
-		if (currentRotation.reactions.includes("change")) {
-			const target = currentRotation.change.changeTo;
-
-			switch (target) {
-				case "random":
-					break;
-				case "next":
-					break;
-				case "previous":
-					break;
-
-				default:
-					if (currentRotation.change.at === "mouseleave") {
-						const index = +target.replaceAll("index-", "") as number;
-						setCurrentRotation(rotations[index]);
-						setSource(rotations[index].source);
-					}
-					break;
-			}
-		}
+		setRotationIndex(newRotationIndex);
+		setCurrentRotation(rotations[newRotationIndex]);
 	};
 
 	return (
@@ -153,15 +146,20 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 				className={cn("absolute overflow-hidden group pointer-events-auto")}
 			>
 				<div
-					onMouseEnter={() => handleReactionMouseEnter()}
-					onMouseLeave={() => handleReactionMouseLeave()}
+					onMouseEnter={() => handleRotation("mouseenter")}
+					onMouseLeave={() => handleRotation("mouseleave")}
 					className={cn(
 						"fray-drag-handle flex items-center justify-between",
 						"select-none cursor-grab active:cursor-grabbing",
 						position.fixed && "cursor-auto active:cursor-auto",
 					)}
 				>
-					<img className="select-none" src={source} alt="" draggable={false} />
+					<img
+						className="select-none"
+						src={currentRotation.source}
+						alt=""
+						draggable={false}
+					/>
 				</div>
 			</Rnd>
 			<div></div>
