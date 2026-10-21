@@ -13,9 +13,10 @@ export interface FrayInstance {
 			changeTo: "random" | "next" | "previous" | string;
 			at: "mouseenter" | "mouseleave" | "none";
 		};
-		follow: {
-			behaviour: "glitchy" | "unmovable";
-			delay: string;
+		move: {
+			behaviour: "static" | "x" | "y" | "xy" | "follow";
+			effect: "glitchy" | "none";
+			delay: number;
 			speed: number;
 		};
 	}>;
@@ -44,9 +45,10 @@ const Frays: Array<FrayInstance> = [
 					changeTo: "index-1",
 					at: "mouseenter",
 				},
-				follow: {
-					behaviour: "unmovable",
-					delay: "0ms",
+				move: {
+					behaviour: "static",
+					effect: "none",
+					delay: 0,
 					speed: 0,
 				},
 			},
@@ -59,9 +61,10 @@ const Frays: Array<FrayInstance> = [
 					changeTo: "index-0",
 					at: "mouseleave",
 				},
-				follow: {
-					behaviour: "unmovable",
-					delay: "0ms",
+				move: {
+					behaviour: "static",
+					effect: "none",
+					delay: 0,
 					speed: 0,
 				},
 			},
@@ -89,10 +92,11 @@ const Frays: Array<FrayInstance> = [
 					changeTo: "random",
 					at: "none",
 				},
-				follow: {
-					behaviour: "glitchy",
-					delay: "100ms",
-					speed: 4, // 4px/s
+				move: {
+					behaviour: "x",
+					effect: "glitchy",
+					delay: 2000, // 100ms
+					speed: 40, // 40px/s
 				},
 			},
 		],
@@ -120,7 +124,7 @@ export const useFrayStore = create<FrayStore>()(
 		fraysInUse: structuredClone(Frays),
 		updateFrayPosition: (id, rectangle) =>
 			set((state) => {
-				const fray = state.fraysInUse.find((frayInUse) => frayInUse.id === id)
+				const fray = state.fraysInUse.find((frayInUse) => frayInUse.id === id);
 				if (fray) {
 					fray.position.x = rectangle.x;
 					fray.position.y = rectangle.y;

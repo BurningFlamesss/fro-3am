@@ -94,6 +94,69 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 		return () => window.removeEventListener("resize", sync);
 	}, [handleDragStop, position.x, position.y]);
 
+	useEffect(() => {
+		const { behaviour, delay, effect, speed } = currentRotation.move;
+
+		if (behaviour === "static") return;
+
+		if (behaviour === "follow") {
+			// I should first check if this component can get mouse positions even when outside the children
+			return;
+		}
+		const move = (positionDelta: number) => {
+			switch (behaviour) {
+				case "x":
+					handleDragStop(null, {
+						x: position.x + positionDelta,
+						y: position.y,
+					});
+					break;
+
+				case "y":
+					handleDragStop(null, {
+						x: position.x,
+						y: position.y + positionDelta,
+					});
+					break;
+				case "xy": {
+					const tinyDelta = positionDelta / Math.SQRT2;
+					handleDragStop(null, {
+						x: position.x + positionDelta,
+						y: position.y + positionDelta - tinyDelta,
+					});
+					break;
+				}
+			}
+		};
+
+		const addEffect = () => {
+			switch (effect) {
+				case "glitchy": {
+					const accumulativeDistance = speed * (delay / 1000); // v = d / t
+					const direction = Math.random() < 0.5 ? 1 : -1;
+					const positionDelta =
+						(speed + Math.floor(Math.random() * accumulativeDistance)) *
+						direction;
+
+					move(positionDelta);
+					break;
+				}
+
+				default:
+					break;
+			}
+		};
+
+		const interval = setInterval(
+			() => {
+				addEffect();
+			},
+			Math.max(100, delay),
+		);
+
+		return () => clearInterval(interval);
+	}, [handleDragStop, position.x, position.y, currentRotation.move]);
+
 	const handleRotation = (event: "mouseenter" | "mouseleave") => {
 		if (
 			!currentRotation.reactions.includes("change") ||
