@@ -68,7 +68,7 @@ const Frays: Array<FrayInstance> = [
 		],
 		position: {
 			x: 0,
-			y: 640,
+			y: 1000,
 			fixed: true,
 		},
 		size: {
@@ -117,10 +117,10 @@ interface FrayStore {
 export const useFrayStore = create<FrayStore>()(
 	immer((set) => ({
 		frays: Frays,
-		fraysInUse: Frays,
+		fraysInUse: structuredClone(Frays),
 		updateFrayPosition: (id, rectangle) =>
 			set((state) => {
-				const fray = state.fraysInUse[id - 1]; // I know it needs to be robust but it works for now
+				const fray = state.fraysInUse.find((frayInUse) => frayInUse.id === id)
 				if (fray) {
 					fray.position.x = rectangle.x;
 					fray.position.y = rectangle.y;

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Rnd } from "react-rnd";
 import { cn } from "#/lib/utils.ts";
 import { type FrayInstance, useFrayStore } from "#/store/fray.tsx";
@@ -8,10 +8,12 @@ const clampPosition = (
 	y: number,
 	containerW: number,
 	containerH: number,
+	width: number,
+	height: number,
 ) => {
-	const maxX = containerW;
+	const maxX = Math.max(0, containerW - width);
 	const minX = 0;
-	const maxY = containerH;
+	const maxY = Math.max(containerH - height);
 	const minY = 0;
 	return {
 		x: Math.min(maxX, Math.max(minX, x)),
@@ -33,18 +35,28 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 
 	const lastClampedPos = useRef({ x: position.x, y: position.y });
 
-	const handleDrag = useCallback((_e: any, d: { x: number; y: number }) => {
-		const container = getCanvasRect();
-		if (!container) return;
-		const clamped = clampPosition(d.x, d.y, container.width, container.height);
-		if (
-			clamped.x !== lastClampedPos.current.x ||
-			clamped.y !== lastClampedPos.current.y
-		) {
-			lastClampedPos.current = clamped;
-			rndRef.current?.updatePosition(clamped);
-		}
-	}, []);
+	const handleDrag = useCallback(
+		(_e: any, d: { x: number; y: number }) => {
+			const container = getCanvasRect();
+			if (!container) return;
+			const clamped = clampPosition(
+				d.x,
+				d.y,
+				container.width,
+				container.height,
+				size.width,
+				size.height,
+			);
+			if (
+				clamped.x !== lastClampedPos.current.x ||
+				clamped.y !== lastClampedPos.current.y
+			) {
+				lastClampedPos.current = clamped;
+				rndRef.current?.updatePosition(clamped);
+			}
+		},
+		[size],
+	);
 
 	const handleDragStop = useCallback(
 		(_e: any, d: { x: number; y: number }) => {
@@ -55,6 +67,8 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 				d.y,
 				container.width,
 				container.height,
+				size.width,
+				size.height,
 			);
 			updateFrayPosition(id, {
 				x: clamped.x,
@@ -62,8 +76,21 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 			});
 			lastClampedPos.current = clamped;
 		},
-		[id, updateFrayPosition],
+		[id, updateFrayPosition, size],
 	);
+
+	useEffect(() => {
+		const sync = () =>
+			handleDragStop(null, {
+				x: position.x,
+				y: position.y,
+			});
+
+		sync();
+
+		window.addEventListener("resize", sync);
+		return () => window.removeEventListener("resize", sync);
+	}, [handleDragStop, position.x, position.y]);
 
 	const handleReactionMouseEnter = () => {
 		if (currentRotation.reactions.includes("change")) {
