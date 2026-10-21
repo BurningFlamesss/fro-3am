@@ -13,6 +13,7 @@ import { HiSpeakerWave } from "react-icons/hi2";
 import { MdOutlineClose } from "react-icons/md";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
 import { RiUnpinLine } from "react-icons/ri";
+import { TbSunHighFilled, TbSunLow } from "react-icons/tb";
 import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 import {
 	cn,
@@ -39,7 +40,6 @@ import {
 } from "./ui/context-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import WindowThumbnail from "./WindowThumbnail";
-import { TbSunHighFilled, TbSunLow } from "react-icons/tb";
 
 function MiscellaneousPanel({ onClose }: { onClose: () => void }) {
 	const theme = useSettingStore((state) => state.theme);
@@ -105,53 +105,60 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 				if (e.target === e.currentTarget) onClose();
 			}}
 		>
-			<div className="absolute bottom-81 right-0 mr-25 mb-20 h-30 flex">
-				<div
-					className={cn("w-75 rounded-2xl overflow-hidden p-4 flex flex-col items-center justify-center", theme.colourScheme)}
-				>
-					<main className="flex flex-row-reverse justify-between items-center">
-						<div className="h-16 max-w-48 max-h-full aspect-video overflow-hidden border border-white/10">
-							<img
-								src={coverImageSource}
-								alt={track.title}
-								className="h-full w-full object-cover"
-								onError={() => {
-									setCoverImageSource("/music/cover/default.jpg");
-								}}
-							/>
-						</div>
+			{track ? (
+				<div className="absolute bottom-81 right-0 mr-25 mb-20 h-30 flex">
+					<div
+						className={cn(
+							"w-75 rounded-2xl overflow-hidden p-4 flex flex-col items-center justify-center",
+							theme.colourScheme,
+						)}
+					>
+						<main className="flex flex-row-reverse justify-between items-center">
+							<div className="h-16 max-w-48 max-h-full aspect-video overflow-hidden border border-white/10">
+								<img
+									src={coverImageSource}
+									alt={track.title}
+									className="h-full w-full object-cover"
+									onError={() => {
+										setCoverImageSource("/music/cover/default.jpg");
+									}}
+								/>
+							</div>
 
-						<div className="px-3 pb-1 text-center">
-							<h2 className="text-sm font-semibold truncate">{track.title.slice(0, 20)}...</h2>
-							<p className="text-xs text-white/60 truncate">{track.artist}</p>
+							<div className="px-3 pb-1 text-center">
+								<h2 className="text-sm font-semibold truncate">
+									{track.title.slice(0, 20)}...
+								</h2>
+								<p className="text-xs text-white/60 truncate">{track.artist}</p>
+							</div>
+						</main>
+						<div className="flex items-center gap-2">
+							<button
+								onClick={() => musicStore.previous()}
+								className="cursor-pointer text-white/60 hover:text-white"
+							>
+								<FaBackwardFast size={16} />
+							</button>
+							<button
+								onClick={() => musicStore.togglePlay()}
+								className="cursor-pointer rounded-full p-1 bg-white/10 hover:bg-white/20"
+							>
+								{musicStore.isPlaying ? (
+									<FaPause size={16} />
+								) : (
+									<FaPlay size={16} />
+								)}
+							</button>
+							<button
+								onClick={() => musicStore.next()}
+								className="cursor-pointer text-white/60 hover:text-white"
+							>
+								<FaForwardFast size={16} />
+							</button>
 						</div>
-					</main>
-					<div className="flex items-center gap-2">
-						<button
-							onClick={() => musicStore.previous()}
-							className="cursor-pointer text-white/60 hover:text-white"
-						>
-							<FaBackwardFast size={16} />
-						</button>
-						<button
-							onClick={() => musicStore.togglePlay()}
-							className="cursor-pointer rounded-full p-1 bg-white/10 hover:bg-white/20"
-						>
-							{musicStore.isPlaying ? (
-								<FaPause size={16} />
-							) : (
-								<FaPlay size={16} />
-							)}
-						</button>
-						<button
-							onClick={() => musicStore.next()}
-							className="cursor-pointer text-white/60 hover:text-white"
-						>
-							<FaForwardFast size={16} />
-						</button>
 					</div>
 				</div>
-			</div>
+			) : null}
 			<div className="absolute bottom-0 right-0 mr-25 mb-20 h-80 flex">
 				<div
 					className={cn("w-75 rounded-2xl overflow-hidden", theme.colourScheme)}
