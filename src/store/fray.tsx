@@ -93,10 +93,10 @@ const Frays: Array<FrayInstance> = [
 					at: "none",
 				},
 				move: {
-					behaviour: "x",
+					behaviour: "xy",
 					effect: "glitchy",
-					delay: 2000, // 100ms
-					speed: 40, // 40px/s
+					delay: 2000, // 2000ms
+					speed: 60, // 60px/s
 				},
 			},
 		],

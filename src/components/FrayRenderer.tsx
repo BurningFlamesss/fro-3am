@@ -119,7 +119,8 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 					});
 					break;
 				case "xy": {
-					const tinyDelta = positionDelta / Math.SQRT2;
+					const direction = Math.random() < 0.5 ? 1 : -1;
+					const tinyDelta = (positionDelta * direction) / Math.SQRT2;
 					handleDragStop(null, {
 						x: position.x + positionDelta,
 						y: position.y + positionDelta - tinyDelta,
@@ -151,7 +152,7 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 			() => {
 				addEffect();
 			},
-			Math.max(100, delay),
+			Math.max(100, (delay / 2) + Math.floor(Math.random() * delay)),
 		);
 
 		return () => clearInterval(interval);
