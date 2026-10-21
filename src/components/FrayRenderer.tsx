@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Rnd } from "react-rnd";
 import { cn } from "#/lib/utils.ts";
 import { type FrayInstance, useFrayStore } from "#/store/fray.tsx";
@@ -26,8 +26,10 @@ const getCanvasRect = (): DOMRect | null => {
 
 export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 	const updateFrayPosition = useFrayStore((state) => state.updateFrayPosition);
-	const rndRef = useRef<Rnd>(null);
 	const { id, name, position, rotations, size } = fray;
+	const [currentRotation, setCurrentRotation] = useState(rotations[0]);
+	const [source, setSource] = useState(currentRotation.source);
+	const rndRef = useRef<Rnd>(null);
 
 	const lastClampedPos = useRef({ x: position.x, y: position.y });
 
@@ -63,6 +65,52 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 		[id, updateFrayPosition],
 	);
 
+	const handleReactionMouseEnter = () => {
+		if (currentRotation.reactions.includes("change")) {
+			const target = currentRotation.change.changeTo;
+
+			switch (target) {
+				case "random":
+					break;
+				case "next":
+					break;
+				case "previous":
+					break;
+
+				default:
+					if (currentRotation.change.at === "mouseenter") {
+						const index = +target.replaceAll("index-", "") as number;
+						setCurrentRotation(rotations[index]);
+						setSource(rotations[index].source);
+					}
+					break;
+			}
+		}
+	};
+
+	const handleReactionMouseLeave = () => {
+		if (currentRotation.reactions.includes("change")) {
+			const target = currentRotation.change.changeTo;
+
+			switch (target) {
+				case "random":
+					break;
+				case "next":
+					break;
+				case "previous":
+					break;
+
+				default:
+					if (currentRotation.change.at === "mouseleave") {
+						const index = +target.replaceAll("index-", "") as number;
+						setCurrentRotation(rotations[index]);
+						setSource(rotations[index].source);
+					}
+					break;
+			}
+		}
+	};
+
 	return (
 		<>
 			<Rnd
@@ -71,19 +119,22 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 				position={{ x: position.x, y: position.y }}
 				size={{ width: size.width ?? 0, height: size.height ?? 0 }}
 				disableDragging={position.fixed}
+				enableResizing={false}
 				bounds={document.getElementById("fray-area") ? "parent" : undefined}
 				onDrag={handleDrag}
 				onDragStop={handleDragStop}
 				className={cn("absolute overflow-hidden group pointer-events-auto")}
 			>
 				<div
+					onMouseEnter={() => handleReactionMouseEnter()}
+					onMouseLeave={() => handleReactionMouseLeave()}
 					className={cn(
-						"fray-drag-handle flex items-center justify-between h-8",
+						"fray-drag-handle flex items-center justify-between",
 						"select-none cursor-grab active:cursor-grabbing",
 						position.fixed && "cursor-auto active:cursor-auto",
 					)}
 				>
-					<img className="select-none" src={rotations[0].source} alt="" draggable={false} />
+					<img className="select-none" src={source} alt="" draggable={false} />
 				</div>
 			</Rnd>
 			<div></div>

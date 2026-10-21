@@ -6,11 +6,12 @@ export interface FrayInstance {
 	name: string;
 	rotations: Array<{
 		source: string;
-		reactions: Array<"change" | "follow">;
+		reactions: Array<"change">;
 		change: {
 			reactionsOnly: boolean;
-			frequency: "random" | string;
+			frequency: "random" | "instant" | string;
 			changeTo: "random" | "next" | "previous" | string;
+			at: "mouseenter" | "mouseleave" | "none";
 		};
 		follow: {
 			behaviour: "glitchy" | "unmovable";
@@ -39,8 +40,24 @@ const Frays: Array<FrayInstance> = [
 				reactions: ["change"],
 				change: {
 					reactionsOnly: true,
-					frequency: "random",
-					changeTo: "next",
+					frequency: "instant",
+					changeTo: "index-1",
+					at: "mouseenter",
+				},
+				follow: {
+					behaviour: "unmovable",
+					delay: "0ms",
+					speed: 0,
+				},
+			},
+			{
+				source: "/frays/frokk/2.gif",
+				reactions: ["change"],
+				change: {
+					reactionsOnly: true,
+					frequency: "instant",
+					changeTo: "index-0",
+					at: "mouseleave",
 				},
 				follow: {
 					behaviour: "unmovable",
@@ -50,9 +67,9 @@ const Frays: Array<FrayInstance> = [
 			},
 		],
 		position: {
-			x: 45,
-			y: 45,
-			fixed: false,
+			x: 0,
+			y: 640,
+			fixed: true,
 		},
 		size: {
 			width: 60,
@@ -65,11 +82,12 @@ const Frays: Array<FrayInstance> = [
 		rotations: [
 			{
 				source: "/frays/fhost/1.gif",
-				reactions: ["follow"],
+				reactions: [],
 				change: {
 					reactionsOnly: false,
 					frequency: "random",
 					changeTo: "random",
+					at: "none",
 				},
 				follow: {
 					behaviour: "glitchy",
@@ -79,13 +97,13 @@ const Frays: Array<FrayInstance> = [
 			},
 		],
 		position: {
-			x: 45,
-			y: 45,
+			x: 600,
+			y: 540,
 			fixed: false,
 		},
 		size: {
-			width: 60,
-			height: 60,
+			width: 100,
+			height: 200,
 		},
 	},
 ];
