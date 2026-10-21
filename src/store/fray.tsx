@@ -1,12 +1,54 @@
-import { num } from "mathjs";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-const Frays = [
+interface FrayEntries {
+	id: number;
+	name: string;
+	rotations: Array<{
+		source: string;
+		reactions: Array<"change" | "follow">;
+		change: {
+			reactionsOnly: boolean;
+			frequency: "random" | string;
+			changeTo: "random" | "next" | "previous" | string;
+		};
+		follow: {
+			behaviour: "glitchy" | "unmovable";
+			delay: string;
+			speed: number;
+		};
+	}>;
+	position: {
+		x: number;
+		y: number;
+		fixed: boolean;
+	};
+	size: {
+		width: number;
+		height: number;
+	};
+}
+
+const Frays: Array<FrayEntries> = [
 	{
 		id: 1,
 		name: "frokk",
-		rotations: ["/frays/frokk/1.gif"],
+		rotations: [
+			{
+				source: "/frays/frokk/1.gif",
+				reactions: ["change"],
+				change: {
+					reactionsOnly: true,
+					frequency: "random",
+					changeTo: "next",
+				},
+				follow: {
+					behaviour: "unmovable",
+					delay: "0ms",
+					speed: 0,
+				},
+			},
+		],
 		position: {
 			x: 45,
 			y: 45,
@@ -15,16 +57,27 @@ const Frays = [
 		size: {
 			width: 60,
 			height: 60,
-		},
-		reactions: ["change"],
-		change: {
-			reactionsOnly: true,
 		},
 	},
 	{
 		id: 2,
 		name: "fhost",
-		rotations: ["/frays/fhost/1.gif"],
+		rotations: [
+			{
+				source: "/frays/fhost/1.gif",
+				reactions: ["follow"],
+				change: {
+					reactionsOnly: false,
+					frequency: "random",
+					changeTo: "random",
+				},
+				follow: {
+					behaviour: "glitchy",
+					delay: "100ms",
+					speed: 4, // 4px/s
+				},
+			},
+		],
 		position: {
 			x: 45,
 			y: 45,
@@ -34,22 +87,17 @@ const Frays = [
 			width: 60,
 			height: 60,
 		},
-		reactions: ["follow"],
-		change: {
-			reactionsOnly: false,
-			frequency: "random",
-		},
 	},
 ];
 
 interface FrayStore {
-	frays: Array<string>;
-	fraysInUse: Array<unknown>;
+	frays: Array<FrayEntries>;
+	fraysInUse: Array<FrayEntries>;
 }
 
 export const useFrayStore = create<FrayStore>()(
 	immer((set) => ({
-		frays: [],
-		fraysInUse: [],
+		frays: Frays,
+		fraysInUse: Frays,
 	})),
 );
