@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import {
+	FaBackwardFast,
 	FaBatteryThreeQuarters,
+	FaForwardFast,
+	FaPause,
+	FaPlay,
 	FaVolumeHigh,
 	FaVolumeXmark,
 	FaWifi,
@@ -73,6 +77,7 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 	const theme = useSettingStore((state) => state.theme);
 	const brightness = useSettingStore((state) => state.brightness);
 	const setBrightness = useSettingStore((state) => state.setBrightness);
+	const [coverImageSource, setCoverImageSource] = useState("");
 	const musicStore = useMusicStore();
 
 	useEffect(() => {
@@ -83,6 +88,16 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 		return () => window.removeEventListener("keydown", handleKey);
 	}, [onClose]);
 
+	const track = musicStore.tracks[musicStore.currentIndex];
+
+	useEffect(() => {
+		if (track) {
+			setCoverImageSource(track.cover);
+		} else {
+			setCoverImageSource("/apps/Music.svg");
+		}
+	}, [track?.cover, track?.id]);
+
 	return (
 		<div
 			className="fixed inset-0 z-[100000002]"
@@ -90,55 +105,113 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 				if (e.target === e.currentTarget) onClose();
 			}}
 		>
+			<div className="absolute bottom-81 right-0 mr-25 mb-20 h-30 flex">
+				<div
+					className={cn("w-75 rounded-2xl overflow-hidden p-4 flex flex-col items-center justify-center", theme.colourScheme)}
+				>
+					<main className="flex flex-row-reverse justify-between items-center">
+						<div className="h-16 max-w-48 max-h-full aspect-video overflow-hidden border border-white/10">
+							<img
+								src={coverImageSource}
+								alt={track.title}
+								className="h-full w-full object-cover"
+								onError={() => {
+									setCoverImageSource("/music/cover/default.jpg");
+								}}
+							/>
+						</div>
+
+						<div className="px-3 pb-1 text-center">
+							<h2 className="text-sm font-semibold truncate">{track.title.slice(0, 20)}...</h2>
+							<p className="text-xs text-white/60 truncate">{track.artist}</p>
+						</div>
+					</main>
+					<div className="flex items-center gap-2">
+						<button
+							onClick={() => musicStore.previous()}
+							className="cursor-pointer text-white/60 hover:text-white"
+						>
+							<FaBackwardFast size={16} />
+						</button>
+						<button
+							onClick={() => musicStore.togglePlay()}
+							className="cursor-pointer rounded-full p-1 bg-white/10 hover:bg-white/20"
+						>
+							{musicStore.isPlaying ? (
+								<FaPause size={16} />
+							) : (
+								<FaPlay size={16} />
+							)}
+						</button>
+						<button
+							onClick={() => musicStore.next()}
+							className="cursor-pointer text-white/60 hover:text-white"
+						>
+							<FaForwardFast size={16} />
+						</button>
+					</div>
+				</div>
+			</div>
 			<div className="absolute bottom-0 right-0 mr-25 mb-20 h-80 flex">
 				<div
 					className={cn("w-75 rounded-2xl overflow-hidden", theme.colourScheme)}
 				>
-					<div className="flex items-center gap-1">
-						<button
-							onClick={() => {}}
-							className="cursor-pointer text-white/60 hover:text-white"
-						>
-							{brightness === 0 ? (
-								<TbSunLow size={14} />
-							) : (
-								<TbSunHighFilled size={14} />
-							)}
-						</button>
-						<input
-							type="range"
-							min="0"
-							max="100"
-							step="0.05"
-							value={brightness}
-							onChange={(event) =>
-								setBrightness(parseFloat(event.target.value))
-							}
-							className="w-12 h-1 accent-white/60 cursor-pointer"
-						/>
+					<div className="w-full px-4 py-4 grid grid-cols-3 grid-rows-2">
+						{[0, 1, 2, 3, 4, 5].map((ctrlOptions) => {
+							return <div key={ctrlOptions}>{ctrlOptions}</div>;
+						})}
 					</div>
-					<div className="flex items-center gap-1">
-						<button
-							onClick={() => musicStore.setMuted(!musicStore.muted)}
-							className="cursor-pointer text-white/60 hover:text-white"
-						>
-							{musicStore.muted || musicStore.volume === 0 ? (
-								<FaVolumeXmark size={14} />
-							) : (
-								<FaVolumeHigh size={14} />
-							)}
-						</button>
-						<input
-							type="range"
-							min="0"
-							max="1"
-							step="0.05"
-							value={musicStore.muted ? 0 : musicStore.volume}
-							onChange={(event) =>
-								musicStore.setVolume(parseFloat(event.target.value))
-							}
-							className="w-12 h-1 accent-white/60 cursor-pointer"
-						/>
+					<div className="w-full px-4 flex flex-col items-center justify-center">
+						<div className="w-full flex items-center gap-1">
+							<button
+								onClick={() => {}}
+								className="cursor-pointer text-white/60 hover:text-white"
+							>
+								{brightness === 0 ? (
+									<TbSunLow size={14} />
+								) : (
+									<TbSunHighFilled size={14} />
+								)}
+							</button>
+							<input
+								type="range"
+								min="0"
+								max="100"
+								step="0.05"
+								value={brightness}
+								onChange={(event) =>
+									setBrightness(parseFloat(event.target.value))
+								}
+								className="w-12 h-1 accent-white/60 cursor-pointer"
+							/>
+						</div>
+						<div className="w-full flex items-center gap-1">
+							<button
+								onClick={() => musicStore.setMuted(!musicStore.muted)}
+								className="cursor-pointer text-white/60 hover:text-white"
+							>
+								{musicStore.muted || musicStore.volume === 0 ? (
+									<FaVolumeXmark size={14} />
+								) : (
+									<FaVolumeHigh size={14} />
+								)}
+							</button>
+							<input
+								type="range"
+								min="0"
+								max="1"
+								step="0.05"
+								value={musicStore.muted ? 0 : musicStore.volume}
+								onChange={(event) =>
+									musicStore.setVolume(parseFloat(event.target.value))
+								}
+								className="w-12 h-1 accent-white/60 cursor-pointer"
+							/>
+						</div>
+					</div>
+					<div className="w-full flex flex-row justify-between px-4">
+						<FaBatteryThreeQuarters />
+						<img src="/apps/Settings.svg" className="w-4" alt="" />
 					</div>
 				</div>
 			</div>
