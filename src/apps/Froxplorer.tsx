@@ -20,6 +20,7 @@ import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
 import { useLauncherStore } from "#/store/launcher.tsx";
 import { useMusicStore } from "#/store/music.tsx";
 import { useNoteStore } from "#/store/note.tsx";
+import { useSettingStore } from "#/store/setting.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWindowStore } from "#/store/window.tsx";
 import { type AppId, Apps, type WindowInstance } from "../constants/apps";
@@ -220,6 +221,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 		getChildren,
 		getPath,
 	} = useFileSystemStore();
+	const theme = useSettingStore((state) => state.theme);
 	const { openApp } = useWindowStore();
 	const { tabs, selectTab, addTab } = useNoteStore();
 	const { launchables, launch } = useLauncherStore();
@@ -593,13 +595,6 @@ function Froxplorer({ windowId }: { windowId: string }) {
 							</button>
 							<button
 								type="button"
-								onClick={() => {}}
-								className="text-xs p-1 rounded cursor-pointer"
-							>
-								Export
-							</button>
-							<button
-								type="button"
 								onClick={(e) => {
 									e.stopPropagation();
 									const response = prompt(
@@ -614,6 +609,35 @@ function Froxplorer({ windowId }: { windowId: string }) {
 								className="text-xs p-1 rounded cursor-pointer"
 							>
 								Delete
+							</button>
+							<button
+								type="button"
+								onClick={(e) => {
+									e.stopPropagation();
+									alert("Clicked!!!");
+									Object.entries(nodes).map(([key, value]) => {
+										if (value.type === "file") {
+											return value.content;
+										} else {
+											return null;
+										}
+									});
+									const folder = selectedIds;
+								}}
+								className="text-xs p-1 rounded cursor-pointer"
+							>
+								Export as
+								<select
+									id="export"
+									className="border-0 outline-0 bg-transparent text-white text-xs"
+								>
+									<option className="text-black" value="zip">
+										ZIP
+									</option>
+									<option className="text-black" value="json">
+										JSON
+									</option>
+								</select>
 							</button>
 						</>
 					) : (
