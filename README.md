@@ -35,13 +35,13 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 
 1. Frotes (Tab system, Task system, Markdown support, Multi-Tab, Storage system)
 
-*(Update):*
+*(TODO):* Shortcuts, FrokerLinks
 
    <img width="764" height="514" alt="image" src="https://github.com/user-attachments/assets/e6cfc13d-2753-484e-934a-44c965d90bad" />
 
 2. Frottings (for Wallpaper change)
 
-*(Update):*
+*(TODO):* UI
 
    <img width="767" height="510" alt="image" src="https://github.com/user-attachments/assets/41a3ae59-cc2f-4d2d-881f-bb97b3b12eb3" />
 
@@ -71,6 +71,8 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 
 8. Frotore (Add more widget instances)
 
+*(TODO):* Community-Driven
+
     <img width="755" height="504" alt="image" src="https://github.com/user-attachments/assets/c11542f2-f001-4ae3-8f10-c038fa8e6017" />
 
 9. Froxplorer (Create, Read, Update, Delete, Drag n Drop, Upload, Move, Add to desktop, the files, folders, and open or edit their content)
@@ -80,6 +82,8 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
     <img width="750" height="501" alt="image" src="https://github.com/user-attachments/assets/36ea4e7f-ec80-4d65-aa2f-0a24ad724b85" />
 
 10. Froncher (Launch any App, or Games (Supports HTML, CSS, JS and even some APIS via file with .html extension in Froxplorer))
+
+*(TODO):* FroLanguage Support
 
     <img width="759" height="499" alt="image" src="https://github.com/user-attachments/assets/aafe0c2e-41da-4a3e-94f5-d51df123979b" />
 
