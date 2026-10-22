@@ -614,10 +614,10 @@ function Froxplorer({ windowId }: { windowId: string }) {
 							</button>
 							<button
 								type="button"
-								onClick={(e) => {
+								onClick={async (e) => {
 									e.stopPropagation();
 									alert(`Exporting as ${exportAs}...`);
-									Export(exportAs, selectedIds, nodes, getChildren);
+									await Export(exportAs, selectedIds, nodes, getChildren);
 								}}
 								className="text-xs p-1 rounded cursor-pointer"
 							>
