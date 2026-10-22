@@ -8,6 +8,7 @@ import {
 	ContextMenuPortal,
 	ContextMenuTrigger,
 } from "#/components/ui/context-menu.tsx";
+import { Export } from "#/lib/export.ts";
 import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 import {
 	cn,
@@ -230,6 +231,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 	const { addAndUpdateTab } = useBrowserStore();
 	const { addTrack, next } = useMusicStore();
 	const [selectedIds, setSelectedIds] = useState<Array<string>>([]);
+	const [exportAs, setExportAs] = useState<ExportOptions>("zip");
 	const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
 
 	const [currentFolderId, setCurrentFolderId] = useState<string>(folderId);
@@ -614,27 +616,27 @@ function Froxplorer({ windowId }: { windowId: string }) {
 								type="button"
 								onClick={(e) => {
 									e.stopPropagation();
-									alert("Clicked!!!");
-									Object.entries(nodes).map(([key, value]) => {
-										if (value.type === "file") {
-											return value.content;
-										} else {
-											return null;
-										}
-									});
-									const folder = selectedIds;
+									alert(`Exporting as ${exportAs}...`);
+									Export(exportAs, selectedIds, nodes, getChildren);
 								}}
 								className="text-xs p-1 rounded cursor-pointer"
 							>
 								Export as
 								<select
+									onClick={(e) => {
+										e.stopPropagation();
+									}}
 									id="export"
-									className="border-0 outline-0 bg-transparent text-white text-xs"
+									value={exportAs}
+									onChange={(event) =>
+										setExportAs(event.target.value as ExportOptions)
+									}
+									className="border-0 outline-0 bg-transparent text-white text-xs cursor-pointer"
 								>
-									<option className="text-black" value="zip">
+									<option className="text-black cursor-pointer" value="zip">
 										ZIP
 									</option>
-									<option className="text-black" value="json">
+									<option className="text-black cursor-pointer" value="json">
 										JSON
 									</option>
 								</select>
