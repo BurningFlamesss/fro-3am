@@ -1,10 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
-import { e } from "mathjs";
-import React, { type Ref, useEffect, useMemo, useRef, useState } from "react";
+import React, { type Ref, useEffect, useRef, useState } from "react";
 import {
-	cn,
 	formatEventRange,
-	generateTypingParagraph,
 	matchFlag,
 	normalizeUrl,
 	parseDate,
@@ -47,11 +44,11 @@ function parseCommand(input: string) {
 function Frominal() {
 	const { apps, openApp, windows, closeWindow, pinApp, unpinApp } =
 		useWindowStore();
-	const { commandExpression, setCommandExpression } = useTerminalStore();
+	const { commandExpressions, setCommandExpressions } = useTerminalStore();
 	const terminalRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [terminalLines, setTerminalLines] = useState<Array<TerminalLine>>([]);
-	const [command, setCommand] = useState<string>(commandExpression);
+	const [command, setCommand] = useState<string>("");
 	const [isProcessing, setIsProcessing] = useState(false);
 	const { addTab, tabs, closeTab, selectTab, updateContent } = useNoteStore();
 	const {
@@ -988,6 +985,37 @@ function Frominal() {
 		},
 	};
 
+	const runCommand = async (input: string) => {
+		if (!input.trim()) return;
+
+		setIsProcessing(true);
+		try {
+			const output = await executeCommand(input);
+
+			setTerminalLines((lines) => [
+				...lines,
+				{
+					input: input,
+					output,
+				},
+			]);
+		} catch (error) {
+			setTerminalLines((lines) => [
+				...lines,
+				{
+					input: input,
+					output: (
+						<p className="text-red-500">
+							Error: {error instanceof Error ? error.message : String(error)}
+						</p>
+					),
+				},
+			]);
+		} finally {
+			setIsProcessing(false);
+		}
+	};
+
 	const handleKeyDown = async (
 		e?: React.KeyboardEvent<HTMLInputElement>,
 		bypass?: boolean,
@@ -995,25 +1023,13 @@ function Frominal() {
 		if (e?.key === "Enter" || bypass) {
 			e?.preventDefault();
 
-			setIsProcessing(true);
-
-			if (command.trim()) {
-				const output = await executeCommand(command);
-
-				setTerminalLines((lines) => [
-					...lines,
-					{
-						input: command,
-						output,
-					},
-				]);
-			}
+			const input = command;
 			setCommand("");
+			await runCommand(input);
 
 			setTimeout(() => {
 				if (inputRef.current) {
 					inputRef.current.focus();
-					setIsProcessing(false);
 				}
 			}, 100);
 		}
@@ -1053,8 +1069,16 @@ function Frominal() {
 	}, [terminalLines]);
 
 	useEffect(() => {
-		handleKeyDown(undefined, true);
-	}, [commandExpression]);
+		const executeAllExpressions = async () => {
+			commandExpressions.forEach(async (commandExpression) => {
+				setCommand(commandExpression);
+				await new Promise((res, rej) => setTimeout(res, 0));
+				await runCommand(commandExpression);
+			});
+		};
+
+		executeAllExpressions();
+	}, [commandExpressions]);
 
 	return (
 		<div

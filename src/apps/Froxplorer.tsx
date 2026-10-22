@@ -296,7 +296,9 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					break;
 				}
 				case "terminal": {
-					setCommandExpression(node.content ?? "");
+					const content = node?.content ?? "";
+					const queries = content.split("\n").filter(Boolean);
+					setCommandExpression(queries);
 					openApp(key);
 
 					break;

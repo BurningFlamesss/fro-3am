@@ -2,16 +2,16 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
 interface TerminalStore {
-	commandExpression: string;
-	setCommandExpression: (commandExpression: string) => void;
+	commandExpressions: Array<string>;
+	setCommandExpression: (commandExpressions: Array<string>) => void;
 }
 
 export const useTerminalStore = create<TerminalStore>()(
 	immer((set) => ({
-		commandExpression: "",
-		setCommandExpression: (commandExpression: string) =>
+		commandExpressions: [""],
+		setCommandExpression: (commandExpressions: Array<string>) =>
 			set((state) => {
-				state.commandExpression = commandExpression;
+				state.commandExpressions = commandExpressions;
 			}),
 	})),
 );

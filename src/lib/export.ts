@@ -65,7 +65,6 @@ export async function Export(
 		}
 
 		case "json": {
-			// Entire logic
 			const data = all.map((node) => ({
 				id: node.id,
 				name: node.name,
