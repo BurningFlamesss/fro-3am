@@ -226,6 +226,55 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 	);
 }
 
+function FaiPanel({ onClose }: { onClose: () => void }) {
+	const theme = useSettingStore((state) => state.theme);
+	const [query, setQuery] = useState("");
+	const inputRef = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		const handleKey = (e: KeyboardEvent) => {
+			if (e.key === "Escape") onClose();
+		};
+		window.addEventListener("keydown", handleKey);
+		return () => window.removeEventListener("keydown", handleKey);
+	}, [onClose]);
+
+	return (
+		<div
+			className="fixed inset-0 z-[100000002]"
+			onClick={(e) => {
+				if (e.target === e.currentTarget) onClose();
+			}}
+		>
+			<div
+				className="absolute bottom-0 left-0 ml-25 mb-20 h-[7%] z-[100000002] flex"
+				onClick={(e) => {
+					if (e.target === e.currentTarget) onClose();
+				}}
+			>
+				<div
+					className={cn(
+						"w-150 rounded-2xl overflow-hidden flex flex-row justify-center items-center",
+						theme.colourScheme,
+					)}
+				>
+					<input
+						ref={inputRef}
+						type="text"
+						value={query}
+						onChange={(e) => setQuery(e.target.value)}
+						placeholder="Give instruction to Fai and witness the magic..."
+						className="mx-4 w-full h-full bg-transparent text-white outline-none placeholder:text-white/40"
+					/>
+					<button className="mr-4 p-1 rounded-xl transition-colors duration-150 hover:bg-white/5 cursor-pointer flex justify-center items-center">
+						Send
+					</button>
+				</div>
+			</div>
+		</div>
+	);
+}
+
 function SearchPanel({ onClose }: { onClose: () => void }) {
 	const [query, setQuery] = useState("");
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -469,6 +518,7 @@ function Taskbar() {
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
 	const [searchPanelTriggered, setSearchPanelTriggered] =
 		useState<boolean>(false);
+	const [faiPanelTriggered, setFaiPanelTriggered] = useState<boolean>(false);
 	const [mediaPanelTriggered, setMediaPanelTriggered] =
 		useState<boolean>(false);
 	const [miscellaneousPanelTriggered, setMiscellaneousPanelTriggered] =
@@ -544,6 +594,9 @@ function Taskbar() {
 			{searchPanelTriggered && (
 				<SearchPanel onClose={() => setSearchPanelTriggered(false)} />
 			)}
+			{faiPanelTriggered && (
+				<FaiPanel onClose={() => setFaiPanelTriggered(false)} />
+			)}
 			{mediaPanelTriggered && (
 				<MediaPanel onClose={() => setMediaPanelTriggered(false)} />
 			)}
@@ -590,6 +643,18 @@ function Taskbar() {
 							className="w-52 h-9 pl-10 pr-4 rounded-full bg-white/10 border border-border/30 text-sm text-white/80 placeholder:text-white/50 hover:bg-white/20 focus:outline-none focus:bg-white/20 transition-colors duration-150"
 						/>
 					</div>
+
+					<button
+						type="button"
+						onClick={() => setFaiPanelTriggered((prev) => !prev)}
+						className="relative flex items-center justify-center w-11 h-11 rounded-xl transition-colors duration-150 hover:bg-white/5 cursor-pointer"
+					>
+						<img
+							className="w-8 h-8 object-contain"
+							src={"/fai.png"}
+							alt="Logo"
+						/>
+					</button>
 				</section>
 
 				<section className="flex items-center gap-1">
