@@ -30,6 +30,17 @@ const collectNodes = (
 	return all;
 };
 
+const download = (blob: Blob, fileName: string) => {
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement("a");
+	a.href = url;
+	a.download = fileName;
+	document.body.appendChild(a);
+	a.click();
+	a.remove();
+	setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+
 export async function Export(
 	option: ExportOptions,
 	ids: Array<FileNode["id"]>,
@@ -41,17 +52,37 @@ export async function Export(
 	const stamp = new Date().toISOString();
 
 	switch (option) {
-		case "zip":
+		case "zip": {
 			const zip = new JSZip();
-            // add files to zip and download
 
-            const blob = await zip.generateAsync({ type: "blob" })
-			break;
+			// add files to zip and download
+			for (const node of all) {
+			}
 
-		case "json":
-            // Entire logic
-			const data = nodes;
+			const blob = await zip.generateAsync({ type: "blob" });
+			download(blob, `froxplorer-export.zip`);
 			break;
+		}
+
+		case "json": {
+			// Entire logic
+			const data = all.map((node) => ({
+				id: node.id,
+				name: node.name,
+				type: node.type,
+				parentId: node.parentId,
+				path: "",
+				content: node.content,
+			}));
+
+			download(
+				new Blob([JSON.stringify(data, null, 2)], {
+					type: "application/json",
+				}),
+				"froxplorer-export.json",
+			);
+			break;
+		}
 
 		default:
 			break;
