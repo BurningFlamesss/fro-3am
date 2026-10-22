@@ -29,6 +29,8 @@ const getCanvasRect = (): DOMRect | null => {
 export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 	const updateFrayPosition = useFrayStore((state) => state.updateFrayPosition);
 	const { id, name, position, rotations, size } = fray;
+	const [isDragging, setIsDragging] = useState(false);
+	const [isHovering, setIsHovering] = useState(false);
 	const [rotationIndex, setRotationIndex] = useState(0);
 	const [currentRotation, setCurrentRotation] = useState(
 		rotations[rotationIndex],
@@ -36,6 +38,10 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 	const rndRef = useRef<Rnd>(null);
 
 	const lastClampedPos = useRef({ x: position.x, y: position.y });
+
+	const handleDragStart = useCallback(() => {
+		setIsDragging(true);
+	}, []);
 
 	const handleDrag = useCallback(
 		(_e: any, d: { x: number; y: number }) => {
@@ -62,6 +68,7 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 
 	const handleDragStop = useCallback(
 		(_e: any, d: { x: number; y: number }) => {
+			setIsDragging(false);
 			const container = getCanvasRect();
 			if (!container) return;
 			const clamped = clampPosition(
@@ -97,12 +104,13 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 	useEffect(() => {
 		const { behaviour, delay, effect, speed } = currentRotation.move;
 
-		if (behaviour === "static") return;
+		if (behaviour === "static" || isHovering || isDragging) return;
 
 		if (behaviour === "follow") {
 			// I should first check if this component can get mouse positions even when outside the children
 			return;
 		}
+
 		const move = (positionDelta: number) => {
 			switch (behaviour) {
 				case "x":
@@ -152,13 +160,22 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 			() => {
 				addEffect();
 			},
-			Math.max(100, (delay / 2) + Math.floor(Math.random() * delay)),
+			Math.max(100, delay / 2 + Math.floor(Math.random() * delay)),
 		);
 
 		return () => clearInterval(interval);
-	}, [handleDragStop, position.x, position.y, currentRotation.move]);
+	}, [
+		handleDragStop,
+		position.x,
+		position.y,
+		currentRotation.move,
+		isDragging,
+		isHovering,
+	]);
 
 	const handleRotation = (event: "mouseenter" | "mouseleave") => {
+		setIsHovering(event === "mouseenter");
+
 		if (
 			!currentRotation.reactions.includes("change") ||
 			currentRotation.change.at !== event
@@ -205,6 +222,7 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 				disableDragging={position.fixed}
 				enableResizing={false}
 				bounds={document.getElementById("fray-area") ? "parent" : undefined}
+				onDragStart={handleDragStart}
 				onDrag={handleDrag}
 				onDragStop={handleDragStop}
 				className={cn("absolute overflow-hidden group pointer-events-auto")}
