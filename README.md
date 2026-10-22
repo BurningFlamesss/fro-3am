@@ -37,55 +37,55 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 
 *(TODO):* Shortcuts, FrokerLinks
 
-   <img width="764" height="514" alt="image" src="https://github.com/user-attachments/assets/e6cfc13d-2753-484e-934a-44c965d90bad" />
+<img width="764" height="514" alt="image" src="https://github.com/user-attachments/assets/e6cfc13d-2753-484e-934a-44c965d90bad" />
 
 2. Frottings (for Wallpaper change)
 
 *(TODO):* UI
 
-   <img width="767" height="510" alt="image" src="https://github.com/user-attachments/assets/41a3ae59-cc2f-4d2d-881f-bb97b3b12eb3" />
+<img width="767" height="510" alt="image" src="https://github.com/user-attachments/assets/41a3ae59-cc2f-4d2d-881f-bb97b3b12eb3" />
 
 3. Frowser (Search via tavily, and browse via Iframe containerization)
 
-   <img width="751" height="507" alt="image" src="https://github.com/user-attachments/assets/42a62ee0-0387-499c-b5f7-100a5c2a44bf" />
+<img width="751" height="507" alt="image" src="https://github.com/user-attachments/assets/42a62ee0-0387-499c-b5f7-100a5c2a44bf" />
 
 4. Frominal (with dozens of commands like ls, open [app], calc, type, fetch, hash, geo, random, note, task.[add | read | done], event.[add | read], append, write, etc)
 
 *(Update):* File format of `.fromine` in froxplorer can hold text, where each new line resemble new commands that can be automatically executed if that file is ran. This works as an automation.
 
-   <img width="750" height="500" alt="image" src="https://github.com/user-attachments/assets/84241afa-9f4a-4602-bdfb-0c44232d570b" />
+<img width="750" height="500" alt="image" src="https://github.com/user-attachments/assets/84241afa-9f4a-4602-bdfb-0c44232d570b" />
 
 5. Froculator (Complex arithmetic & trigonometric calculations with memory system and shorcuts)
 
-    <img width="744" height="506" alt="image" src="https://github.com/user-attachments/assets/72aef0ae-569d-426c-8c6f-14f2ffa77bcc" />
+<img width="744" height="506" alt="image" src="https://github.com/user-attachments/assets/72aef0ae-569d-426c-8c6f-14f2ffa77bcc" />
 
 6. Frolendar (Event Management System featuring Day, Month, and Year view, with selection time blocking, drag n drop events)
 
-    <img width="754" height="499" alt="image" src="https://github.com/user-attachments/assets/3a7fd3f3-c4c5-40cf-b1d9-d208490cac84" />
+<img width="754" height="499" alt="image" src="https://github.com/user-attachments/assets/3a7fd3f3-c4c5-40cf-b1d9-d208490cac84" />
 
 7. Frosic (Create your own playlist and Play youtube & local musics)
 
 *(Update):* Media Panel (viewable by clicking on the Wi-Fi, Volume, and Battery portion in the taskbar) which can be used to control the volume, brightness, and media play/pause, next/previous media.
 
-    <img width="754" height="500" alt="image" src="https://github.com/user-attachments/assets/a30c3b34-49ae-45f1-9357-9b986db6c297" />
+<img width="754" height="500" alt="image" src="https://github.com/user-attachments/assets/a30c3b34-49ae-45f1-9357-9b986db6c297">
 
 8. Frotore (Add more widget instances)
 
 *(TODO):* Community-Driven
 
-    <img width="755" height="504" alt="image" src="https://github.com/user-attachments/assets/c11542f2-f001-4ae3-8f10-c038fa8e6017" />
+<img width="755" height="504" alt="image" src="https://github.com/user-attachments/assets/c11542f2-f001-4ae3-8f10-c038fa8e6017" />
 
 9. Froxplorer (Create, Read, Update, Delete, Drag n Drop, Upload, Move, Add to desktop, the files, folders, and open or edit their content)
 
 *(Update:)* Froxplorer has built-in scope of fai, metric of total & selected items, and options to delete, select all or even export the content as zip, and json formats to your Real OS. 
 
-    <img width="750" height="501" alt="image" src="https://github.com/user-attachments/assets/36ea4e7f-ec80-4d65-aa2f-0a24ad724b85" />
+<img width="750" height="501" alt="image" src="https://github.com/user-attachments/assets/36ea4e7f-ec80-4d65-aa2f-0a24ad724b85" />
 
 10. Froncher (Launch any App, or Games (Supports HTML, CSS, JS and even some APIS via file with .html extension in Froxplorer))
 
 *(TODO):* FroLanguage Support
 
-    <img width="759" height="499" alt="image" src="https://github.com/user-attachments/assets/aafe0c2e-41da-4a3e-94f5-d51df123979b" />
+<img width="759" height="499" alt="image" src="https://github.com/user-attachments/assets/aafe0c2e-41da-4a3e-94f5-d51df123979b" />
 
 ---
 
