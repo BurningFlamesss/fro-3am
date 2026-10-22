@@ -35,9 +35,13 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 
 1. Frotes (Tab system, Task system, Markdown support, Multi-Tab, Storage system)
 
+*(Update):*
+
    <img width="764" height="514" alt="image" src="https://github.com/user-attachments/assets/e6cfc13d-2753-484e-934a-44c965d90bad" />
 
 2. Frottings (for Wallpaper change)
+
+*(Update):*
 
    <img width="767" height="510" alt="image" src="https://github.com/user-attachments/assets/41a3ae59-cc2f-4d2d-881f-bb97b3b12eb3" />
 
@@ -46,6 +50,8 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
    <img width="751" height="507" alt="image" src="https://github.com/user-attachments/assets/42a62ee0-0387-499c-b5f7-100a5c2a44bf" />
 
 4. Frominal (with dozens of commands like ls, open [app], calc, type, fetch, hash, geo, random, note, task.[add | read | done], event.[add | read], append, write, etc)
+
+*(Update):* File format of `.fromine` in froxplorer can hold text, where each new line resemble new commands that can be automatically executed if that file is ran. This works as an automation.
 
    <img width="750" height="500" alt="image" src="https://github.com/user-attachments/assets/84241afa-9f4a-4602-bdfb-0c44232d570b" />
 
@@ -59,6 +65,8 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 
 7. Frosic (Create your own playlist and Play youtube & local musics)
 
+*(Update):* Media Panel (viewable by clicking on the Wi-Fi, Volume, and Battery portion in the taskbar) which can be used to control the volume, brightness, and media play/pause, next/previous media.
+
     <img width="754" height="500" alt="image" src="https://github.com/user-attachments/assets/a30c3b34-49ae-45f1-9357-9b986db6c297" />
 
 8. Frotore (Add more widget instances)
@@ -66,6 +74,8 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
     <img width="755" height="504" alt="image" src="https://github.com/user-attachments/assets/c11542f2-f001-4ae3-8f10-c038fa8e6017" />
 
 9. Froxplorer (Create, Read, Update, Delete, Drag n Drop, Upload, Move, Add to desktop, the files, folders, and open or edit their content)
+
+*(Update:)* Froxplorer has built-in scope of fai, metric of total & selected items, and options to delete, select all or even export the content as zip, and json formats to your Real OS. 
 
     <img width="750" height="501" alt="image" src="https://github.com/user-attachments/assets/36ea4e7f-ec80-4d65-aa2f-0a24ad724b85" />
 
@@ -90,6 +100,8 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 ---
 
 ## Froxplorer's Filesystem and App system (Froncher or Other APP) supported extensions
+
+files are ended with .{extension}, default is .frote. Here's the list of all supported extensions.
 
 - "calc": Calculator (Froculator) App associated
 - "mp3", "wav", "frosic": Music (Frosic) App associated
@@ -116,6 +128,26 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 6. Events (Shows the upcoming events)
 
 ---
+
+*(new additions to the Fro-OS ecosystem)*
+
+## Theme
+
+Themes are cool
+
+1. Default (Old is Silver)
+2. Halloween (Let it be spooky)
+
+## Frays 
+
+Frays are the pet/companions for you. Frays that are trying to be your friend from the start are:
+
+1. Frokk (See at the bottom left corner of your screen. Try Hovering it.)
+2. Fhost (Don't know where it lives cause its Fhost)
+
+## Fai (Fro AI)
+
+Fai is magic that makes Fro-OS to "First WebOS to name its AI as Fai"
 
 ## Get started with contribution
 
