@@ -1069,15 +1069,30 @@ function Frominal() {
 	}, [terminalLines]);
 
 	useEffect(() => {
+		if (!commandExpressions.length) return;
+
+		let cancelled = false;
+
 		const executeAllExpressions = async () => {
-			commandExpressions.forEach(async (commandExpression) => {
-				setCommand(commandExpression);
+			for (const commandExpression of commandExpressions) {
+				if (cancelled) return;
+
+				// setCommand(commandExpression);
+
 				await new Promise((res, rej) => setTimeout(res, 0));
+				if (cancelled) return;
+
 				await runCommand(commandExpression);
-			});
+			}
+
+			if (!cancelled) setCommandExpressions([]);
 		};
 
-		executeAllExpressions();
+		void executeAllExpressions();
+
+		return () => {
+			cancelled = true;
+		};
 	}, [commandExpressions]);
 
 	return (
