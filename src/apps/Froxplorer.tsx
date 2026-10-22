@@ -527,8 +527,13 @@ function Froxplorer({ windowId }: { windowId: string }) {
 		}
 	};
 
+	const clearSelection = () => {
+		setSelectedIds([]);
+		setLastSelectedId(null);
+	};
+
 	return (
-		<div className="flex flex-col h-full">
+		<div onClick={clearSelection} className="flex flex-col h-full">
 			<div className="flex items-center p-2 gap-2 select-none">
 				<button
 					type="button"
@@ -566,25 +571,66 @@ function Froxplorer({ windowId }: { windowId: string }) {
 				<div className="flex ml-auto gap-2">
 					<button
 						type="button"
-						onClick={handleNewFolder}
+						onClick={(e) => {
+							e.stopPropagation();
+							alert("Wingardium Leviosa");
+						}}
 						className="text-xs p-1 rounded cursor-pointer"
 					>
-						New Folder
+						Fai
 					</button>
-					<button
-						type="button"
-						onClick={handleNewFile}
-						className="text-xs p-1 rounded cursor-pointer"
-					>
-						New File
-					</button>
-					<button
-						type="button"
-						onClick={() => document.getElementById("upload-input")?.click()}
-						className="text-xs p-1 rounded cursor-pointer"
-					>
-						Upload
-					</button>
+					{selectedIds.length > 0 ? (
+						<>
+							<button
+								type="button"
+								onClick={(e) => {
+									e.stopPropagation();
+									setSelectedIds((prev) => children.map((child) => child.id));
+								}}
+								className="text-xs p-1 rounded cursor-pointer"
+							>
+								Select All
+							</button>
+							<button
+								type="button"
+								onClick={() => {}}
+								className="text-xs p-1 rounded cursor-pointer"
+							>
+								Export
+							</button>
+							<button
+								type="button"
+								onClick={() => {}}
+								className="text-xs p-1 rounded cursor-pointer"
+							>
+								Delete
+							</button>
+						</>
+					) : (
+						<>
+							<button
+								type="button"
+								onClick={handleNewFolder}
+								className="text-xs p-1 rounded cursor-pointer"
+							>
+								New Folder
+							</button>
+							<button
+								type="button"
+								onClick={handleNewFile}
+								className="text-xs p-1 rounded cursor-pointer"
+							>
+								New File
+							</button>
+							<button
+								type="button"
+								onClick={() => document.getElementById("upload-input")?.click()}
+								className="text-xs p-1 rounded cursor-pointer"
+							>
+								Upload
+							</button>
+						</>
+					)}
 				</div>
 			</div>
 
@@ -617,11 +663,12 @@ function Froxplorer({ windowId }: { windowId: string }) {
 												<button
 													title={node.name}
 													type="button"
-													onClick={() =>
+													onClick={(e) => {
+														e.stopPropagation();
 														setSelectedIds((prev) => [
 															...new Set([...prev, node.id]),
-														])
-													}
+														]);
+													}}
 													onDoubleClick={() => handleOpen(node)}
 													className={cn(
 														"flex flex-col items-center p-2 rounded-xl w-full cursor-pointer",
@@ -659,8 +706,17 @@ function Froxplorer({ windowId }: { windowId: string }) {
 											<button
 												title={node.name}
 												type="button"
+												onClick={(e) => {
+													e.stopPropagation();
+													setSelectedIds((prev) => [
+														...new Set([...prev, node.id]),
+													]);
+												}}
 												onDoubleClick={() => handleOpen(node)}
-												className="flex flex-col items-center p-2 rounded-xl w-full cursor-pointer"
+												className={cn(
+													"flex flex-col items-center p-2 rounded-xl w-full cursor-pointer",
+													isSelected ? "border border-blue-500" : "",
+												)}
 											>
 												<img
 													className="w-12 h-12 object-contain select-none"
