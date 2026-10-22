@@ -10,6 +10,7 @@ import resetImg from "../../public/widgets/pomodoro/reset.png";
 import workGif from "../../public/widgets/pomodoro/work.gif";
 import workBtn from "../../public/widgets/pomodoro/work.png";
 import workBtnClicked from "../../public/widgets/pomodoro/work-clicked.png";
+import { useSettingStore } from "#/store/setting.tsx";
 
 const cheerMessages = [
 	"Stay Frokused",
@@ -37,6 +38,7 @@ const formatTime = (seconds: number): string => {
 };
 
 function Pomodoro() {
+	const theme = useSettingStore((state) => state.theme)
 	const [timeLeft, setTimeLeft] = useState<number>(25 * 60);
 	const [isRunning, setIsRunning] = useState<boolean>(false);
 	const [isBreak, setIsBreak] = useState<boolean>(false);
@@ -149,7 +151,7 @@ function Pomodoro() {
 
 	return (
 		<main
-			className="w-full min-h-full flex items-center justify-center box-border text-center retro-font"
+			className={cn("w-full min-h-full flex items-center justify-center box-border text-center retro-font", theme.colourScheme, "border-0")}
 			style={{
 				backgroundImage: `url("../../widgets/pomodoro/background.png")`,
 				backgroundSize: "cover",
