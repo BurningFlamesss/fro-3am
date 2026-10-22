@@ -111,7 +111,7 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 			return;
 		}
 
-		const move = (positionDelta: number) => {
+		const move = (positionDelta: number, tinyDelta?: number) => {
 			switch (behaviour) {
 				case "x":
 					handleDragStop(null, {
@@ -127,11 +127,9 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 					});
 					break;
 				case "xy": {
-					const direction = Math.random() < 0.5 ? 1 : -1;
-					const tinyDelta = (positionDelta * direction) / Math.SQRT2;
 					handleDragStop(null, {
 						x: position.x + positionDelta,
-						y: position.y + positionDelta - tinyDelta,
+						y: position.y + positionDelta - (tinyDelta ?? 0),
 					});
 					break;
 				}
@@ -147,7 +145,10 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 						(speed + Math.floor(Math.random() * accumulativeDistance)) *
 						direction;
 
-					move(positionDelta);
+					const direction2 = Math.random() < 0.5 ? 1 : -1;
+					const tinyDelta = (positionDelta * direction2) / Math.SQRT2;
+
+					move(positionDelta, tinyDelta);
 					break;
 				}
 

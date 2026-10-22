@@ -10,6 +10,7 @@ import {
 } from "#/components/ui/context-menu.tsx";
 import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 import {
+	cn,
 	parseFileName,
 	searchFileAssociatesThroughExtension,
 } from "#/lib/utils.ts";
@@ -226,6 +227,8 @@ function Froxplorer({ windowId }: { windowId: string }) {
 	const { setCommandExpression } = useTerminalStore();
 	const { addAndUpdateTab } = useBrowserStore();
 	const { addTrack, next } = useMusicStore();
+	const [selectedIds, setSelectedIds] = useState<Array<string>>([]);
+	const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
 
 	const [currentFolderId, setCurrentFolderId] = useState<string>(folderId);
 	const [renameTarget, setRenameTarget] = useState<{
@@ -236,6 +239,11 @@ function Froxplorer({ windowId }: { windowId: string }) {
 
 	const children = getChildren(currentFolderId);
 	const currentFolder = nodes[currentFolderId];
+
+	useEffect(() => {
+		setSelectedIds([]);
+		setLastSelectedId(null);
+	}, [currentFolderId]);
 
 	const navigateTo = useCallback((id: string) => setCurrentFolderId(id), []);
 
@@ -303,7 +311,6 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					break;
 				}
 				case "music": {
-					
 					addTrack({
 						title: node.name,
 						src: node.content ?? "",
@@ -311,10 +318,10 @@ function Froxplorer({ windowId }: { windowId: string }) {
 						cover: "/apps/Music.svg",
 						artist: "Local File",
 					});
-					
+
 					openApp("music");
 
-					next()
+					next();
 
 					break;
 				}
@@ -594,6 +601,8 @@ function Froxplorer({ windowId }: { windowId: string }) {
 								parseFileName(node.name).extension,
 							);
 
+						const isSelected = selectedIds.includes(node.id);
+
 						return (
 							<ContextMenu modal={false} key={`fs-node-${node.id}`}>
 								<ContextMenuTrigger asChild>
@@ -608,8 +617,16 @@ function Froxplorer({ windowId }: { windowId: string }) {
 												<button
 													title={node.name}
 													type="button"
+													onClick={() =>
+														setSelectedIds((prev) => [
+															...new Set([...prev, node.id]),
+														])
+													}
 													onDoubleClick={() => handleOpen(node)}
-													className="flex flex-col items-center p-2 rounded-xl w-full cursor-pointer"
+													className={cn(
+														"flex flex-col items-center p-2 rounded-xl w-full cursor-pointer",
+														isSelected ? "border border-blue-500" : "",
+													)}
 												>
 													<img
 														className="w-12 h-12 object-contain select-none"
@@ -702,6 +719,9 @@ function Froxplorer({ windowId }: { windowId: string }) {
 						);
 					})}
 				</div>
+			</div>
+			<div className="mx-4">
+				{children.length} items | {selectedIds.length} items selected (0) KB |
 			</div>
 		</div>
 	);
