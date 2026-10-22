@@ -600,7 +600,17 @@ function Froxplorer({ windowId }: { windowId: string }) {
 							</button>
 							<button
 								type="button"
-								onClick={() => {}}
+								onClick={(e) => {
+									e.stopPropagation();
+									const response = prompt(
+										"[DANGER] Do you really want to delete? (Y/N)",
+									);
+									if (response?.toUpperCase() === "Y") {
+										selectedIds.forEach((scopeId) => {
+											deleteNode(scopeId);
+										});
+									}
+								}}
 								className="text-xs p-1 rounded cursor-pointer"
 							>
 								Delete
@@ -766,7 +776,16 @@ function Froxplorer({ windowId }: { windowId: string }) {
 										<ContextMenuItem onClick={() => removeFromDesktop(node.id)}>
 											Remove from desktop
 										</ContextMenuItem>
-										<ContextMenuItem onClick={() => deleteNode(node.id)}>
+										<ContextMenuItem
+											onClick={() => {
+												const response = prompt(
+													"[DANGER] Do you really want to delete? (Y/N)",
+												);
+												if (response?.toUpperCase() === "Y") {
+													deleteNode(node.id);
+												}
+											}}
+										>
 											Delete
 										</ContextMenuItem>
 									</ContextMenuContent>
