@@ -23,6 +23,7 @@ import {
 } from "#/lib/utils.ts";
 import { useBrowserStore } from "#/store/browser.tsx";
 import { useCalculatorStore } from "#/store/calculator.tsx";
+import { useFaiStore } from "#/store/fai.tsx";
 import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
 import { useLauncherStore } from "#/store/launcher.tsx";
 import { useMusicStore } from "#/store/music.tsx";
@@ -228,6 +229,7 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 
 function FaiPanel({ onClose }: { onClose: () => void }) {
 	const theme = useSettingStore((state) => state.theme);
+	const addProcess = useFaiStore((state) => state.addProcess);
 	const [query, setQuery] = useState("");
 	const inputRef = useRef<HTMLInputElement>(null);
 
@@ -238,6 +240,12 @@ function FaiPanel({ onClose }: { onClose: () => void }) {
 		window.addEventListener("keydown", handleKey);
 		return () => window.removeEventListener("keydown", handleKey);
 	}, [onClose]);
+
+	const handleProcess = async () => {
+		addProcess({
+			query,
+		});
+	};
 
 	return (
 		<div
@@ -266,7 +274,11 @@ function FaiPanel({ onClose }: { onClose: () => void }) {
 						placeholder="Give instruction to Fai and witness the magic..."
 						className="mx-4 w-full h-full bg-transparent text-white outline-none placeholder:text-white/40"
 					/>
-					<button className="mr-4 p-1 rounded-xl transition-colors duration-150 hover:bg-white/5 cursor-pointer flex justify-center items-center">
+					<button
+						type="button"
+						onClick={handleProcess}
+						className="mr-4 p-1 rounded-xl transition-colors duration-150 hover:bg-white/5 cursor-pointer flex justify-center items-center"
+					>
 						Send
 					</button>
 				</div>
