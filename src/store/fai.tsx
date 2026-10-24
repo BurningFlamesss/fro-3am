@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-interface Process {
+export interface Process {
 	query: string;
 	scopes: Array<string>;
 	status:
