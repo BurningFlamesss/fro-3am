@@ -5,6 +5,7 @@ import Taskbar from "#/components/Taskbar.tsx";
 import WindowOverlays from "#/components/WindowOverlays.tsx";
 import { useFaiStore } from "#/store/fai.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -14,6 +15,21 @@ function Home() {
 	const brightness = useSettingStore((state) => state.brightness);
 	const backgroundColor = brightness >= 50 ? "white" : "black";
 	const opacity = (Math.abs(brightness - 50) / 50) * 0.3;
+
+	const handleProcess = async (process, queueIndex) => {};
+
+	useEffect(() => {
+		processes.forEach((process) => {
+			if (!process.status.includes("#")) return;
+
+			const queueIndex = +process.status.replace("queue-#", "") as number;
+
+			if (!Number.isNaN(queueIndex)) {
+				handleProcess(process, queueIndex);
+			}
+		});
+	}, []);
+
 	return (
 		<div
 			className="os-container"

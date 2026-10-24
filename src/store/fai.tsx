@@ -1,17 +1,31 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
+interface Process {
+	query: string;
+	scopes: Array<string>;
+	status:
+		| "processing"
+		| "error"
+		| "success"
+		| `queue-#${number}`
+		| "perform"
+		| "action-required";
+}
+
 interface FaiStore {
-	processes: Array<unknown>;
-	addProcess: (process: unknown) => void;
+	globalInstruction: string;
+	processes: Array<Process>;
+	addProcess: (process: Process) => void;
 }
 
 export const useFaiStore = create<FaiStore>()(
 	immer((set) => ({
+		globalInstruction: "",
 		processes: [],
 		addProcess: (process) =>
 			set((state) => {
-				state.processes = [...new Set([...state.processes, process])]
+				state.processes = [...new Set([...state.processes, process])];
 			}),
 	})),
 );

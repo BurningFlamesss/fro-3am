@@ -244,6 +244,8 @@ function FaiPanel({ onClose }: { onClose: () => void }) {
 	const handleProcess = async () => {
 		addProcess({
 			query,
+			scopes: ["global"],
+			status: "queue-#1"
 		});
 	};
 

@@ -201,6 +201,7 @@ export default function FrayRenderer({ fray }: { fray: FrayInstance }) {
 			default:
 				if (target.startsWith("index-")) {
 					const index = +target.replaceAll("index-", "") as number;
+					
 					if (!Number.isNaN(index) && rotations?.[index]) {
 						newRotationIndex = index;
 					}
