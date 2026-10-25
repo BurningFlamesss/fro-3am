@@ -295,29 +295,27 @@ function WordGuessingGame({ params }: LaunchProps) {
 }
 
 function MentalMathGame({ params }: LaunchProps) {
-	const zero = 0
 	const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-	const naturalNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 	const operations = ["+", "-", "*", "/"]
 	const braces = ["(", ")", "{", "}", "[", "]"]
 	const levelSystem = {
 		easy: {
-			operators: 1,
-			operands: 2,
-			brace: 0,
-			letterCap: [1,2]
+			operatorCount: 1,
+			operandCount: 2,
+			bracesCount: 0,
+			letterMaxCap: [1, 2]
 		},
 		mid: {
-			operators: 2,
-			operands: 3,
-			brace: 1,
-			letterCap: [2]
+			operatorCount: 2,
+			operandCount: 3,
+			bracesCount: 2,
+			letterMaxCap: [2]
 		},
 		high: {
-			operators: 3,
-			operands: 4,
-			brace: 2,
-			letterCap: [2]
+			operatorCount: 3,
+			operandCount: 4,
+			bracesCount: 4,
+			letterMaxCap: [2]
 		},
 	}
 
@@ -328,9 +326,51 @@ function MentalMathGame({ params }: LaunchProps) {
 	// (1 operator, and 2 operands 1-2 digit for easy level), 
 	// (2 operator, 3 operands 2 digit, and 1 brace for mid), 
 	// (3 operators, 4 operands 2 digit, and 2 brace for high)
+	// order: operand + operator + operand
+	//  || braceOpen + operand + operator + operand + braceClose + operand + operator + operand
+	//  || braceOpen + braceOpen* operand + operator + operand + braceClose* + operand + operator + operand + braceClose + operand + operator + operand
+	//  || braceOpen + operand + operator + operand + braceClose + operand + operator + operand + braceOpen + operand + operator + operand + braceClose
 
 	function generateQuestionAndAnswer(level: "easy" | "mid" | "high") {
-		 Math.floor(Math.random() * operations.length)
+		const { operatorCount, bracesCount, letterMaxCap, operandCount } = levelSystem[level]
+
+		const operators = []
+		const operands = []
+
+		for (let index = 0; index < operatorCount; index++) {
+			operators[index] = operations[Math.floor(Math.random() * operations.length)];
+		}
+
+		for (let index = 0; index < operandCount; index++) {
+			const maxCap = letterMaxCap[Math.floor(Math.random() * letterMaxCap.length)]
+			operands[index] = Math.max(numbers.length ** (maxCap - 1), Math.floor(Math.random() * numbers.length ** maxCap));
+		}
+
+
+		const questionLengthEstimate = operandCount + bracesCount + operatorCount
+		const sequence = ["brace", "operand", "operator", "operand", "brace"]
+
+		for (let index = 1; index <= questionLengthEstimate; index++) {
+			const requiredEntry = (index - 1) % sequence.length
+
+			switch (sequence[requiredEntry]) {
+				case "brace":
+					
+					break;
+
+				case "operand":
+					question[index] = operands
+					
+					break;
+
+				case "operator":
+					question[index] = operators
+					break;
+			
+				default:
+					break;
+			}
+		}
 	}
 
 	return <></>
