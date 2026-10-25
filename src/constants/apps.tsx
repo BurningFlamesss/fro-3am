@@ -39,6 +39,7 @@ export interface WindowInstance {
 	maximized: boolean;
 	theme?: string;
 	component: React.ReactNode;
+	shadow?: boolean;
 	containerId?: string;
 	launchSpecification?: LaunchSpecification;
 }

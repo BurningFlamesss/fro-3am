@@ -675,7 +675,8 @@ function Taskbar() {
 
 				<section className="flex items-center gap-1">
 					{Object.entries(apps).map(([key, app]) => {
-						const win = findAppWindows(windows, app.id);
+						const allWin = findAppWindows(windows, app.id);
+						const win = allWin.filter(w => !w?.shadow)
 						const activeWin = win.filter((w) => !w?.minimized);
 
 						if (!win.length && !activeWin.length && !app.isPinned) {

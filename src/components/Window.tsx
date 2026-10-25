@@ -267,7 +267,7 @@ const Window = function Window({ win }: { win: WindowInstance }) {
 							type="button"
 							onClick={focusWindow.bind(null, id)}
 							onKeyUp={focusWindow.bind(null, id)}
-							className="w-full h-[calc(100%-2.5rem)] overflow-auto text-white"
+							className={cn("w-full h-[calc(100%-2.5rem)] overflow-auto text-white")}
 							ref={contentRef}
 						>
 							{React.cloneElement(component as React.ReactElement<any>, { windowId: id })}
