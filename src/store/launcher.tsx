@@ -14,19 +14,19 @@ export interface Launchable {
 	id: string;
 	name: string;
 	source:
-		| {
-				type: "ftml";
-				code: string;
-		  }
-		| {
-				type: "fromponent";
-				code: ComponentType<LaunchProps>;
-		  };
+	| {
+		type: "ftml";
+		code: string;
+	}
+	| {
+		type: "fromponent";
+		code: ComponentType<LaunchProps>;
+	};
 	shortcut?:
-		| {
-				name: string;
-		  }
-		| false;
+	| {
+		name: string;
+	}
+	| false;
 	logo: string;
 	showInCollections?: boolean;
 	extension?: Array<string>;
@@ -72,13 +72,13 @@ export const useLauncherStore = create<LauncherStore>()(
 					},
 					showInCollections: true,
 				},
-				app_frathematics: {
-					id: "app_frathematics",
-					name: "Frathematics",
-					logo: "/apps/Frathematics.svg",
+				app_fentalMaths: {
+					id: "app_fentalMaths",
+					name: "Fental Maths",
+					logo: "/apps/FentalMaths.svg",
 					source: {
 						type: "fromponent",
-						code: MathGame,
+						code: MentalMathGame,
 					},
 					showInCollections: true,
 				},
@@ -294,6 +294,44 @@ function WordGuessingGame({ params }: LaunchProps) {
 	return <></>
 }
 
-function MathGame({ params }: LaunchProps) {
+function MentalMathGame({ params }: LaunchProps) {
+	const zero = 0
+	const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+	const naturalNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+	const operations = ["+", "-", "*", "/"]
+	const braces = ["(", ")", "{", "}", "[", "]"]
+	const levelSystem = {
+		easy: {
+			operators: 1,
+			operands: 2,
+			brace: 0,
+			letterCap: [1,2]
+		},
+		mid: {
+			operators: 2,
+			operands: 3,
+			brace: 1,
+			letterCap: [2]
+		},
+		high: {
+			operators: 3,
+			operands: 4,
+			brace: 2,
+			letterCap: [2]
+		},
+	}
+
+	let question = []
+	let answer = 0
+
+	// immediate logic to me is generate
+	// (1 operator, and 2 operands 1-2 digit for easy level), 
+	// (2 operator, 3 operands 2 digit, and 1 brace for mid), 
+	// (3 operators, 4 operands 2 digit, and 2 brace for high)
+
+	function generateQuestionAndAnswer(level: "easy" | "mid" | "high") {
+		 Math.floor(Math.random() * operations.length)
+	}
+
 	return <></>
 }
