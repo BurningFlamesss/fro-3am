@@ -2,6 +2,7 @@ import { Checkbox } from "#/components/ui/checkbox.tsx";
 import { cn } from "#/lib/utils.ts";
 import { useNoteStore } from "#/store/note.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
+import { Delete, Link } from "lucide-react";
 
 export const TASK_TAB_ID = "user-task.todo";
 export const COMPLETED_MARKER = "[x]";
@@ -55,8 +56,17 @@ function Task() {
 		}
 	};
 
+	const handleDeleteTask = (index: number) => {
+		const updatedItems = taskItems.filter((item, i) =>
+			i !== index
+		);
+		const newContent = buildContent(updatedItems);
+		updateContent(TASK_TAB_ID, newContent);
+	};
+
 	const toggleTask = (index: number) => {
 		if (!taskTab) return;
+
 		const updatedItems = taskItems.map((item, i) =>
 			i === index ? { ...item, completed: !item.completed } : item,
 		);
@@ -79,16 +89,23 @@ function Task() {
 			{taskItems.map((task, index) => (
 				<li
 					key={`widget-task-${index}`}
-					className="flex justify-start items-center gap-x-2"
+					className="flex justify-between items-center group/task"
 				>
-					<Checkbox
-						className="cursor-pointer"
-						checked={task.completed}
-						onCheckedChange={() => toggleTask(index)}
-					/>
-					<span className={task.completed ? "line-through opacity-60" : ""}>
-						{task.text}
-					</span>
+					<div className="flex justify-start items-center gap-x-2">
+						<Checkbox
+							className="cursor-pointer"
+							checked={task.completed}
+							onCheckedChange={() => toggleTask(index)}
+						/>
+						<span className={task.completed ? "line-through opacity-60" : ""}>
+							{task.text}
+						</span>
+					</div>
+
+					<div className="flex justify-end items-center gap-x-2">
+						<Link size={16} className="group-hover/task:flex hidden cursor-pointer hover:text-green-400" />
+						<Delete onClick={() => handleDeleteTask(index)} size={18} className="group-hover/task:flex hidden cursor-pointer hover:text-red-400" />
+					</div>
 				</li>
 			))}
 		</ul>
