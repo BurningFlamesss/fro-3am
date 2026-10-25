@@ -2,6 +2,7 @@ import { Checkbox } from "#/components/ui/checkbox.tsx";
 import { cn } from "#/lib/utils.ts";
 import { useNoteStore } from "#/store/note.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
+import { useWidgetStore } from "#/store/widget.tsx";
 import { Delete, Link } from "lucide-react";
 
 export const TASK_TAB_ID = "user-task.todo";
@@ -10,6 +11,8 @@ export const INCOMPLETE_MARKER = "[ ]";
 
 function Task() {
 	const { tabs, addTab, updateContent } = useNoteStore();
+	const widgetStates = useWidgetStore(state => state.widgetStates)
+	const updateWidgetState = useWidgetStore(state => state.updateWidgetState)
 	const theme = useSettingStore((state) => state.theme);
 
 	const taskTab = tabs.find((tab) => tab.id === TASK_TAB_ID);
@@ -62,6 +65,24 @@ function Task() {
 		);
 		const newContent = buildContent(updatedItems);
 		updateContent(TASK_TAB_ID, newContent);
+
+		const needsUpdate = (widgetStates?.["widget_task"]?.linkedIndex ?? -1) as number >= index
+		if (needsUpdate) {
+			updateWidgetState("widget_task", {
+			linkedIndex: (widgetStates?.["widget_task"]?.linkedIndex ?? -1) as number - 1 ,
+		})
+		}
+	};
+
+	const handleLinkTask = (index: number) => {
+		const task = taskItems.find((item, i) =>
+			i !== index
+		);
+
+		updateWidgetState("widget_task", {
+			linkedIndex: index,
+			linkedTask: task
+		})
 	};
 
 	const toggleTask = (index: number) => {
@@ -103,7 +124,7 @@ function Task() {
 					</div>
 
 					<div className="flex justify-end items-center gap-x-2">
-						<Link size={16} className="group-hover/task:flex hidden cursor-pointer hover:text-green-400" />
+						<Link onClick={() => handleLinkTask(index)} size={16} className="group-hover/task:flex hidden cursor-pointer hover:text-green-400" />
 						<Delete onClick={() => handleDeleteTask(index)} size={18} className="group-hover/task:flex hidden cursor-pointer hover:text-red-400" />
 					</div>
 				</li>

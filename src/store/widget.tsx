@@ -14,6 +14,9 @@ import {
 interface WidgetStore {
 	widgets: Record<WidgetId, WidgetInstance>;
 
+	widgetStates: Record<WidgetId, Record<string, unknown>>;
+	updateWidgetState: (widgetId: WidgetId, fields: Record<string, unknown>) => void;
+
 	addWidget: (
 		definitionId: WidgetId,
 		position?: { x: number; y: number },
@@ -40,6 +43,19 @@ export const useWidgetStore = create<WidgetStore>()(
 	persist(
 		immer((set) => ({
 			widgets: Widgets,
+
+			widgetStates: {},
+			updateWidgetState: (widgetId, fields) => {
+				const widget = WidgetAppDefinitions[widgetId];
+
+				if (!widget) {
+					return
+				}
+
+				set((state) => {
+					state.widgetStates[widgetId] = { ...state.widgetStates[widgetId], ...fields }
+				})
+			},
 
 			addWidget: (definitionId, position, widgetSpecification) => {
 				const widget = WidgetAppDefinitions[definitionId];
