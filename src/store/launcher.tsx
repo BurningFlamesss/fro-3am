@@ -1,9 +1,9 @@
+import { e, evaluate } from "mathjs";
 import { type ComponentType, useMemo, useRef, useState } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { cn, generateTypingParagraph } from "#/lib/utils.ts";
 import { useWindowStore } from "./window";
-import { evaluate } from "mathjs";
 
 export type LaunchProps = {
 	windowId?: string;
@@ -297,27 +297,37 @@ function WordGuessingGame({ params }: LaunchProps) {
 
 function MentalMathGame({ params }: LaunchProps) {
 	const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-	const operations = ["+", "-", "*", "/"]
+	const operations = ["+", "-", "*"]
 	const braces = ["(", ")", "{", "}", "[", "]"]
 	const levelSystem = {
 		easy: {
 			operatorCount: 1,
 			operandCount: 2,
 			bracesCount: 0,
-			letterMaxCap: [1, 2]
+			letterMaxCap: [1, 2],
+			allowDivison: false
 		},
 		mid: {
 			operatorCount: 2,
 			operandCount: 3,
 			bracesCount: 2,
-			letterMaxCap: [2]
+			letterMaxCap: [2],
+			allowDivison: false
 		},
 		high: {
 			operatorCount: 3,
 			operandCount: 4,
 			bracesCount: 4,
-			letterMaxCap: [2]
+			letterMaxCap: [2],
+			allowDivison: false
 		},
+		extreme: {
+			operatorCount: 3,
+			operandCount: 4,
+			bracesCount: 4,
+			letterMaxCap: [2],
+			allowDivision: true
+		}
 	}
 
 	// immediate logic to me is generate
@@ -329,10 +339,14 @@ function MentalMathGame({ params }: LaunchProps) {
 	//  || braceOpen + braceOpen* operand + operator + operand + braceClose* + operand + operator + operand + braceClose + operand + operator + operand
 	//  || braceOpen + operand + operator + operand + braceClose + operand + operator + operand + braceOpen + operand + operator + operand + braceClose
 
-	function generateQuestionAndAnswer(level: "easy" | "mid" | "high") {
+	function generateQuestionAndAnswer(level: "easy" | "mid" | "high" | "extreme") {
 		let questionTerms = []
 
-		const { operatorCount, bracesCount, letterMaxCap, operandCount } = levelSystem[level]
+		const { operatorCount, bracesCount, letterMaxCap, operandCount, allowDivision } = levelSystem[level]
+
+		if (allowDivision) {
+			operations.push("/")
+		}
 
 		const operators = []
 		const operands = []
@@ -349,23 +363,15 @@ function MentalMathGame({ params }: LaunchProps) {
 		const questionLengthEstimate = operandCount + operatorCount
 		const sequence = ["operand", "operator"]
 
-		for (let index = 0; index <= questionLengthEstimate; index++) {
+		for (let index = 0; index < questionLengthEstimate; index++) {
 			const seq = sequence[index % sequence.length]
 			const turn = Math.floor(index / sequence.length)
 
-			switch (seq) {
-				case "operand": {
-					questionTerms[index] = operands[turn]
-
-					break;
-				}
-				case "operator": {
-					questionTerms[index] = operators[turn]
-
-					break;
-				}
+			if (seq === "operand") {
+				questionTerms.push(operands[turn])
+			} else {
+				questionTerms.push(operators[turn])
 			}
-
 		}
 
 		switch (bracesCount) {
@@ -381,10 +387,48 @@ function MentalMathGame({ params }: LaunchProps) {
 				break;
 			}
 			case 4: {
-				const possibleStartIndices = [0, 2, 4]
-				const random = possibleStartIndices[Math.floor(Math.random() * possibleStartIndices.length)]
-				questionTerms.splice(random, 0, "(")
-				questionTerms.splice(random + 4, 0, ")")
+				const random = Math.floor(Math.random() * 5)
+
+				switch (random) {
+					case 0: {
+						questionTerms.splice(0, 0, "(")
+						questionTerms.splice(4, 0, ")")
+						questionTerms.splice(6, 0, "(")
+						questionTerms.splice(10, 0, ")")
+						break;
+					}
+					case 1: {
+						questionTerms.splice(0, 0, "(") // {
+						questionTerms.splice(1, 0, "(")
+						questionTerms.splice(5, 0, ")")
+						questionTerms.splice(8, 0, ")") // }
+						break;
+					}
+					case 2: {
+						questionTerms.splice(0, 0, "(") // {
+						questionTerms.splice(3, 0, "(")
+						questionTerms.splice(7, 0, ")")
+						questionTerms.splice(8, 0, ")") // }
+						break;
+					}
+					case 3: {
+						questionTerms.splice(2, 0, "(") // {
+						questionTerms.splice(3, 0, "(")
+						questionTerms.splice(7, 0, ")")
+						questionTerms.splice(10, 0, ")") // }
+						break;
+					}
+					case 4: {
+						questionTerms.splice(2, 0, "(") // {
+						questionTerms.splice(5, 0, "(")
+						questionTerms.splice(9, 0, ")")
+						questionTerms.splice(10, 0, ")") // }
+						break;
+					}
+
+					default:
+						break;
+				}
 				break;
 			}
 			default:
