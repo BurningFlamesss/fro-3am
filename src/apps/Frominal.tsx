@@ -44,7 +44,7 @@ function parseCommand(input: string) {
 function Frominal() {
 	const { apps, openApp, windows, closeWindow, pinApp, unpinApp } =
 		useWindowStore();
-	const { commandExpressions, setCommandExpressions } = useTerminalStore();
+	const { commandExpressions, setCommandExpressions, clearCommandExpressions, onComplete } = useTerminalStore();
 	const terminalRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [terminalLines, setTerminalLines] = useState<Array<TerminalLine>>([]);
@@ -999,6 +999,8 @@ function Frominal() {
 					output,
 				},
 			]);
+
+			return output
 		} catch (error) {
 			setTerminalLines((lines) => [
 				...lines,
@@ -1011,6 +1013,10 @@ function Frominal() {
 					),
 				},
 			]);
+
+			return <p className="text-red-500">
+				Error: {error instanceof Error ? error.message : String(error)}
+			</p>
 		} finally {
 			setIsProcessing(false);
 		}
@@ -1072,6 +1078,7 @@ function Frominal() {
 		if (!commandExpressions.length) return;
 
 		let cancelled = false;
+		let outputs: Array<string> = []
 
 		const executeAllExpressions = async () => {
 			for (const commandExpression of commandExpressions) {
@@ -1082,10 +1089,15 @@ function Frominal() {
 				await new Promise((res, rej) => setTimeout(res, 0));
 				if (cancelled) return;
 
-				await runCommand(commandExpression);
+				const response = await runCommand(commandExpression);
+				const textOutput = JSON.stringify(response) // I shall have a more powerful approach to get the text response (skipping all the unnecessary htmls and converting them to markdown or similar small sized textual content)
+
+				outputs.push(`$ ${commandExpression} \n\n ${textOutput || "(Executed successfully!)"}`)
 			}
 
-			if (!cancelled) setCommandExpressions([]);
+			onComplete?.(outputs)
+
+			if (!cancelled) clearCommandExpressions();
 		};
 
 		void executeAllExpressions();
