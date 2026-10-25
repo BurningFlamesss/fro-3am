@@ -147,7 +147,7 @@ function Screen() {
 	const { tabs, selectTab, addTab } = useNoteStore();
 	const { launchables, launch } = useLauncherStore();
 	const { setCalculatorExpression } = useCalculatorStore();
-	const { setCommandExpression } = useTerminalStore();
+	const { setCommandExpressions } = useTerminalStore();
 	const { addAndUpdateTab } = useBrowserStore();
 	const { addTrack, next } = useMusicStore();
 
@@ -196,7 +196,7 @@ function Screen() {
 				case "terminal": {
 					const content = node?.content ?? "";
 					const queries = content.split("\n").filter(Boolean);
-					setCommandExpression(queries);
+					setCommandExpressions(queries);
 					openApp(key);
 
 					break;

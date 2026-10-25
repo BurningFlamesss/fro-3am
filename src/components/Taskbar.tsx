@@ -299,7 +299,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 	const { tabs, selectTab, addTab } = useNoteStore();
 	const { launchables, launch } = useLauncherStore();
 	const { setCalculatorExpression } = useCalculatorStore();
-	const { setCommandExpression } = useTerminalStore();
+	const { setCommandExpressions } = useTerminalStore();
 
 	const { addAndUpdateTab } = useBrowserStore();
 	const { addTrack } = useMusicStore();
@@ -364,7 +364,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 			case "terminal": {
 				const content = node?.content ?? "";
 				const queries = content.split("\n").filter(Boolean);
-				setCommandExpression(queries);
+				setCommandExpressions(queries);
 				openApp(key);
 				break;
 			}

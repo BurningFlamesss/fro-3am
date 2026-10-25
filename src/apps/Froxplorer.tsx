@@ -227,7 +227,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 	const { tabs, selectTab, addTab } = useNoteStore();
 	const { launchables, launch } = useLauncherStore();
 	const { setCalculatorExpression } = useCalculatorStore();
-	const { setCommandExpression } = useTerminalStore();
+	const { setCommandExpressions } = useTerminalStore();
 	const { addAndUpdateTab } = useBrowserStore();
 	const { addTrack, next } = useMusicStore();
 	const [selectedIds, setSelectedIds] = useState<Array<string>>([]);
@@ -298,7 +298,7 @@ function Froxplorer({ windowId }: { windowId: string }) {
 				case "terminal": {
 					const content = node?.content ?? "";
 					const queries = content.split("\n").filter(Boolean);
-					setCommandExpression(queries);
+					setCommandExpressions(queries);
 					openApp(key);
 
 					break;
