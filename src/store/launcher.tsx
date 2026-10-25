@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { cn, generateTypingParagraph } from "#/lib/utils.ts";
 import { useWindowStore } from "./window";
+import { evaluate } from "mathjs";
 
 export type LaunchProps = {
 	windowId?: string;
@@ -319,9 +320,6 @@ function MentalMathGame({ params }: LaunchProps) {
 		},
 	}
 
-	let question = []
-	let answer = 0
-
 	// immediate logic to me is generate
 	// (1 operator, and 2 operands 1-2 digit for easy level), 
 	// (2 operator, 3 operands 2 digit, and 1 brace for mid), 
@@ -332,6 +330,8 @@ function MentalMathGame({ params }: LaunchProps) {
 	//  || braceOpen + operand + operator + operand + braceClose + operand + operator + operand + braceOpen + operand + operator + operand + braceClose
 
 	function generateQuestionAndAnswer(level: "easy" | "mid" | "high") {
+		let questionTerms = []
+
 		const { operatorCount, bracesCount, letterMaxCap, operandCount } = levelSystem[level]
 
 		const operators = []
@@ -346,32 +346,39 @@ function MentalMathGame({ params }: LaunchProps) {
 			operands[index] = Math.max(numbers.length ** (maxCap - 1), Math.floor(Math.random() * numbers.length ** maxCap));
 		}
 
+		const questionLengthEstimate = operandCount + operatorCount
+		const sequence = ["operand", "operator"]
 
-		const questionLengthEstimate = operandCount + bracesCount + operatorCount
-		const sequence = ["brace", "operand", "operator", "operand", "brace"]
+		for (let index = 0; index <= questionLengthEstimate; index++) {
+			const seq = sequence[index % sequence.length]
+			const turn = Math.floor(index / sequence.length)
 
-		for (let index = 1; index <= questionLengthEstimate; index++) {
-			const requiredEntry = (index - 1) % sequence.length
+			switch (seq) {
+				case "operand": {
+					questionTerms[index] = operands[turn]
 
-			switch (sequence[requiredEntry]) {
-				case "brace":
-					
 					break;
+				}
+				case "operator": {
+					questionTerms[index] = operators[turn]
 
-				case "operand":
-					question[index] = operands
-					
 					break;
-
-				case "operator":
-					question[index] = operators
-					break;
-			
-				default:
-					break;
+				}
 			}
+		}
+
+		const question = questionTerms.join(" ")
+
+		return {
+			question,
+			answer: evaluate(question)
 		}
 	}
 
-	return <></>
+	const { question, answer } = generateQuestionAndAnswer("mid")
+
+	return <>
+		<p>{question}</p>
+		&rarr; {answer}
+	</>
 }
