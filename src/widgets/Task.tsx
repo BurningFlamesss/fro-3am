@@ -1,59 +1,42 @@
 import { Checkbox } from "#/components/ui/checkbox.tsx";
-import { cn } from "#/lib/utils.ts";
+import { cn, COMPLETED_MARKER, decodeHiddenInformation, disguishHiddenInformation, INCOMPLETE_MARKER } from "#/lib/utils.ts";
 import { useNoteStore } from "#/store/note.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
-import { useWidgetAppsStore } from "#/store/widgetApps.tsx";
 import { Delete, Link } from "lucide-react";
 
 export const TASK_TAB_ID = "user-task.todo";
-export const COMPLETED_MARKER = "[x]";
-export const COMPLETE_LINKED_MARKER = "{x}"
-export const INCOMPLETE_LINKED_MARKER = "{ }"
-export const INCOMPLETE_MARKER = "[ ]";
 
 function Task() {
 	const { tabs, addTab, updateContent } = useNoteStore();
-	const widgetStates = useWidgetAppsStore(state => state.widgetStates)
-	const updateWidgetState = useWidgetAppsStore(state => state.updateWidgetState)
 	const theme = useSettingStore((state) => state.theme);
 
 	const taskTab = tabs.find((tab) => tab.id === TASK_TAB_ID);
 	const content = taskTab?.content ?? "";
-	const linkedIndex = widgetStates?.["widget_task"]?.linkedIndex ?? -1
 
 	const taskItems = content
 		.split("\n")
 		.map((line) => {
 			const trimmed = line.trim();
+			let linked: boolean = false
+			const hiddenText = decodeHiddenInformation(trimmed)
+
+			if (hiddenText?.includes("linked")) linked = true
+
 			if (trimmed.startsWith(COMPLETED_MARKER)) {
 				return {
 					text: trimmed.slice(COMPLETED_MARKER.length).trim(),
 					completed: true,
-					linked: false
+					linked
 				};
 			}
 			if (trimmed.startsWith(INCOMPLETE_MARKER)) {
 				return {
 					text: trimmed.slice(INCOMPLETE_MARKER.length).trim(),
 					completed: false,
-					linked: false
+					linked
 				};
 			}
-			if (trimmed.startsWith(COMPLETE_LINKED_MARKER)) {
-				return {
-					text: trimmed.slice(COMPLETE_LINKED_MARKER.length).trim(),
-					completed: true,
-					linked: true
-				};
-			}
-			if (trimmed.startsWith(INCOMPLETE_LINKED_MARKER)) {
-				return {
-					text: trimmed.slice(INCOMPLETE_LINKED_MARKER.length).trim(),
-					completed: false,
-					linked: true
-				};
-			}
-			return { text: trimmed, completed: false, linked: false };
+			return { text: trimmed, completed: false, linked };
 		})
 		.filter((item) => item.text.length > 0);
 
@@ -61,7 +44,7 @@ function Task() {
 		items
 			.map(
 				(item) =>
-					`${item.linked ? item.completed ? COMPLETE_LINKED_MARKER : INCOMPLETE_LINKED_MARKER : item.completed ? COMPLETED_MARKER : INCOMPLETE_MARKER} ${item.text}`,
+					`${item.completed ? COMPLETED_MARKER : INCOMPLETE_MARKER} ${item.text}`,
 			)
 			.join("\n");
 
@@ -130,7 +113,7 @@ function Task() {
 							onCheckedChange={() => toggleTask(index)}
 						/>
 						<span className={task.completed ? "line-through opacity-60" : ""}>
-							{task.text}
+							{disguishHiddenInformation(task.text)}
 						</span>
 					</div>
 

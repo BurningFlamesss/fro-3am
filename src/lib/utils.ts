@@ -288,3 +288,39 @@ export function generateTypingParagraph(length: number) {
 
 	return text;
 }
+
+export const START_HIDING_PATTERN = "{_<<hide>>_}";
+export const END_HIDING_PATTERN = "{_</</hide>>_}";
+export const COMPLETED_MARKER = "[x]";
+export const INCOMPLETE_MARKER = "[ ]";
+
+export function decodeHiddenInformation(text: string) {
+	const trimmed = text.trim();
+
+	if (
+		!trimmed.includes(START_HIDING_PATTERN) ||
+		!trimmed.includes(END_HIDING_PATTERN)
+	)
+		return;
+
+	const startingIndex =
+		trimmed.indexOf(START_HIDING_PATTERN) + START_HIDING_PATTERN.length;
+	const endingIndex = trimmed.indexOf(END_HIDING_PATTERN) - 1;
+
+	return trimmed.slice(startingIndex, endingIndex + 1);
+}
+
+export function disguishHiddenInformation(text: string) {
+	const trimmed = text.trim();
+
+	if (
+		!trimmed.includes(START_HIDING_PATTERN) ||
+		!trimmed.includes(END_HIDING_PATTERN)
+	)
+		return trimmed;
+
+	const startingIndex =
+		trimmed.indexOf(START_HIDING_PATTERN)
+
+	return trimmed.slice(0, startingIndex)
+}

@@ -17,7 +17,7 @@ import { useLauncherStore } from "#/store/launcher.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWindowStore } from "#/store/window.tsx";
-import { COMPLETED_MARKER, INCOMPLETE_MARKER } from "#/widgets/Task.tsx";
+import { COMPLETED_MARKER, INCOMPLETE_MARKER } from "#/lib/utils.ts";
 import type { AppInstance, WindowInstance } from "../constants/apps";
 import { EVENT_COLORS } from "./Frolendar";
 
