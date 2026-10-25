@@ -8,6 +8,8 @@ import { getAIResponse } from "#/server/fai.tsx";
 import { type Process, useFaiStore } from "#/store/fai.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
 import { useChat } from "@tanstack/ai-react";
+import { useWindowStore } from "#/store/window.tsx";
+import { useTerminalStore } from "#/store/terminal.tsx";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -18,14 +20,35 @@ function Home() {
 	const brightness = useSettingStore((state) => state.brightness);
 	const backgroundColor = brightness >= 50 ? "white" : "black";
 	const opacity = (Math.abs(brightness - 50) / 50) * 0.3;
+	const setCommandExpressions = useTerminalStore(state => state.setCommandExpressions)
+	const openApp = useWindowStore(state => state.openApp)
+
+	useEffect(() => {
+		let cancelled = false;
+
+		const execute = async () => {
+			if (cancelled) return;
+
+			openApp("terminal", undefined, true)
+			setCommandExpressions(["task.add Read book"])
+		}
+		void execute();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [])
+
 	const { messages, sendMessage, isLoading } = useChat({
-		threadId: "",
-		fetcher: (params) => getAIResponse({ data: {
-			threadId: params.threadId,
-			key: "",
-			prompt: "",
-			scopes: []
-		} }),
+		threadId: "somethjnig",
+		fetcher: (params) => getAIResponse({
+			data: {
+				threadId: params.threadId,
+				key: "",
+				prompt: "",
+				scopes: []
+			}
+		}),
 		tools: []
 	})
 
