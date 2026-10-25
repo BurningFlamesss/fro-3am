@@ -2,7 +2,7 @@ import { Checkbox } from "#/components/ui/checkbox.tsx";
 import { cn } from "#/lib/utils.ts";
 import { useNoteStore } from "#/store/note.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
-import { usewidgetAppsStore } from "#/store/widgetApps.tsx";
+import { useWidgetAppsStore } from "#/store/widgetApps.tsx";
 import { Delete, Link } from "lucide-react";
 
 export const TASK_TAB_ID = "user-task.todo";
@@ -11,8 +11,8 @@ export const INCOMPLETE_MARKER = "[ ]";
 
 function Task() {
 	const { tabs, addTab, updateContent } = useNoteStore();
-	const widgetStates = usewidgetAppsStore(state => state.widgetStates)
-	const updateWidgetState = usewidgetAppsStore(state => state.updateWidgetState)
+	const widgetStates = useWidgetAppsStore(state => state.widgetStates)
+	const updateWidgetState = useWidgetAppsStore(state => state.updateWidgetState)
 	const theme = useSettingStore((state) => state.theme);
 
 	const taskTab = tabs.find((tab) => tab.id === TASK_TAB_ID);
