@@ -1,8 +1,15 @@
+import { chat, toServerSentEventsResponse } from "@tanstack/ai";
+import { openRouterText } from "@tanstack/ai-openrouter";
 import { createServerFn } from "@tanstack/react-start";
 
-export const getAIResponse = createServerFn()
+export const getAIResponse = createServerFn({ method: "POST" })
 	.validator(
-		(data: { key: string; prompt: string; scopes: Array<string> }) => data,
+		(data: {
+			threadId: string;
+			key: string;
+			prompt: string;
+			scopes: Array<string>
+		}) => data,
 	)
 	.handler(async ({ data }) => {
 		try {
@@ -12,6 +19,11 @@ export const getAIResponse = createServerFn()
 				throw new Error("Fai API key missing");
 			}
 
-            
-		} catch (error) {}
+			const stream = chat({
+				adapter: openRouterText("google/gemma-4-26b-a4b-it:free"),
+				threadId: data.threadId
+			})
+
+			return toServerSentEventsResponse(stream)
+		} catch (error) { }
 	});

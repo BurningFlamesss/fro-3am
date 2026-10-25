@@ -19,6 +19,7 @@ interface WindowStore {
 	openApp: (
 		appId: AppId,
 		position?: { x: number; y: number; width: number; height: number },
+		shadow?: boolean,
 		extraProps?: Record<string, unknown>,
 	) => void;
 	unpinApp: (appId: AppId) => void;
@@ -45,6 +46,7 @@ export const useWindowStore = create<WindowStore>()(
 		openApp: (
 			appId,
 			position?: { x: number; y: number; width: number; height: number },
+			shadow = false,
 			extraProps = {},
 		) =>
 			set((state) => {

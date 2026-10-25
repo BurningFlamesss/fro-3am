@@ -168,7 +168,7 @@ function Screen() {
 		}
 
 		if (node.type === "folder") {
-			openApp("file_explorer", undefined, {
+			openApp("file_explorer", undefined, false, {
 				containerId: node.id,
 			});
 		} else {
@@ -194,7 +194,9 @@ function Screen() {
 					break;
 				}
 				case "terminal": {
-					setCommandExpression(node.content ?? "");
+					const content = node?.content ?? "";
+					const queries = content.split("\n").filter(Boolean);
+					setCommandExpression(queries);
 					openApp(key);
 
 					break;
@@ -384,7 +386,7 @@ function Screen() {
 								<ContextMenuContent className="z-100000002">
 									<ContextMenuItem
 										onClick={() =>
-											openApp("file_explorer", undefined, {
+											openApp("file_explorer", undefined, false, {
 												containerId: container.id,
 											})
 										}

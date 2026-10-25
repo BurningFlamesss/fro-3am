@@ -172,7 +172,7 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 					<div className="w-full px-4 flex flex-col items-center justify-center">
 						<div className="w-full flex items-center gap-1">
 							<button
-								onClick={() => {}}
+								onClick={() => { }}
 								className="cursor-pointer text-white/60 hover:text-white"
 							>
 								{brightness === 0 ? (
@@ -324,10 +324,10 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 
 	const filteredFiles = query
 		? Object.values(nodes).filter(
-				(node) =>
-					node.type === "file" &&
-					node.name.toLowerCase().includes(query.toLowerCase()),
-			)
+			(node) =>
+				node.type === "file" &&
+				node.name.toLowerCase().includes(query.toLowerCase()),
+		)
 		: [];
 
 	const openFile = async (node: FileNode, openAppId?: AppId) => {
@@ -341,7 +341,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 		}
 
 		if (node.type === "folder") {
-			openApp("file_explorer", undefined, { containerId: node.id });
+			openApp("file_explorer", undefined, false, { containerId: node.id });
 			return;
 		}
 
@@ -362,7 +362,9 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 				break;
 			}
 			case "terminal": {
-				setCommandExpression(node.content ?? "");
+				const content = node?.content ?? "";
+				const queries = content.split("\n").filter(Boolean);
+				setCommandExpression(queries);
 				openApp(key);
 				break;
 			}
@@ -389,24 +391,24 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 				launch(
 					key === "app_view"
 						? {
-								id: "app_froview",
-								name: "App_froview",
-								source: {
-									type: "fromponent",
-									code: function View() {
-										return <img src={node.content} alt="" />;
-									},
+							id: "app_froview",
+							name: "App_froview",
+							source: {
+								type: "fromponent",
+								code: function View() {
+									return <img src={node.content} alt="" />;
 								},
-								logo: "/apps/Game.svg",
-								showInCollections: true,
-							}
-						: {
-								id: "app_froview",
-								name: "App_froview",
-								source: { type: "ftml", code: node.content ?? "" },
-								logo: "/apps/Game.svg",
-								showInCollections: true,
 							},
+							logo: "/apps/Game.svg",
+							showInCollections: true,
+						}
+						: {
+							id: "app_froview",
+							name: "App_froview",
+							source: { type: "ftml", code: node.content ?? "" },
+							logo: "/apps/Game.svg",
+							showInCollections: true,
+						},
 				);
 				break;
 			}

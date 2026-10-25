@@ -69,7 +69,7 @@ export const useLauncherStore = create<LauncherStore>()(
 					state.launchables[data.id] = data;
 					state.recentLaunches.set(data.id, Date.now());
 
-					useWindowStore.getState().openApp("launcher", undefined, {
+					useWindowStore.getState().openApp("launcher", undefined, false, {
 						launchSpecification: {
 							name: data.name,
 							source: data.source,

@@ -7,6 +7,7 @@ import WindowOverlays from "#/components/WindowOverlays.tsx";
 import { getAIResponse } from "#/server/fai.tsx";
 import { type Process, useFaiStore } from "#/store/fai.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
+import { useChat } from "@tanstack/ai-react";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -17,19 +18,16 @@ function Home() {
 	const brightness = useSettingStore((state) => state.brightness);
 	const backgroundColor = brightness >= 50 ? "white" : "black";
 	const opacity = (Math.abs(brightness - 50) / 50) * 0.3;
-
-	const handleProcess = async (process: Process, queueIndex) => {
-		getAIResponse({
-			data: {
-				key: "",
-				prompt: `${globalInstruction}
-				
-				${process.query}
-				`,
-				scopes: process.scopes,
-			},
-		});
-	};
+	const { messages, sendMessage, isLoading } = useChat({
+		threadId: "",
+		fetcher: (params) => getAIResponse({ data: {
+			threadId: params.threadId,
+			key: "",
+			prompt: "",
+			scopes: []
+		} }),
+		tools: []
+	})
 
 	useEffect(() => {
 		processes.forEach((process) => {
@@ -38,7 +36,9 @@ function Home() {
 			const queueIndex = +process.status.replace("queue-#", "") as number;
 
 			if (!Number.isNaN(queueIndex)) {
-				handleProcess(process, queueIndex);
+				sendMessage({
+					content: process.query,
+				});
 			}
 		});
 	}, []);
