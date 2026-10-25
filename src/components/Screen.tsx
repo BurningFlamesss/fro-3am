@@ -108,8 +108,9 @@ function Screen() {
 		}
 	};
 
-	const toggleApp = (app: AppInstance) => {
-		const appWindows = findAppWindows(windows, app.id);
+	const toggleApp = (app: AppInstance) => {		
+		const allAppWindows = findAppWindows(windows, app.id);
+		const appWindows = allAppWindows.filter(w => !w?.shadow)
 
 		if (appWindows.length === 0) {
 			openApp(app.id);
