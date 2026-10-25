@@ -294,6 +294,33 @@ export const END_HIDING_PATTERN = "{_</</hide>>_}";
 export const COMPLETED_MARKER = "[x]";
 export const INCOMPLETE_MARKER = "[ ]";
 
+export function getStartAndEndOfHiddenPattern(text: string) {
+	if (
+		!text.includes(START_HIDING_PATTERN) ||
+		!text.includes(END_HIDING_PATTERN)
+	)
+		return {
+			startIndexOfStartPattern: undefined,
+			endIndexOfStartPattern: undefined,
+			startIndexOfEndPattern: undefined,
+			endIndexOfEndPattern: undefined,
+		};
+
+	const startIndexOfStartPattern = text.indexOf(START_HIDING_PATTERN);
+	const endIndexOfStartPattern =
+		text.indexOf(START_HIDING_PATTERN) + START_HIDING_PATTERN.length;
+	const startIndexOfEndPattern = text.indexOf(END_HIDING_PATTERN);
+	const endIndexOfEndPattern =
+		text.indexOf(END_HIDING_PATTERN) + START_HIDING_PATTERN.length;
+
+	return {
+		startIndexOfStartPattern,
+		endIndexOfStartPattern,
+		startIndexOfEndPattern,
+		endIndexOfEndPattern,
+	};
+}
+
 export function decodeHiddenInformation(text: string) {
 	const trimmed = text.trim();
 
@@ -303,24 +330,20 @@ export function decodeHiddenInformation(text: string) {
 	)
 		return;
 
-	const startingIndex =
-		trimmed.indexOf(START_HIDING_PATTERN) + START_HIDING_PATTERN.length;
-	const endingIndex = trimmed.indexOf(END_HIDING_PATTERN) - 1;
+	const { endIndexOfStartPattern, endIndexOfEndPattern } =
+		getStartAndEndOfHiddenPattern(trimmed);
 
-	return trimmed.slice(startingIndex, endingIndex + 1);
+	return trimmed.slice(endIndexOfStartPattern, endIndexOfEndPattern);
 }
 
 export function disguishHiddenInformation(text: string) {
-	const trimmed = text.trim();
-
 	if (
-		!trimmed.includes(START_HIDING_PATTERN) ||
-		!trimmed.includes(END_HIDING_PATTERN)
+		!text.includes(START_HIDING_PATTERN) ||
+		!text.includes(END_HIDING_PATTERN)
 	)
-		return trimmed;
+		return text;
 
-	const startingIndex =
-		trimmed.indexOf(START_HIDING_PATTERN)
+	const { startIndexOfStartPattern } = getStartAndEndOfHiddenPattern(text);
 
-	return trimmed.slice(0, startingIndex)
+	return text.slice(0, startIndexOfStartPattern);
 }

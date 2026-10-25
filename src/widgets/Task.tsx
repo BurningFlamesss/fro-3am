@@ -1,5 +1,5 @@
 import { Checkbox } from "#/components/ui/checkbox.tsx";
-import { cn, COMPLETED_MARKER, decodeHiddenInformation, disguishHiddenInformation, INCOMPLETE_MARKER } from "#/lib/utils.ts";
+import { cn, COMPLETED_MARKER, decodeHiddenInformation, disguishHiddenInformation, END_HIDING_PATTERN, getStartAndEndOfHiddenPattern, INCOMPLETE_MARKER, START_HIDING_PATTERN } from "#/lib/utils.ts";
 import { useNoteStore } from "#/store/note.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
 import { Delete, Link } from "lucide-react";
@@ -69,11 +69,13 @@ function Task() {
 		updateContent(TASK_TAB_ID, newContent);
 	};
 
-	const handleLinkTask = (index: number) => {
+	const toggleLink = (index: number) => {
 		if (!taskTab) return;
 
+		const { startIndexOfStartPattern } = getStartAndEndOfHiddenPattern(taskItems[index].text)
+
 		const updatedItems = taskItems.map((item, i) =>
-			i === index ? { ...item, linked: !item.linked } : item,
+			i === index ? { ...item, text: item.linked ? item.text.slice(0, startIndexOfStartPattern) : `${item.text} ${START_HIDING_PATTERN}linked${END_HIDING_PATTERN}`, linked: !item.linked } : item,
 		);
 		const newContent = buildContent(updatedItems);
 		updateContent(TASK_TAB_ID, newContent);
@@ -118,7 +120,7 @@ function Task() {
 					</div>
 
 					<div className="flex justify-end items-center gap-x-2">
-						<Link onClick={() => handleLinkTask(index)} size={16} className={cn("group-hover/task:flex hidden cursor-pointer hover:text-green-400", task.linked ? "text-blue-400 hover:text-red-400" : "")} />
+						<Link onClick={() => toggleLink(index)} size={16} className={cn("group-hover/task:flex hidden cursor-pointer hover:text-green-400", task.linked ? "text-blue-400 hover:text-red-400" : "")} />
 						<Delete onClick={() => handleDeleteTask(index)} size={18} className="group-hover/task:flex hidden cursor-pointer hover:text-red-400" />
 					</div>
 				</li>
