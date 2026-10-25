@@ -11,6 +11,7 @@ import workGif from "../../public/widgets/pomodoro/work.gif";
 import workBtn from "../../public/widgets/pomodoro/work.png";
 import workBtnClicked from "../../public/widgets/pomodoro/work-clicked.png";
 import { useSettingStore } from "#/store/setting.tsx";
+import { useWidgetAppsStore } from "#/store/widgetApps.tsx";
 
 const cheerMessages = [
 	"Stay Frokused",
@@ -39,6 +40,8 @@ const formatTime = (seconds: number): string => {
 
 function Pomodoro() {
 	const theme = useSettingStore((state) => state.theme)
+	const widgetStates = useWidgetAppsStore(state => state.widgetStates)
+	const updateWidgetState = useWidgetAppsStore(state => state.updateWidgetState)
 	const [timeLeft, setTimeLeft] = useState<number>(25 * 60);
 	const [isRunning, setIsRunning] = useState<boolean>(false);
 	const [isBreak, setIsBreak] = useState<boolean>(false);

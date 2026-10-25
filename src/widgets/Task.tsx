@@ -7,6 +7,8 @@ import { Delete, Link } from "lucide-react";
 
 export const TASK_TAB_ID = "user-task.todo";
 export const COMPLETED_MARKER = "[x]";
+export const COMPLETE_LINKED_MARKER = "{x}"
+export const INCOMPLETE_LINKED_MARKER = "{ }"
 export const INCOMPLETE_MARKER = "[ ]";
 
 function Task() {
@@ -17,6 +19,7 @@ function Task() {
 
 	const taskTab = tabs.find((tab) => tab.id === TASK_TAB_ID);
 	const content = taskTab?.content ?? "";
+	const linkedIndex = widgetStates?.["widget_task"]?.linkedIndex ?? -1
 
 	const taskItems = content
 		.split("\n")
@@ -26,15 +29,31 @@ function Task() {
 				return {
 					text: trimmed.slice(COMPLETED_MARKER.length).trim(),
 					completed: true,
+					linked: false
 				};
 			}
 			if (trimmed.startsWith(INCOMPLETE_MARKER)) {
 				return {
 					text: trimmed.slice(INCOMPLETE_MARKER.length).trim(),
 					completed: false,
+					linked: false
 				};
 			}
-			return { text: trimmed, completed: false };
+			if (trimmed.startsWith(COMPLETE_LINKED_MARKER)) {
+				return {
+					text: trimmed.slice(COMPLETE_LINKED_MARKER.length).trim(),
+					completed: true,
+					linked: true
+				};
+			}
+			if (trimmed.startsWith(INCOMPLETE_LINKED_MARKER)) {
+				return {
+					text: trimmed.slice(INCOMPLETE_LINKED_MARKER.length).trim(),
+					completed: false,
+					linked: true
+				};
+			}
+			return { text: trimmed, completed: false, linked: false };
 		})
 		.filter((item) => item.text.length > 0);
 
@@ -42,7 +61,7 @@ function Task() {
 		items
 			.map(
 				(item) =>
-					`${item.completed ? COMPLETED_MARKER : INCOMPLETE_MARKER} ${item.text}`,
+					`${item.linked ? item.completed ? COMPLETE_LINKED_MARKER : INCOMPLETE_LINKED_MARKER : item.completed ? COMPLETED_MARKER : INCOMPLETE_MARKER} ${item.text}`,
 			)
 			.join("\n");
 
@@ -53,7 +72,7 @@ function Task() {
 		if (!taskTab) {
 			addTab("Tasks", `${INCOMPLETE_MARKER} ${trimmed}`, TASK_TAB_ID, "todo");
 		} else {
-			const newItems = [...taskItems, { text: trimmed, completed: false }];
+			const newItems = [...taskItems, { text: trimmed, completed: false, linked: false }];
 			const newContent = buildContent(newItems);
 			updateContent(TASK_TAB_ID, newContent);
 		}
@@ -65,22 +84,16 @@ function Task() {
 		);
 		const newContent = buildContent(updatedItems);
 		updateContent(TASK_TAB_ID, newContent);
-
-		const needsUpdate = (widgetStates?.["widget_task"]?.linkedIndex ?? -1) as number >= index
-		if (needsUpdate) {
-			updateWidgetState("widget_task", {
-			linkedIndex: (widgetStates?.["widget_task"]?.linkedIndex ?? -1) as number - 1 ,
-		})
-		}
 	};
 
 	const handleLinkTask = (index: number) => {
-		const task = taskItems[index];
+		if (!taskTab) return;
 
-		updateWidgetState("widget_task", {
-			linkedIndex: index,
-			linkedTask: task
-		})
+		const updatedItems = taskItems.map((item, i) =>
+			i === index ? { ...item, linked: !item.linked } : item,
+		);
+		const newContent = buildContent(updatedItems);
+		updateContent(TASK_TAB_ID, newContent);
 	};
 
 	const toggleTask = (index: number) => {
@@ -122,7 +135,7 @@ function Task() {
 					</div>
 
 					<div className="flex justify-end items-center gap-x-2">
-						<Link onClick={() => handleLinkTask(index)} size={16} className="group-hover/task:flex hidden cursor-pointer hover:text-green-400" />
+						<Link onClick={() => handleLinkTask(index)} size={16} className={cn("group-hover/task:flex hidden cursor-pointer hover:text-green-400", task.linked ? "text-blue-400 hover:text-red-400" : "")} />
 						<Delete onClick={() => handleDeleteTask(index)} size={18} className="group-hover/task:flex hidden cursor-pointer hover:text-red-400" />
 					</div>
 				</li>
