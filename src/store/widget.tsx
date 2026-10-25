@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { WidgetAppDefinitions } from "#/constants/widgetsAppDefinition.tsx";
 import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
 import {
 	defaultSizeConfigurations,
@@ -10,12 +9,10 @@ import {
 	type WidgetSpecification,
 	Widgets,
 } from "../constants/widgets";
+import { WidgetAppDefinitions } from "#/constants/widgetsAppDefinition.tsx";
 
 interface WidgetStore {
 	widgets: Record<WidgetId, WidgetInstance>;
-
-	widgetStates: Record<WidgetId, Record<string, unknown>>;
-	updateWidgetState: (widgetId: WidgetId, fields: Record<string, unknown>) => void;
 
 	addWidget: (
 		definitionId: WidgetId,
@@ -44,18 +41,6 @@ export const useWidgetStore = create<WidgetStore>()(
 		immer((set) => ({
 			widgets: Widgets,
 
-			widgetStates: {},
-			updateWidgetState: (widgetId, fields) => {
-				const widget = WidgetAppDefinitions[widgetId];
-
-				if (!widget) {
-					return
-				}
-
-				set((state) => {
-					state.widgetStates[widgetId] = { ...state.widgetStates[widgetId], ...fields }
-				})
-			},
 
 			addWidget: (definitionId, position, widgetSpecification) => {
 				const widget = WidgetAppDefinitions[definitionId];
