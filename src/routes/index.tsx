@@ -29,8 +29,8 @@ function Home() {
 		const execute = async () => {
 			if (cancelled) return;
 
-			openApp("terminal", undefined, true)
-			setCommandExpressions(["task.add Read book"])
+			// openApp("terminal", undefined, true)
+			// setCommandExpressions(["task.add Read book"])
 		}
 		void execute();
 

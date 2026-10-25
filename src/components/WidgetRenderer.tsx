@@ -66,8 +66,6 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 
 	const { source, sizeConfigurations } = WidgetAppDefinitions[definitionId];
 
-	if (hidden) return null;
-
 	const minW = sizeConfigurations?.minimumWidth ?? MIN_WIDGET_W;
 	const minH = sizeConfigurations?.minimumHeight ?? MIN_WIDGET_H;
 	const maxW = sizeConfigurations?.maximumWidth ?? 200;
@@ -157,6 +155,9 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 		e.stopPropagation();
 	};
 
+	if (hidden) return null;
+
+
 	if (minimized) {
 		return (
 			<div
@@ -220,9 +221,8 @@ export default function WidgetRenderer({ widget }: { widget: WidgetInstance }) {
 					<button
 						type="button"
 						onClick={() => lockWidget(id, !locked)}
-						className={`w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-yellow-400/20 ${
-							locked ? "text-yellow-400" : "text-white/60 hover:text-white"
-						} text-sm`}
+						className={`w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-yellow-400/20 ${locked ? "text-yellow-400" : "text-white/60 hover:text-white"
+							} text-sm`}
 						title={locked ? "Unlock" : "Lock"}
 					>
 						{locked ? <FaLock /> : <FaLockOpen />}

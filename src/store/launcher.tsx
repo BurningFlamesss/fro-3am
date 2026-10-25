@@ -1,5 +1,5 @@
 import { e, evaluate } from "mathjs";
-import { type ComponentType, useMemo, useRef, useState } from "react";
+import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { cn, generateTypingParagraph } from "#/lib/utils.ts";
@@ -296,6 +296,7 @@ function WordGuessingGame({ params }: LaunchProps) {
 }
 
 function MentalMathGame({ params }: LaunchProps) {
+	const inputRef = useRef<HTMLInputElement>(null)
 	const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 	const operations = ["+", "-", "*"]
 	const braces = ["(", ")", "{", "}", "[", "]"]
@@ -439,14 +440,33 @@ function MentalMathGame({ params }: LaunchProps) {
 
 		return {
 			question,
-			answer: evaluate(question)
+			answer: evaluate(question) as number
 		}
 	}
 
-	const { question, answer } = generateQuestionAndAnswer("high")
+	const { question, answer } = generateQuestionAndAnswer("easy")
 
-	return <>
-		<p>{question}</p>
-		&rarr; {answer}
-	</>
+	const [value, setValue] = useState<string>("")
+
+	useEffect(() => {
+		if (inputRef.current) {
+			inputRef.current.focus()
+		}
+	}, [])
+
+	useEffect(() => {
+		if (value.trim()) {
+			const writtenAnswer = Number(value.trim())
+
+			if (writtenAnswer === Math.floor(answer)) {
+				alert("GOATED!!!")
+			}
+		}
+	}, [value])
+
+	return <main className="min-h-full min-w-full flex flex-col items-center justify-start p-4">
+		<h1 className="text-4xl font-black">{question}</h1>
+
+		<input value={value} onChange={e => setValue(prev => e.target.value)} ref={inputRef} className="caret-green-500 border-0 outline-0 min-w-3/4 min-h-24 text-2xl font-black text-center my-auto" type="text" />
+	</main>
 }

@@ -6,7 +6,7 @@ import { useWindowStore } from "#/store/window";
 function MediaPlayerEngine() {
 	const audioElementRef = useRef<HTMLAudioElement>(null);
 	const youTubePlayerRef = useRef<YouTube>(null);
-	const timeUpdateIntervalRef = useRef<NodeJS.Timeout>();
+	const timeUpdateIntervalRef = useRef<NodeJS.Timeout>(null);
 	const previousMusicWindowCountRef = useRef(0);
 
 	const track = useMusicStore((state) => state.tracks[state.currentIndex]);
