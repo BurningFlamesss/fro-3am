@@ -62,6 +62,26 @@ export const useLauncherStore = create<LauncherStore>()(
 					},
 					showInCollections: true,
 				},
+				app_frodle: {
+					id: "app_frodle",
+					name: "Frodle",
+					logo: "/apps/Frodle.svg",
+					source: {
+						type: "fromponent",
+						code: WordGuessingGame,
+					},
+					showInCollections: true,
+				},
+				app_frathematics: {
+					id: "app_frathematics",
+					name: "Frathematics",
+					logo: "/apps/Frathematics.svg",
+					source: {
+						type: "fromponent",
+						code: MathGame,
+					},
+					showInCollections: true,
+				},
 			},
 			recentLaunches: new Map<string, number>(),
 			launch: (data, props) =>
@@ -268,4 +288,12 @@ function FypeMaster({ params }: LaunchProps) {
 			</p>
 		</div>
 	);
+}
+
+function WordGuessingGame({ params }: LaunchProps) {
+	return <></>
+}
+
+function MathGame({ params }: LaunchProps) {
+	return <></>
 }

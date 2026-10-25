@@ -15,14 +15,14 @@ function Launcher({ props }: WidgetProps) {
 			};
 
 			const injectableCode = `
-      <style>
-        body {
-          font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
-        }
-      </style>
-      <main>
-        ${source.code}
-      </main>
+			<style>
+				body {
+				font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+				}
+			</style>
+			<main>
+				${source.code}
+			</main>
 		`;
 
 			return (

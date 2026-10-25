@@ -30,3 +30,17 @@
 # Pomodoro Sound
 
     Sound Effect by <a href="https://pixabay.com/users/ribhavagrawal-39286533/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=293314">Ribhav Agrawal</a> from <a href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=293314">Pixabay</a>
+
+# SVG logo 
+
+- Figma
+
+- Svgrepo.com
+
+    COLLECTION: Arcticons Thin Line Icons
+    LICENSE: GPL License
+    AUTHOR: Donnnno
+
+    COLLECTION: School Set 2
+    LICENSE: CC0 License
+    UPLOADER: SVG Repo
