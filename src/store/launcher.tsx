@@ -365,6 +365,30 @@ function MentalMathGame({ params }: LaunchProps) {
 					break;
 				}
 			}
+
+		}
+
+		switch (bracesCount) {
+			case 0:
+
+				break;
+
+			case 2: {
+				const possibleStartIndices = [0, 2]
+				const random = possibleStartIndices[Math.floor(Math.random() * possibleStartIndices.length)]
+				questionTerms.splice(random, 0, "(")
+				questionTerms.splice(random + 4, 0, ")")
+				break;
+			}
+			case 4: {
+				const possibleStartIndices = [0, 2, 4]
+				const random = possibleStartIndices[Math.floor(Math.random() * possibleStartIndices.length)]
+				questionTerms.splice(random, 0, "(")
+				questionTerms.splice(random + 4, 0, ")")
+				break;
+			}
+			default:
+				break;
 		}
 
 		const question = questionTerms.join(" ")
@@ -375,7 +399,7 @@ function MentalMathGame({ params }: LaunchProps) {
 		}
 	}
 
-	const { question, answer } = generateQuestionAndAnswer("mid")
+	const { question, answer } = generateQuestionAndAnswer("high")
 
 	return <>
 		<p>{question}</p>
