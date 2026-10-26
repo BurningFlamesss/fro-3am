@@ -299,6 +299,7 @@ function Frodle({ params }: LaunchProps) {
 	const structure = [5, 5, 5, 5, 5]
 	const [mode, setMode] = useState<"full-random-list" | "notes" | "shortlisted-word-list">("shortlisted-word-list")
 	const [randomWord, setRandomWord] = useState<string>("")
+	const [currentRow, setCurrentRow] = useState<number>(0)
 	const nodes = useFileSystemStore(state => state.nodes)
 	const [guesses, setGuesses] = useState<Record<number, Array<string>>>({
 		0: ["", "", "", "", ""],
@@ -392,6 +393,7 @@ function Frodle({ params }: LaunchProps) {
 									return (
 										<td key={`col-${indexCol}`} className="h-12 w-12 rounded-xl border-2 border-blue-500 flex flex-row items-center justify-center">
 											<input
+												disabled={currentRow !== indexRow}
 												value={guesses[indexRow][indexCol]}
 												onChange={(event) => {
 													const letter = event.target.value?.at(-1) || ""
@@ -408,8 +410,18 @@ function Frodle({ params }: LaunchProps) {
 														return
 													}
 													if (nextRow) {
-														const nextInputBox = document.getElementById(`frodle-input-row-${indexRow + 1}-col-${0}`)
-														nextInputBox?.focus()
+														const containsEmptyElementIndex = guesses[indexRow].indexOf("")
+
+														if (Number.isInteger(containsEmptyElementIndex)) {
+															const nextInputBox = document.getElementById(`frodle-input-row-${indexRow}-col-${containsEmptyElementIndex}`)
+
+															nextInputBox?.focus()
+														} else {
+															setCurrentRow(indexRow + 1)
+															const nextInputBox = document.getElementById(`frodle-input-row-${indexRow + 1}-col-${0}`)
+
+															nextInputBox?.focus()
+														}
 													} else {
 														const nextInputBox = document.getElementById(`frodle-input-row-${indexRow}-col-${indexCol + 1}`)
 														nextInputBox?.focus()
