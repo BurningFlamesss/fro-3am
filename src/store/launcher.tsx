@@ -5,6 +5,7 @@ import { immer } from "zustand/middleware/immer";
 import { cn, formatTime, generateTypingParagraph } from "#/lib/utils.ts";
 import resetImg from "../../public/widgets/pomodoro/reset.png";
 import { useWindowStore } from "./window";
+import { totalWordCount, words } from "#/constants/words.tsx";
 
 export type LaunchProps = {
 	windowId?: string;
@@ -70,7 +71,7 @@ export const useLauncherStore = create<LauncherStore>()(
 					logo: "/apps/Frodle.svg",
 					source: {
 						type: "fromponent",
-						code: WordGuessingGame,
+						code: Frodle,
 					},
 					showInCollections: true,
 				},
@@ -292,8 +293,21 @@ function FypeMaster({ params }: LaunchProps) {
 	);
 }
 
-function WordGuessingGame({ params }: LaunchProps) {
-	return <></>
+function Frodle({ params }: LaunchProps) {
+	const [randomWord, setRandomWord] = useState<string>("")
+
+	useEffect(() => {
+		const randomWordIndex = Math.floor(Math.random() * totalWordCount)
+		const word = words[randomWordIndex][0]
+		console.log("Word: ", word)
+		setRandomWord(word)
+	}, [])
+
+	return (
+		<main className="min-h-full min-w-full flex flex-col items-center justify-start">
+			{randomWord}
+		</main>
+	)
 }
 
 function MentalMathGame({ params }: LaunchProps) {
@@ -354,7 +368,7 @@ function MentalMathGame({ params }: LaunchProps) {
 		}
 		if (allowDivision) {
 			operations.push("/")
-		} 
+		}
 
 		const operators = []
 		const operands = []
