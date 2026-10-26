@@ -182,4 +182,5 @@ Step 5 (Optional):
 ## AI Declarations
 
 - *(Please see AI Declarations at README-from-old-ship-at-macondo.md for any AI usages done on previous ship)*
-- "Rendered fewer hooks than expected. This may be caused by an accidental early return statement" due to the fact that I mistakenly spelt the intended useWidgetAppsStore as usewidgetAppsStore which doesnot fit under the react hook and thus getting the issue. Eventually used AI to fix that which took almost 8 minutes (I get this time by the fact that I started opencode when 1 hour was looged today, and stopped when it was done at 1 hour 8 minutes).
+- `Rendered fewer hooks than expected. This may be caused by an accidental early return statement` due to the fact that I mistakenly spelt the intended useWidgetAppsStore as usewidgetAppsStore which doesnot fit under the react hook and thus getting the issue. Eventually used AI to fix that which took almost 8 minutes (I get this time by the fact that I started opencode when 1 hour was looged today, and stopped when it was done at 1 hour 8 minutes).
+- `/src/constants/words.tsx`. I used AI to create a list of words with their frequency and difficulties and copy pasted them in the file so that Frodle can use the random word from there. (Only the words are from AI)

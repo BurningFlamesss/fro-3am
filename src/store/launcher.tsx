@@ -294,7 +294,15 @@ function FypeMaster({ params }: LaunchProps) {
 }
 
 function Frodle({ params }: LaunchProps) {
+	const structure = [5, 5, 5, 5, 5]
 	const [randomWord, setRandomWord] = useState<string>("")
+	const [guesses, setGuesses] = useState<Record<number, string>>({
+		1: "",
+		2: "",
+		3: "",
+		4: "",
+		5: ""
+	})
 
 	useEffect(() => {
 		const randomWordIndex = Math.floor(Math.random() * totalWordCount)
@@ -305,7 +313,26 @@ function Frodle({ params }: LaunchProps) {
 
 	return (
 		<main className="min-h-full min-w-full flex flex-col items-center justify-start">
-			{randomWord}
+			<nav className="w-full p-4 flex flex-row justify-between items-center"></nav>
+			<section className="min-h-full min-w-full flex flex-row items-center justify-center">
+				<table className="h-64 w-64 flex flex-row items-center justify-between gap-x-2">
+					{structure.map((row) => {
+
+						return (
+							<tr className="flex flex-col items-center justify-between gap-y-2">
+								{Array.from({ length: row }).map((col) => {
+
+									return (
+										<td className="h-12 w-12 rounded-xl border-2 border-blue-500 flex flex-row items-center justify-center">
+											<input className="min-h-full min-w-full flex flex-row items-center justify-center border-0 outline-0 text-center" />
+											</td>
+									)
+								})}
+							</tr>
+						)
+					})}
+				</table>
+			</section>
 		</main>
 	)
 }
@@ -590,7 +617,7 @@ function MentalMathGame({ params }: LaunchProps) {
 			</nav>
 
 			{timeLeft === 0 ? (
-				<section className="h-full w-full flex flex-col items-center justify-start p-4 gap-y-8">
+				<section className="h-full w-full flex flex-col items-center justify-center p-4 gap-y-8 my-auto">
 					<h1 className="text-4xl font-black">Your score is {score}.</h1>
 
 					<button
@@ -617,7 +644,7 @@ function MentalMathGame({ params }: LaunchProps) {
 
 				</section>
 			) : (
-				<section className="h-full w-full flex flex-col items-center justify-start p-4 gap-y-8">
+				<section className="h-full w-full flex flex-col items-center justify-center p-4 gap-y-8">
 					<h1 className="text-4xl font-black">{question}</h1>
 
 					<input
