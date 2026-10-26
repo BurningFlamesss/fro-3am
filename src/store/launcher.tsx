@@ -296,6 +296,7 @@ function WordGuessingGame({ params }: LaunchProps) {
 }
 
 function MentalMathGame({ params }: LaunchProps) {
+	const frameRef = useRef<number>(0)
 	const inputRef = useRef<HTMLInputElement>(null)
 	const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 	const operations = ["+", "-", "*"]
@@ -307,7 +308,7 @@ function MentalMathGame({ params }: LaunchProps) {
 			letterMaxCap: [1, 2],
 			allowDivison: false
 		},
-		mid: {
+		medium: {
 			operatorCount: 2,
 			operandCount: 3,
 			bracesCount: 2,
@@ -332,13 +333,13 @@ function MentalMathGame({ params }: LaunchProps) {
 
 	// immediate logic to me is generate
 	// (1 operator, and 2 operands 1-2 digit for easy level), 
-	// (2 operator, 3 operands 2 digit, and 1 brace for mid), 
+	// (2 operator, 3 operands 2 digit, and 1 brace for medium), 
 	// (3 operators, 4 operands 2 digit, and 2 brace for high)
 	// order: operand + operator + operand
 	//  || braceOpen + operand + operator + operand + braceClose + operand + operator + operand
 	//  || braceOpen + braceOpen* operand + operator + operand + braceClose* + operand + operator + operand + braceClose + operand + operator + operand
 	//  || braceOpen + operand + operator + operand + braceClose + operand + operator + operand + braceOpen + operand + operator + operand + braceClose
-	function generateQuestionAndAnswer(level: "easy" | "mid" | "high" | "extreme") {
+	function generateQuestionAndAnswer(level: "easy" | "medium" | "high" | "extreme") {
 		let questionTerms = []
 
 		const { operatorCount, bracesCount, letterMaxCap, operandCount, allowDivision } = levelSystem[level]
@@ -442,18 +443,25 @@ function MentalMathGame({ params }: LaunchProps) {
 		}
 	}
 
-	const { question, answer } = generateQuestionAndAnswer("easy")
+	const [level, setLevel] = useState<"easy" | "medium" | "high" | "extreme">("easy")
+	const [question, setQuestion] = useState<string>("")
+	const [answer, setAnswer] = useState<number>(0)
 	const [timeLeft, setTimeLeft] = useState<number>(1 * 60);
 	const [isRunning, setIsRunning] = useState<boolean>(true);
 	const [value, setValue] = useState<string>("")
 	const endTimeRef = useRef<number>(0);
 	const totalDurationRef = useRef<number>(1 * 60);
-
+	const [score, setScore] = useState<number>(0)
 
 	useEffect(() => {
 		if (inputRef.current) {
 			inputRef.current.focus()
 		}
+
+		const { answer: ans, question: ques } = generateQuestionAndAnswer(level)
+
+		setQuestion(ques)
+		setAnswer(ans)
 	}, [])
 
 	useEffect(() => {
@@ -461,8 +469,19 @@ function MentalMathGame({ params }: LaunchProps) {
 			const writtenAnswer = Number(value.trim())
 
 			if (writtenAnswer === Math.floor(answer)) {
-				alert("GOATED!!!")
+				const { answer: ans, question: ques } = generateQuestionAndAnswer(level)
+
+				setValue("")
+
+				setScore(prev => prev + 1)
+				setQuestion(ques)
+				setAnswer(ans)
 			}
+
+		}
+
+		if (inputRef.current) {
+			inputRef.current.focus()
 		}
 	}, [value])
 
@@ -485,15 +504,10 @@ function MentalMathGame({ params }: LaunchProps) {
 			});
 
 			if (remaining > 0) {
-				requestAnimationFrame(updateTimer)
-				// animationFrameRef.current = requestAnimationFrame(updateTimer);
+				frameRef.current = requestAnimationFrame(updateTimer);
 			} else {
 				setIsRunning(false);
-				// setImage(playImg);
-				// setGifImage(idleGif);
 				setTimeLeft(totalDurationRef.current);
-
-				// frokAudioRef.current?.play().catch(() => { });
 			}
 		};
 
@@ -501,16 +515,53 @@ function MentalMathGame({ params }: LaunchProps) {
 
 		endTimeRef.current = Date.now() + remainingSeconds * 1000;
 		requestAnimationFrame(updateTimer)
-		// animationFrameRef.current = requestAnimationFrame(updateTimer);
+		frameRef.current = requestAnimationFrame(updateTimer);
 
 		return () => {
-			// cancelAnimationFrame(animationFrameRef.current)
+			cancelAnimationFrame(frameRef.current)
 		};
 	}, [isRunning]);
 
 	return (
 		<main className="min-h-full min-w-full flex flex-col items-center justify-start p-4">
-			{formatTime(timeLeft)}
+			<nav className="w-full pb-4 px-4 flex flex-row justify-between items-center">
+				<span>
+					<select
+						onClick={(e) => {
+							e.stopPropagation();
+						}}
+						id={level}
+						value={level}
+						onChange={(event) => {
+							setLevel(event.target.value as "easy" | "extreme" | "high" | "medium")
+							setTimeLeft(1 * 60)
+
+							const { answer: ans, question: ques } = generateQuestionAndAnswer(event.target.value as "easy" | "extreme" | "high" | "medium")
+							setQuestion(ques)
+							setAnswer(ans)
+							endTimeRef.current = 0
+							setScore(0)
+							setIsRunning(true)
+						}}
+						className="border-0 outline-0 bg-transparent text-white text-xs cursor-pointer"
+					>
+						<option className="text-black cursor-pointer" value="easy">
+							EASY
+						</option>
+						<option className="text-black cursor-pointer" value="medium">
+							MEDIUM
+						</option>
+						<option className="text-black cursor-pointer" value="high">
+							HIGH
+						</option>
+						<option className="text-black cursor-pointer" value="extreme">
+							EXTREME
+						</option>
+					</select>
+				</span>
+				<span>{formatTime(timeLeft)}</span>
+			</nav>
+
 			<h1 className="text-4xl font-black">{question}</h1>
 
 			<input
