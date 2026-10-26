@@ -299,7 +299,10 @@ function Frodle({ params }: LaunchProps) {
 	const structure = [5, 5, 5, 5, 5]
 	const [mode, setMode] = useState<"full-random-list" | "notes" | "shortlisted-word-list">("shortlisted-word-list")
 	const [randomWord, setRandomWord] = useState<string>("")
-	const [currentRow, setCurrentRow] = useState<number>(0)
+	const [currentPosition, setCurrentPosition] = useState<{ row: number, col: number }>({
+		row: 0,
+		col: 0
+	})
 	const nodes = useFileSystemStore(state => state.nodes)
 	const [guesses, setGuesses] = useState<Record<number, Array<string>>>({
 		0: ["", "", "", "", ""],
@@ -350,8 +353,12 @@ function Frodle({ params }: LaunchProps) {
 	}, [])
 
 	useEffect(() => {
-		console.log("Guesses: ", guesses)
-	}, [guesses])
+		if (!currentPosition) {
+			return
+		}
+
+		document.getElementById(`frodle-input-row-${currentPosition.row}-col-${currentPosition.col}`)?.focus()
+	}, [currentPosition])
 
 	return (
 		<main className="min-h-full min-w-full flex flex-col items-center justify-start">
@@ -393,38 +400,39 @@ function Frodle({ params }: LaunchProps) {
 									return (
 										<td key={`col-${indexCol}`} className="h-12 w-12 rounded-xl border-2 border-blue-500 flex flex-row items-center justify-center">
 											<input
-												disabled={currentRow !== indexRow}
+												disabled={currentPosition.row !== indexRow}
 												value={guesses[indexRow][indexCol]}
 												onChange={(event) => {
-													const letter = event.target.value?.at(-1) || ""
+													const letter = event.target.value?.at(-1)?.toUpperCase() || ""
+
+													if (!(["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"].includes(letter))) {
+														return
+													}
+
+													const updatedRow = guesses[indexRow].map((prev, index) => index === indexCol ? letter : prev)
 
 													setGuesses(prev => ({
 														...prev,
-														[indexRow]: prev[indexRow].map((pre, index) => index === indexCol ? letter : pre)
+														[indexRow]: updatedRow
 													}))
 
-													const nextRow = indexCol === 4
-													const isFinished = nextRow ? indexRow === 4 : false
+													if (updatedRow.every(char => char !== "")) {
+														if (indexRow < 4) {
+															setCurrentPosition({
+																row: indexRow + 1,
+																col: 0
+															})
 
-													if (isFinished) {
-														return
-													}
-													if (nextRow) {
-														const containsEmptyElementIndex = guesses[indexRow].indexOf("")
-
-														if (Number.isInteger(containsEmptyElementIndex)) {
-															const nextInputBox = document.getElementById(`frodle-input-row-${indexRow}-col-${containsEmptyElementIndex}`)
-
-															nextInputBox?.focus()
-														} else {
-															setCurrentRow(indexRow + 1)
-															const nextInputBox = document.getElementById(`frodle-input-row-${indexRow + 1}-col-${0}`)
-
-															nextInputBox?.focus()
+															return
 														}
-													} else {
-														const nextInputBox = document.getElementById(`frodle-input-row-${indexRow}-col-${indexCol + 1}`)
-														nextInputBox?.focus()
+													} else if (indexCol < 4) {
+														const indexOfColWithEmptyCharacter = updatedRow.indexOf("")
+
+														setCurrentPosition({
+															row: indexRow,
+															col: indexOfColWithEmptyCharacter
+														})
+
 													}
 												}}
 												id={`frodle-input-row-${indexRow}-col-${indexCol}`}
