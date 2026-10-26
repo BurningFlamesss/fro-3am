@@ -1,4 +1,4 @@
-import { e, evaluate } from "mathjs";
+import { evaluate } from "mathjs";
 import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
@@ -7,7 +7,6 @@ import resetImg from "../../public/widgets/pomodoro/reset.png";
 import { useWindowStore } from "./window";
 import { totalWordCount, words } from "#/constants/words.tsx";
 import { generate } from "random-words";
-import { useNoteStore } from "./note";
 import { useFileSystemStore } from "./fs";
 
 export type LaunchProps = {
@@ -301,12 +300,12 @@ function Frodle({ params }: LaunchProps) {
 	const [mode, setMode] = useState<"full-random-list" | "notes" | "shortlisted-word-list">("shortlisted-word-list")
 	const [randomWord, setRandomWord] = useState<string>("")
 	const nodes = useFileSystemStore(state => state.nodes)
-	const [guesses, setGuesses] = useState<Record<number, string>>({
-		1: "",
-		2: "",
-		3: "",
-		4: "",
-		5: ""
+	const [guesses, setGuesses] = useState<Record<number, Array<string>>>({
+		0: ["", "", "", "", ""],
+		1: ["", "", "", "", ""],
+		2: ["", "", "", "", ""],
+		3: ["", "", "", "", ""],
+		4: ["", "", "", "", ""],
 	})
 
 	function generateNewRandomWord(mode: "full-random-list" | "notes" | "shortlisted-word-list") {
@@ -349,6 +348,10 @@ function Frodle({ params }: LaunchProps) {
 		generateNewRandomWord(mode)
 	}, [])
 
+	useEffect(() => {
+		console.log("Guesses: ", guesses)
+	}, [guesses])
+
 	return (
 		<main className="min-h-full min-w-full flex flex-col items-center justify-start">
 			<nav className="w-full p-4 flex flex-row justify-between items-center">
@@ -380,15 +383,27 @@ function Frodle({ params }: LaunchProps) {
 			</nav>
 			<section className="min-h-full min-w-full flex flex-row items-center justify-center">
 				<table className="h-64 w-64 flex flex-row items-center justify-between gap-x-2">
-					{structure.map((row) => {
+					{structure.map((row, indexRow) => {
 
 						return (
-							<tr className="flex flex-col items-center justify-between gap-y-2">
-								{Array.from({ length: row }).map((col) => {
+							<tr key={`row-${indexRow}`} className="flex flex-col items-center justify-between gap-y-2">
+								{Array.from({ length: row }).map((col, indexCol) => {
 
 									return (
-										<td className="h-12 w-12 rounded-xl border-2 border-blue-500 flex flex-row items-center justify-center">
-											<input className="min-h-full min-w-full flex flex-row items-center justify-center border-0 outline-0 text-center" />
+										<td key={`col-${indexCol}`} className="h-12 w-12 rounded-xl border-2 border-blue-500 flex flex-row items-center justify-center">
+											<input
+												value={guesses[indexCol][indexRow]}
+												onChange={(event) => {
+													const letter = event.target.value?.at(-1) || ""
+
+													setGuesses(prev => ({
+														...prev,
+														[indexCol]: prev[indexCol].map((pre, index) => index === indexRow ? letter : pre)
+													}))
+												}}
+												id={`frodle-input-row-${indexRow}-col-${indexCol}`}
+												className="min-h-full min-w-full flex flex-row items-center justify-center border-0 outline-0 text-center"
+											/>
 										</td>
 									)
 								})}
