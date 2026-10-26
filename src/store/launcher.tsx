@@ -3,6 +3,7 @@ import { type ComponentType, useEffect, useMemo, useRef, useState } from "react"
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { cn, formatTime, generateTypingParagraph } from "#/lib/utils.ts";
+import resetImg from "../../public/widgets/pomodoro/reset.png";
 import { useWindowStore } from "./window";
 
 export type LaunchProps = {
@@ -299,34 +300,38 @@ function MentalMathGame({ params }: LaunchProps) {
 	const frameRef = useRef<number>(0)
 	const inputRef = useRef<HTMLInputElement>(null)
 	const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-	const operations = ["+", "-", "*"]
+	const operations = ["+", "-"]
 	const levelSystem = {
 		easy: {
 			operatorCount: 1,
 			operandCount: 2,
 			bracesCount: 0,
 			letterMaxCap: [1, 2],
-			allowDivison: false
+			allowMultiplication: false,
+			allowDivision: false
 		},
 		medium: {
 			operatorCount: 2,
 			operandCount: 3,
 			bracesCount: 2,
 			letterMaxCap: [2],
-			allowDivison: false
+			allowMultiplication: true,
+			allowDivision: false
 		},
 		high: {
 			operatorCount: 3,
 			operandCount: 4,
 			bracesCount: 4,
 			letterMaxCap: [2],
-			allowDivison: false
+			allowMultiplication: true,
+			allowDivision: false
 		},
 		extreme: {
 			operatorCount: 3,
 			operandCount: 4,
 			bracesCount: 4,
 			letterMaxCap: [2],
+			allowMultiplication: true,
 			allowDivision: true
 		}
 	}
@@ -342,11 +347,14 @@ function MentalMathGame({ params }: LaunchProps) {
 	function generateQuestionAndAnswer(level: "easy" | "medium" | "high" | "extreme") {
 		let questionTerms = []
 
-		const { operatorCount, bracesCount, letterMaxCap, operandCount, allowDivision } = levelSystem[level]
+		const { operatorCount, bracesCount, letterMaxCap, operandCount, allowDivision, allowMultiplication } = levelSystem[level]
 
+		if (allowMultiplication) {
+			operations.push("*")
+		}
 		if (allowDivision) {
 			operations.push("/")
-		}
+		} 
 
 		const operators = []
 		const operands = []
@@ -479,10 +487,6 @@ function MentalMathGame({ params }: LaunchProps) {
 			}
 
 		}
-
-		if (inputRef.current) {
-			inputRef.current.focus()
-		}
 	}, [value])
 
 	useEffect(() => {
@@ -507,7 +511,7 @@ function MentalMathGame({ params }: LaunchProps) {
 				frameRef.current = requestAnimationFrame(updateTimer);
 			} else {
 				setIsRunning(false);
-				setTimeLeft(totalDurationRef.current);
+				setTimeLeft(0);
 			}
 		};
 
@@ -523,8 +527,8 @@ function MentalMathGame({ params }: LaunchProps) {
 	}, [isRunning, level]);
 
 	return (
-		<main className="min-h-full min-w-full flex flex-col items-center justify-start p-4">
-			<nav className="w-full pb-4 px-4 flex flex-row justify-between items-center">
+		<main className="min-h-full min-w-full flex flex-col items-center justify-start">
+			<nav className="w-full p-4 flex flex-row justify-between items-center">
 				<span>
 					<select
 						onClick={(e) => {
@@ -544,7 +548,7 @@ function MentalMathGame({ params }: LaunchProps) {
 							setAnswer(ans)
 
 							setIsRunning(true)
-							
+
 							if (inputRef.current) {
 								inputRef.current.focus()
 							}
@@ -565,17 +569,53 @@ function MentalMathGame({ params }: LaunchProps) {
 						</option>
 					</select>
 				</span>
-				<span>{formatTime(timeLeft)}</span>
+				<div className="flex flex-row items-center justify-center gap-4">
+					<span>Score: {score}</span>
+					<span>{formatTime(timeLeft)}</span>
+				</div>
 			</nav>
 
-			<h1 className="text-4xl font-black">{question}</h1>
+			{timeLeft === 0 ? (
+				<section className="h-full w-full flex flex-col items-center justify-start p-4 gap-y-8">
+					<h1 className="text-4xl font-black">Your score is {score}.</h1>
 
-			<input
-				value={value}
-				onChange={e => setValue(prev => e.target.value)}
-				ref={inputRef}
-				className="caret-green-500 border-0 outline-0 min-w-3/4 min-h-24 text-2xl font-black text-center my-auto"
-				type="text" />
+					<button
+						onClick={() => {
+							setTimeLeft(1 * 60)
+							setScore(0)
+							setValue("")
+
+							const { answer: ans, question: ques } = generateQuestionAndAnswer(level)
+							setQuestion(ques)
+							setAnswer(ans)
+
+							setIsRunning(true)
+
+							if (inputRef.current) {
+								inputRef.current.focus()
+							}
+						}}
+						type="button"
+						className="bg-none border-none cursor-pointer"
+					>
+						<img src={resetImg} className="w-15" alt="Button" />
+					</button>
+
+				</section>
+			) : (
+				<section className="h-full w-full flex flex-col items-center justify-start p-4 gap-y-8">
+					<h1 className="text-4xl font-black">{question}</h1>
+
+					<input
+						value={value}
+						onChange={e => setValue(prev => e.target.value)}
+						ref={inputRef}
+						className="caret-green-500 border-0 border-b-2 outline-0 min-w-3/4 min-h-16 text-2xl font-black text-center"
+						type="text"
+					/>
+				</section>
+			)}
+
 		</main>
 	)
 }
