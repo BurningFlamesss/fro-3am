@@ -309,7 +309,7 @@ function Frodle({ params }: LaunchProps) {
 		5: ""
 	})
 
-	useEffect(() => {
+	function generateNewRandomWord(mode: "full-random-list" | "notes" | "shortlisted-word-list") {
 		let word: string = ""
 		switch (mode) {
 			case "shortlisted-word-list": {
@@ -326,7 +326,7 @@ function Frodle({ params }: LaunchProps) {
 				const notes = nodes["notes"]
 
 				for (const noteId of notes?.children || []) {
-					const contentArray = (nodes[noteId]?.content ?? "").split(" ").filter((str) => str.length !== 5)
+					const contentArray = (nodes[noteId]?.content ?? "").split(/\s+/).filter((str) => str.length === 5)
 					contentArray.map(cont => content.push(cont))
 				}
 
@@ -341,33 +341,42 @@ function Frodle({ params }: LaunchProps) {
 
 		console.log("Word: ", word)
 		setRandomWord(word.toUpperCase())
+
+		return word.toUpperCase()
+	}
+
+	useEffect(() => {
+		generateNewRandomWord(mode)
 	}, [])
 
 	return (
 		<main className="min-h-full min-w-full flex flex-col items-center justify-start">
 			<nav className="w-full p-4 flex flex-row justify-between items-center">
-				From <select
-					onClick={(e) => {
-						e.stopPropagation();
-					}}
-					id={mode}
-					value={mode}
-					onChange={(event) => {
-						const targetMode = event.target.value as "full-random-list" | "notes" | "shortlisted-word-list"
-						setMode(targetMode)
-					}}
-					className="border-0 outline-0 bg-transparent text-white text-xs cursor-pointer"
-				>
-					<option className="text-black cursor-pointer" value="shortlisted-word-list">
-						SHORTLISTED-WORD-LIST
-					</option>
-					<option className="text-black cursor-pointer" value="notes">
-						NOTES
-					</option>
-					<option className="text-black cursor-pointer" value="full-random-list">
-						FULL-RANDOM-LIST
-					</option>
-				</select>
+				<span>
+					From <select
+						onClick={(e) => {
+							e.stopPropagation();
+						}}
+						id={mode}
+						value={mode}
+						onChange={(event) => {
+							const targetMode = event.target.value as "full-random-list" | "notes" | "shortlisted-word-list"
+							setMode(targetMode)
+							generateNewRandomWord(targetMode)
+						}}
+						className="border-0 outline-0 bg-transparent text-white text-xs cursor-pointer"
+					>
+						<option className="text-black cursor-pointer" value="shortlisted-word-list">
+							SHORTLISTED-WORD-LIST
+						</option>
+						<option className="text-black cursor-pointer" value="notes">
+							NOTES
+						</option>
+						<option className="text-black cursor-pointer" value="full-random-list">
+							FULL-RANDOM-LIST
+						</option>
+					</select>
+				</span>
 			</nav>
 			<section className="min-h-full min-w-full flex flex-row items-center justify-center">
 				<table className="h-64 w-64 flex flex-row items-center justify-between gap-x-2">
