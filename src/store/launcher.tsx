@@ -520,7 +520,7 @@ function MentalMathGame({ params }: LaunchProps) {
 		return () => {
 			cancelAnimationFrame(frameRef.current)
 		};
-	}, [isRunning]);
+	}, [isRunning, level]);
 
 	return (
 		<main className="min-h-full min-w-full flex flex-col items-center justify-start p-4">
@@ -533,15 +533,21 @@ function MentalMathGame({ params }: LaunchProps) {
 						id={level}
 						value={level}
 						onChange={(event) => {
-							setLevel(event.target.value as "easy" | "extreme" | "high" | "medium")
+							const newLevel = event.target.value as "easy" | "extreme" | "high" | "medium"
+							setLevel(newLevel)
 							setTimeLeft(1 * 60)
+							setScore(0)
+							setValue("")
 
-							const { answer: ans, question: ques } = generateQuestionAndAnswer(event.target.value as "easy" | "extreme" | "high" | "medium")
+							const { answer: ans, question: ques } = generateQuestionAndAnswer(newLevel)
 							setQuestion(ques)
 							setAnswer(ans)
-							endTimeRef.current = 0
-							setScore(0)
+
 							setIsRunning(true)
+							
+							if (inputRef.current) {
+								inputRef.current.focus()
+							}
 						}}
 						className="border-0 outline-0 bg-transparent text-white text-xs cursor-pointer"
 					>
