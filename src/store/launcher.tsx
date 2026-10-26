@@ -360,6 +360,42 @@ function Frodle({ params }: LaunchProps) {
 		document.getElementById(`frodle-input-row-${currentPosition.row}-col-${currentPosition.col}`)?.focus()
 	}, [currentPosition])
 
+	const handleInput = (event: React.ChangeEvent<HTMLInputElement>, indexRow: number, indexCol: number) => {
+		const letter = event.target.value?.at(-1)?.toUpperCase() || ""
+
+		if (!(["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"].includes(letter))) {
+			return
+		}
+
+		const updatedRow = guesses[indexRow].map((prev, index) => index === indexCol ? letter : prev)
+
+		setGuesses(prev => ({
+			...prev,
+			[indexRow]: updatedRow
+		}))
+
+		if (updatedRow.every(char => char !== "")) {
+			if (indexRow < 4) {
+				setCurrentPosition({
+					row: indexRow + 1,
+					col: 0
+				})
+
+				return
+			}
+		} else if (indexCol < 4) {
+			const indexOfColWithEmptyCharacter = updatedRow.indexOf("")
+
+			setCurrentPosition({
+				row: indexRow,
+				col: indexOfColWithEmptyCharacter
+			})
+
+		} else {
+			// completed
+		}
+	}
+
 	return (
 		<main className="min-h-full min-w-full flex flex-col items-center justify-start">
 			<nav className="w-full p-4 flex flex-row justify-between items-center">
@@ -402,38 +438,32 @@ function Frodle({ params }: LaunchProps) {
 											<input
 												disabled={currentPosition.row !== indexRow}
 												value={guesses[indexRow][indexCol]}
-												onChange={(event) => {
-													const letter = event.target.value?.at(-1)?.toUpperCase() || ""
+												onKeyDown={(event) => {
+													if (event.key === "Backspace" || event.key === "Delete") {
+														const updatedRow = guesses[indexRow].map((prev, index) => index === indexCol ? "" : prev)
 
-													if (!(["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"].includes(letter))) {
-														return
+														setGuesses(prev => ({
+															...prev,
+															[indexRow]: updatedRow
+														}))
+
 													}
 
-													const updatedRow = guesses[indexRow].map((prev, index) => index === indexCol ? letter : prev)
-
-													setGuesses(prev => ({
-														...prev,
-														[indexRow]: updatedRow
-													}))
-
-													if (updatedRow.every(char => char !== "")) {
-														if (indexRow < 4) {
-															setCurrentPosition({
-																row: indexRow + 1,
-																col: 0
-															})
-
-															return
-														}
-													} else if (indexCol < 4) {
-														const indexOfColWithEmptyCharacter = updatedRow.indexOf("")
-
+													if (event.key === "Backspace" || event.key === "ArrowLeft") {
 														setCurrentPosition({
 															row: indexRow,
-															col: indexOfColWithEmptyCharacter
+															col: Math.max(0, indexCol - 1)
 														})
-
 													}
+													if (event.key === "Delete" || event.key === "ArrowRight") {
+														setCurrentPosition({
+															row: indexRow,
+															col: Math.min(4, indexCol + 1)
+														})
+													}
+												}}
+												onChange={(event) => {
+													handleInput(event, indexRow, indexCol)
 												}}
 												id={`frodle-input-row-${indexRow}-col-${indexCol}`}
 												className="min-h-full min-w-full flex flex-row items-center justify-center border-0 outline-0 text-center"
