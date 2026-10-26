@@ -6,6 +6,9 @@ import { cn, formatTime, generateTypingParagraph } from "#/lib/utils.ts";
 import resetImg from "../../public/widgets/pomodoro/reset.png";
 import { useWindowStore } from "./window";
 import { totalWordCount, words } from "#/constants/words.tsx";
+import { generate } from "random-words";
+import { useNoteStore } from "./note";
+import { useFileSystemStore } from "./fs";
 
 export type LaunchProps = {
 	windowId?: string;
@@ -295,7 +298,9 @@ function FypeMaster({ params }: LaunchProps) {
 
 function Frodle({ params }: LaunchProps) {
 	const structure = [5, 5, 5, 5, 5]
+	const [mode, setMode] = useState<"full-random-list" | "notes" | "shortlisted-word-list">("shortlisted-word-list")
 	const [randomWord, setRandomWord] = useState<string>("")
+	const nodes = useFileSystemStore(state => state.nodes)
 	const [guesses, setGuesses] = useState<Record<number, string>>({
 		1: "",
 		2: "",
@@ -305,15 +310,65 @@ function Frodle({ params }: LaunchProps) {
 	})
 
 	useEffect(() => {
-		const randomWordIndex = Math.floor(Math.random() * totalWordCount)
-		const word = words[randomWordIndex][0]
+		let word: string = ""
+		switch (mode) {
+			case "shortlisted-word-list": {
+				const randomWordIndex = Math.floor(Math.random() * totalWordCount)
+				word = words[randomWordIndex][0]
+				break;
+			}
+			case "full-random-list": {
+				word = generate({ exactly: 1, minLength: 5, maxLength: 5 })[0]
+				break;
+			}
+			case "notes": {
+				const content: Array<string> = []
+				const notes = nodes["notes"]
+
+				for (const noteId of notes?.children || []) {
+					const contentArray = (nodes[noteId]?.content ?? "").split(" ").filter((str) => str.length !== 5)
+					contentArray.map(cont => content.push(cont))
+				}
+
+				const randomWordIndex = Math.floor(Math.random() * content.length)
+				word = content[randomWordIndex] || "error"
+				break;
+			}
+
+			default:
+				break;
+		}
+
 		console.log("Word: ", word)
-		setRandomWord(word)
+		setRandomWord(word.toUpperCase())
 	}, [])
 
 	return (
 		<main className="min-h-full min-w-full flex flex-col items-center justify-start">
-			<nav className="w-full p-4 flex flex-row justify-between items-center"></nav>
+			<nav className="w-full p-4 flex flex-row justify-between items-center">
+				From <select
+					onClick={(e) => {
+						e.stopPropagation();
+					}}
+					id={mode}
+					value={mode}
+					onChange={(event) => {
+						const targetMode = event.target.value as "full-random-list" | "notes" | "shortlisted-word-list"
+						setMode(targetMode)
+					}}
+					className="border-0 outline-0 bg-transparent text-white text-xs cursor-pointer"
+				>
+					<option className="text-black cursor-pointer" value="shortlisted-word-list">
+						SHORTLISTED-WORD-LIST
+					</option>
+					<option className="text-black cursor-pointer" value="notes">
+						NOTES
+					</option>
+					<option className="text-black cursor-pointer" value="full-random-list">
+						FULL-RANDOM-LIST
+					</option>
+				</select>
+			</nav>
 			<section className="min-h-full min-w-full flex flex-row items-center justify-center">
 				<table className="h-64 w-64 flex flex-row items-center justify-between gap-x-2">
 					{structure.map((row) => {
@@ -325,7 +380,7 @@ function Frodle({ params }: LaunchProps) {
 									return (
 										<td className="h-12 w-12 rounded-xl border-2 border-blue-500 flex flex-row items-center justify-center">
 											<input className="min-h-full min-w-full flex flex-row items-center justify-center border-0 outline-0 text-center" />
-											</td>
+										</td>
 									)
 								})}
 							</tr>
