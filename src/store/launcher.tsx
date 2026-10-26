@@ -1,13 +1,13 @@
 import { evaluate } from "mathjs";
+import { generate } from "random-words";
 import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import { totalWordCount, words } from "#/constants/words.tsx";
 import { cn, formatTime, generateTypingParagraph } from "#/lib/utils.ts";
 import resetImg from "../../public/widgets/pomodoro/reset.png";
-import { useWindowStore } from "./window";
-import { totalWordCount, words } from "#/constants/words.tsx";
-import { generate } from "random-words";
 import { useFileSystemStore } from "./fs";
+import { useWindowStore } from "./window";
 
 export type LaunchProps = {
 	windowId?: string;
@@ -382,24 +382,38 @@ function Frodle({ params }: LaunchProps) {
 				</span>
 			</nav>
 			<section className="min-h-full min-w-full flex flex-row items-center justify-center">
-				<table className="h-64 w-64 flex flex-row items-center justify-between gap-x-2">
+				<table className="h-64 w-64 flex flex-col items-center justify-between gap-y-2">
 					{structure.map((row, indexRow) => {
 
 						return (
-							<tr key={`row-${indexRow}`} className="flex flex-col items-center justify-between gap-y-2">
+							<tr key={`row-${indexRow}`} className="flex flex-row items-center justify-between gap-x-2">
 								{Array.from({ length: row }).map((col, indexCol) => {
 
 									return (
 										<td key={`col-${indexCol}`} className="h-12 w-12 rounded-xl border-2 border-blue-500 flex flex-row items-center justify-center">
 											<input
-												value={guesses[indexCol][indexRow]}
+												value={guesses[indexRow][indexCol]}
 												onChange={(event) => {
 													const letter = event.target.value?.at(-1) || ""
 
 													setGuesses(prev => ({
 														...prev,
-														[indexCol]: prev[indexCol].map((pre, index) => index === indexRow ? letter : pre)
+														[indexRow]: prev[indexRow].map((pre, index) => index === indexCol ? letter : pre)
 													}))
+
+													const nextRow = indexCol === 4
+													const isFinished = nextRow ? indexRow === 4 : false
+
+													if (isFinished) {
+														return
+													}
+													if (nextRow) {
+														const nextInputBox = document.getElementById(`frodle-input-row-${indexRow + 1}-col-${0}`)
+														nextInputBox?.focus()
+													} else {
+														const nextInputBox = document.getElementById(`frodle-input-row-${indexRow}-col-${indexCol + 1}`)
+														nextInputBox?.focus()
+													}
 												}}
 												id={`frodle-input-row-${indexRow}-col-${indexCol}`}
 												className="min-h-full min-w-full flex flex-row items-center justify-center border-0 outline-0 text-center"
