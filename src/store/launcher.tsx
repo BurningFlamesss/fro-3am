@@ -2,7 +2,7 @@ import { e, evaluate } from "mathjs";
 import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { cn, generateTypingParagraph } from "#/lib/utils.ts";
+import { cn, formatTime, generateTypingParagraph } from "#/lib/utils.ts";
 import { useWindowStore } from "./window";
 
 export type LaunchProps = {
@@ -299,7 +299,6 @@ function MentalMathGame({ params }: LaunchProps) {
 	const inputRef = useRef<HTMLInputElement>(null)
 	const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 	const operations = ["+", "-", "*"]
-	const braces = ["(", ")", "{", "}", "[", "]"]
 	const levelSystem = {
 		easy: {
 			operatorCount: 1,
@@ -339,7 +338,6 @@ function MentalMathGame({ params }: LaunchProps) {
 	//  || braceOpen + operand + operator + operand + braceClose + operand + operator + operand
 	//  || braceOpen + braceOpen* operand + operator + operand + braceClose* + operand + operator + operand + braceClose + operand + operator + operand
 	//  || braceOpen + operand + operator + operand + braceClose + operand + operator + operand + braceOpen + operand + operator + operand + braceClose
-
 	function generateQuestionAndAnswer(level: "easy" | "mid" | "high" | "extreme") {
 		let questionTerms = []
 
@@ -445,8 +443,12 @@ function MentalMathGame({ params }: LaunchProps) {
 	}
 
 	const { question, answer } = generateQuestionAndAnswer("easy")
-
+	const [timeLeft, setTimeLeft] = useState<number>(1 * 60);
+	const [isRunning, setIsRunning] = useState<boolean>(true);
 	const [value, setValue] = useState<string>("")
+	const endTimeRef = useRef<number>(0);
+	const totalDurationRef = useRef<number>(1 * 60);
+
 
 	useEffect(() => {
 		if (inputRef.current) {
@@ -464,9 +466,59 @@ function MentalMathGame({ params }: LaunchProps) {
 		}
 	}, [value])
 
-	return <main className="min-h-full min-w-full flex flex-col items-center justify-start p-4">
-		<h1 className="text-4xl font-black">{question}</h1>
+	useEffect(() => {
+		if (!isRunning) {
+			return;
+		}
 
-		<input value={value} onChange={e => setValue(prev => e.target.value)} ref={inputRef} className="caret-green-500 border-0 outline-0 min-w-3/4 min-h-24 text-2xl font-black text-center my-auto" type="text" />
-	</main>
+		const updateTimer = () => {
+			const now = Date.now();
+			const remaining = Math.max(
+				0,
+				Math.ceil((endTimeRef.current - now) / 1000),
+			);
+
+			setTimeLeft((prev) => {
+				if (remaining !== prev) return remaining;
+
+				return prev;
+			});
+
+			if (remaining > 0) {
+				requestAnimationFrame(updateTimer)
+				// animationFrameRef.current = requestAnimationFrame(updateTimer);
+			} else {
+				setIsRunning(false);
+				// setImage(playImg);
+				// setGifImage(idleGif);
+				setTimeLeft(totalDurationRef.current);
+
+				// frokAudioRef.current?.play().catch(() => { });
+			}
+		};
+
+		const remainingSeconds = timeLeft;
+
+		endTimeRef.current = Date.now() + remainingSeconds * 1000;
+		requestAnimationFrame(updateTimer)
+		// animationFrameRef.current = requestAnimationFrame(updateTimer);
+
+		return () => {
+			// cancelAnimationFrame(animationFrameRef.current)
+		};
+	}, [isRunning]);
+
+	return (
+		<main className="min-h-full min-w-full flex flex-col items-center justify-start p-4">
+			{formatTime(timeLeft)}
+			<h1 className="text-4xl font-black">{question}</h1>
+
+			<input
+				value={value}
+				onChange={e => setValue(prev => e.target.value)}
+				ref={inputRef}
+				className="caret-green-500 border-0 outline-0 min-w-3/4 min-h-24 text-2xl font-black text-center my-auto"
+				type="text" />
+		</main>
+	)
 }

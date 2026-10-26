@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { cn } from "#/lib/utils.ts";
+import { cn, formatTime } from "#/lib/utils.ts";
 import breakGif from "../../public/widgets/pomodoro/break.gif";
 import breakBtn from "../../public/widgets/pomodoro/break.png";
 import breakBtnClicked from "../../public/widgets/pomodoro/break-clicked.png";
@@ -11,7 +11,6 @@ import workGif from "../../public/widgets/pomodoro/work.gif";
 import workBtn from "../../public/widgets/pomodoro/work.png";
 import workBtnClicked from "../../public/widgets/pomodoro/work-clicked.png";
 import { useSettingStore } from "#/store/setting.tsx";
-import { useWidgetAppsStore } from "#/store/widgetApps.tsx";
 
 const cheerMessages = [
 	"Stay Frokused",
@@ -29,19 +28,8 @@ const breakMessages = [
 	"Walk 100 meters",
 ];
 
-const formatTime = (seconds: number): string => {
-	const minute = Math.floor(seconds / 60)
-		.toString()
-		.padStart(2, "0");
-
-	const second = (seconds % 60).toString().padStart(2, "0");
-	return `${minute}:${second}`;
-};
-
 function Pomodoro() {
 	const theme = useSettingStore((state) => state.theme)
-	const widgetStates = useWidgetAppsStore(state => state.widgetStates)
-	const updateWidgetState = useWidgetAppsStore(state => state.updateWidgetState)
 	const [timeLeft, setTimeLeft] = useState<number>(25 * 60);
 	const [isRunning, setIsRunning] = useState<boolean>(false);
 	const [isBreak, setIsBreak] = useState<boolean>(false);
