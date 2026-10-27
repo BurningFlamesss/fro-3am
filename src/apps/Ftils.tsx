@@ -1,7 +1,8 @@
 import type React from "react";
 import { type ComponentType, useState } from "react";
+import convert from "convert-units";
 
-type Utilities = "currencyConverter"
+type Utilities = "currencyConverter" | "unitConverter"
 interface UtilityStructure {
     input: () => React.ReactNode;
     process: (payload: any) => any;
@@ -28,12 +29,12 @@ function Ftils() {
 
                     const formData = new FormData(event.currentTarget)
                     const amount = formData.get("amount")
-                    const currentCurrency = formData.get("currentCurrency")
-                    const requiredCurrency = formData.get("requiredCurrency")
+                    const from = formData.get("from")
+                    const to = formData.get("to")
                     const payload = {
                         amount,
-                        currentCurrency,
-                        requiredCurrency
+                        from,
+                        to
                     }
 
                     handleUtility(payload, "currencyConverter")
@@ -45,30 +46,30 @@ function Ftils() {
                             <input placeholder="67" className="p-1 border border-black" type="number" name="amount" id="" />
                         </div>
                         <div className="w-full flex flex-row items-center gap-x-2">
-                            <label htmlFor="currentCurrency">Current Currency:</label>
-                            <input placeholder="usd" className="p-1 border border-black" type="text" name="currentCurrency" id="" />
+                            <label htmlFor="from">From:</label>
+                            <input placeholder="usd" className="p-1 border border-black" type="text" name="from" id="" />
                         </div>
                         <div className="w-full flex flex-row items-center gap-x-2">
-                            <label htmlFor="requiredCurrency">Required Currency:</label>
-                            <input placeholder="npr" className="p-1 border border-black" type="text" name="requiredCurrency" id="" />
+                            <label htmlFor="to">To:</label>
+                            <input placeholder="npr" className="p-1 border border-black" type="text" name="to" id="" />
                         </div>
                         <button className="w-14 cursor-pointer" type="submit">Submit</button>
                     </form>
                 )
             },
-            process: async ({ amount, currentCurrency, requiredCurrency }: { amount: number, currentCurrency: string, requiredCurrency: string }) => {
-                const from = currentCurrency.trim().toUpperCase()
-                const to = requiredCurrency.trim().toUpperCase()
+            process: async ({ amount, from, to }: { amount: number, from: string, to: string }) => {
+                const normalFrom = from.trim().toUpperCase()
+                const normalTo = to.trim().toUpperCase()
 
-                if (from === to) {
+                if (normalFrom === normalTo) {
                     return {
                         amount,
-                        requiredCurrency
+                        to: normalTo
                     }
                 }
 
                 const response = await fetch(
-                    `https://api.frankfurter.dev/v2/rate/${encodeURIComponent(from)}/${encodeURIComponent(to)}`
+                    `https://api.frankfurter.dev/v2/rate/${encodeURIComponent(normalFrom)}/${encodeURIComponent(normalTo)}`
                 );
 
                 if (!response.ok) {
@@ -78,15 +79,73 @@ function Ftils() {
                 const data = await response.json()
 
                 return {
-                    amount: amount * data.rate, requiredCurrency: to
+                    amount: amount * data.rate, to: normalTo
                 }
             },
-            output: ({ amount, requiredCurrency }: { amount: number, requiredCurrency: string }) => {
+            output: ({ amount, to }: { amount: number, to: string }) => {
                 return (
-                    <p>{requiredCurrency} {amount}</p>
+                    <p>{to} {amount}</p>
                 )
             },
-        }
+        },
+        unitConverter: {
+            input: () => {
+                const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+                    event.preventDefault()
+
+                    const formData = new FormData(event.currentTarget)
+                    const amount = formData.get("amount")
+                    const from = formData.get("from")
+                    const to = formData.get("to")
+                    const payload = {
+                        amount,
+                        from,
+                        to
+                    }
+
+                    handleUtility(payload, "currencyConverter")
+                }
+                return (
+                    <form className="w-full flex flex-col gap-y-2" action="" onSubmit={handleSubmit}>
+                        <div className="w-full flex flex-row items-center gap-x-2">
+                            <label htmlFor="amount">Amount:</label>
+                            <input placeholder="67" className="p-1 border border-black" type="number" name="amount" id="" />
+                        </div>
+                        <div className="w-full flex flex-row items-center gap-x-2">
+                            <label htmlFor="from">From:</label>
+                            <input placeholder="usd" className="p-1 border border-black" type="text" name="from" id="" />
+                        </div>
+                        <div className="w-full flex flex-row items-center gap-x-2">
+                            <label htmlFor="to">To:</label>
+                            <input placeholder="npr" className="p-1 border border-black" type="text" name="to" id="" />
+                        </div>
+                        <button className="w-14 cursor-pointer" type="submit">Submit</button>
+                    </form>
+                )
+            },
+            process: async ({ amount, from, to }: { amount: number, from: string, to: string }) => {
+                const normalFrom = from.trim().toUpperCase()
+                const normalTo = to.trim().toUpperCase()
+
+                if (normalFrom === normalTo) {
+                    return {
+                        amount,
+                        to: normalTo
+                    }
+                }
+
+                const response = convert(amount).from(normalFrom).to(normalTo);
+
+                return {
+                    amount: response, to: normalTo
+                }
+            },
+            output: ({ amount, to }: { amount: number, to: string }) => {
+                return (
+                    <p>{to} {amount}</p>
+                )
+            },
+        },
     }
 
     const [renderer, setRenderer] = useState<React.ReactNode>()

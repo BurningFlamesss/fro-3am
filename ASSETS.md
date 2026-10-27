@@ -46,3 +46,9 @@
     COLLECTION: School Set 2
     LICENSE: CC0 License
     UPLOADER: SVG Repo
+
+# Currency Rates
+
+- frankfurter.dev
+
+    https://api.frankfurter.dev
