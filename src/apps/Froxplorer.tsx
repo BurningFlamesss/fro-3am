@@ -786,7 +786,17 @@ function Froxplorer({ windowId }: { windowId: string }) {
 								<ContextMenuPortal>
 									<ContextMenuContent className="z-100000002">
 										<ContextMenuItem onClick={() => handleOpen(node)}>
-											Open
+											{node.type === "file" ? "Run" : "Open"}
+										</ContextMenuItem>
+										<ContextMenuItem onClick={async () => {
+											await new Promise((resolve, reject) => setTimeout(() => resolve(null), 20));
+											addAndUpdateTab({
+												query: `fro://${node.id}`,
+											})
+
+											openApp("browser");
+										}}>
+											View in frowser
 										</ContextMenuItem>
 										<ContextMenuItem onClick={() => handleRenameStart(node)}>
 											Rename

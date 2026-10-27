@@ -719,7 +719,7 @@ function Frowser() {
 				onAdd={addTab}
 			/>
 
-			<div className="relative m-2 flex flex-1 flex-col overflow-hidden rounded-2xl">
+			<div className="relative m-2 flex flex-1 flex-col overflow-hidden">
 				{currentTab.state === "search" ? (
 					<NewTabView
 						key={currentTab.id}
