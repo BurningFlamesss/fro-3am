@@ -20,51 +20,51 @@ interface SettingStore {
 }
 
 export const useSettingStore = create<SettingStore>()(
-	// persist(
-	immer((set) => ({
-		backgroundImage: {
-			url: "/backgrounds/halloween.gif",
-			position: "bottom",
+	persist(
+		immer((set) => ({
+			backgroundImage: {
+				url: "/backgrounds/halloween.gif",
+				position: "bottom",
+			},
+			location: "Butwal",
+			theme: setThemeOutside("Halloween"),
+			brightness: 50,
+
+			setBackgroundImage: (imageUrl, position) =>
+				set((state) => {
+					state.backgroundImage.url = imageUrl;
+					state.backgroundImage.position = position;
+				}),
+
+			setLocation: (location) =>
+				set((state) => {
+					const trimmed = location.trim();
+					if (!trimmed) {
+						return;
+					}
+					state.location = trimmed;
+				}),
+
+			setTheme: (themeName) =>
+				set((state) => {
+					state.theme = setThemeOutside(themeName);
+				}),
+
+			setBrightness: (brightness) =>
+				set((state) => {
+					state.brightness = brightness;
+				}),
+		})),
+		{
+			name: "frottings-storage",
+			storage: createDebouncedStorage(1000),
 		},
-		location: "Butwal",
-		theme: setThemeOutside("Halloween"),
-		brightness: 50,
-
-		setBackgroundImage: (imageUrl, position) =>
-			set((state) => {
-				state.backgroundImage.url = imageUrl;
-				state.backgroundImage.position = position;
-			}),
-
-		setLocation: (location) =>
-			set((state) => {
-				const trimmed = location.trim();
-				if (!trimmed) {
-					return;
-				}
-				state.location = trimmed;
-			}),
-
-		setTheme: (themeName) =>
-			set((state) => {
-				state.theme = setThemeOutside(themeName);
-			}),
-
-		setBrightness: (brightness) =>
-			set((state) => {
-				state.brightness = brightness;
-			}),
-	})),
-	// 	{
-	// 		name: "frottings-storage",
-	// 		storage: createDebouncedStorage(1000),
-	// 	},
-	// ),
+	),
 );
 
 function setThemeOutside(themeName: string): Theme {
 	const foundTheme =
-		themeBundle.find((theme) => theme.name === themeName) ?? themeBundle[0];
+		themeBundle.find((theme) => theme.name.toUpperCase() === themeName.toUpperCase()) ?? themeBundle[0];
 	const requiredTheme = { ...foundTheme } as Theme;
 
 	foundTheme.targetIncludes.forEach((asset) => {

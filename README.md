@@ -97,9 +97,11 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 ---
 
 1. FypeMaster (Type at the speed close to 99.99% of c)
-2. Froview (Witness the pixels)
-3. Frowebview (Witness the power of markups)
-4. NOTFOUND (Are you f*#king kidding me? I meant Froking)
+2. Frodle (A cool little game to test your ability to guess) *(new)*
+3. FentalMaths (A hot little game to test your mental maths ability) *(new)*
+4. Froview (Witness the pixels)
+5. Frowebview (Witness the power of markups)
+6. NOTFOUND (Are you f*#king kidding me? I meant Froking)
 
 ---
 

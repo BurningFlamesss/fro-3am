@@ -1,13 +1,15 @@
 import { formatDistanceToNow } from "date-fns";
 import React, { type Ref, useEffect, useRef, useState } from "react";
+import { themeBundle } from "#/constants/theme.tsx";
 import {
-	formatEventRange,
+	COMPLETED_MARKER,
+	formatEventRange, INCOMPLETE_MARKER,
 	matchFlag,
 	normalizeUrl,
 	parseDate,
 	parseDuration,
 	parseFileName,
-	splitEvent,
+	splitEvent
 } from "#/lib/utils.ts";
 import { fetchResponse, pingUrl } from "#/server/fetchResponses.tsx";
 import { useCalculatorStore } from "#/store/calculator.tsx";
@@ -15,9 +17,9 @@ import { useCalendarStore } from "#/store/calendar.tsx";
 import { useFileSystemStore } from "#/store/fs.tsx";
 import { useLauncherStore } from "#/store/launcher.tsx";
 import { useNoteStore } from "#/store/note.tsx";
+import { useSettingStore } from "#/store/setting.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWindowStore } from "#/store/window.tsx";
-import { COMPLETED_MARKER, INCOMPLETE_MARKER } from "#/lib/utils.ts";
 import type { AppInstance, WindowInstance } from "../constants/apps";
 import { EVENT_COLORS } from "./Frolendar";
 
@@ -62,6 +64,11 @@ function Frominal() {
 	} = useFileSystemStore();
 	const { setCalculatorExpression } = useCalculatorStore();
 	const { events, addEvent } = useCalendarStore();
+	const brightness = useSettingStore(state => state.brightness)
+	const setBrightness = useSettingStore(state => state.setBrightness)
+	const theme = useSettingStore(state => state.theme)
+	const setTheme = useSettingStore(state => state.setTheme)
+	const setBackgroundImage = useSettingStore(state => state.setBackgroundImage)
 	const [currentPath, setCurrentPath] = useState(rootId);
 	const { launch, launchables } = useLauncherStore();
 
@@ -319,6 +326,43 @@ function Frominal() {
 		},
 
 		echo: (params) => params.join(" "),
+
+		"get.brightness": () => {
+			return (
+				<p>Brightness: {brightness}</p>
+			)
+		},
+
+		"set.brightness": (param) => {
+			const brightness = +param[0]
+
+			if (!Number.isNaN(brightness)) {
+				setBrightness(brightness)
+			}
+		},
+
+		"get.theme": () => {
+			const themeOptions = themeBundle.map(bundle => bundle.name)
+
+			return (
+				<>
+					<p>Current Theme: {theme.name}</p>
+					<hr />
+					<p>Other Options:</p>
+					<ul>
+						{themeOptions.map(options => <li key={`Theme-${options}`}>{options}</li>)}
+					</ul>
+				</>
+			)
+		},
+
+		"set.theme": (param) => {
+			const theme = param[0]
+
+			if (theme) {
+				setTheme(theme)
+			}
+		},
 
 		ping: async (params) => {
 			if (!params.length) {
