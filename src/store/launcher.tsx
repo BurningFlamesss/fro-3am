@@ -302,6 +302,13 @@ function Frodle({ params }: LaunchProps) {
 		row: 0,
 		col: 0
 	})
+	const [gameStats, setGameStats] = useState<{
+		completed: boolean,
+		correctGuessedAt: number,
+	}>({
+		completed: false,
+		correctGuessedAt: 0,
+	})
 	const nodes = useFileSystemStore(state => state.nodes)
 	const [guesses, setGuesses] = useState<Record<number, Array<string>>>({
 		0: ["", "", "", "", ""],
@@ -351,6 +358,13 @@ function Frodle({ params }: LaunchProps) {
 		const guessWordArray = guesses[row]
 		const randomWordArray = randomWord.split("")
 
+		if (!guessWordArray || !randomWordArray) {
+			return {
+				partials: [],
+				fulls: []
+			}
+		}
+
 		const partialCorrectColumn = new Set<number>([])
 		const fullCorrectColumn = new Set<number>([])
 
@@ -383,7 +397,15 @@ function Frodle({ params }: LaunchProps) {
 			return
 		}
 
-		document.getElementById(`frodle-input-row-${currentPosition.row}-col-${currentPosition.col}`)?.focus()
+		const { fulls } = getFeedback(currentPosition.row - 1)
+		if (fulls.length === 5) {
+			setGameStats({
+				completed: true,
+				correctGuessedAt: currentPosition.row
+			})
+		} else {
+			document.getElementById(`frodle-input-row-${currentPosition.row}-col-${currentPosition.col}`)?.focus()
+		}
 	}, [currentPosition])
 
 	const handleInput = (event: React.ChangeEvent<HTMLInputElement>, indexRow: number, indexCol: number) => {
@@ -418,7 +440,18 @@ function Frodle({ params }: LaunchProps) {
 			})
 
 		} else {
-			// completed
+			const { fulls } = getFeedback(4)
+			if (fulls.length === 5) {
+				setGameStats({
+					completed: true,
+					correctGuessedAt: 5
+				})
+			} else {
+				setGameStats({
+					completed: true,
+					correctGuessedAt: 0
+				})
+			}
 		}
 	}
 
@@ -452,67 +485,93 @@ function Frodle({ params }: LaunchProps) {
 				</span>
 			</nav>
 			<section className="min-h-full min-w-full flex flex-row items-center justify-center">
-				<table className="h-64 w-64 flex flex-col items-center justify-between gap-y-2">
-					{Object.values(guesses).map((row, indexRow) => {
+				{gameStats.completed ? (
+					<section className="h-full w-full flex flex-col items-center justify-center p-4 gap-y-4 my-auto">
+						<h1 className="text-4xl font-black">{gameStats.correctGuessedAt ? `Yippee! You guessed the word "${randomWord}" in ${gameStats.correctGuessedAt} attempts` : `Sadly, You couldnot guess the word. The correct word was "${randomWord}"`}</h1>
 
-						return (
-							<tr key={`row-${indexRow}`} className="flex flex-row items-center justify-between gap-x-2">
-								{row.map((col, indexCol) => {
-									const { fulls, partials } = currentPosition.row !== indexRow ? { fulls: [], partials: [] } : getFeedback(indexRow)
-									const isPartialMatch = partials.includes(indexCol)
-									const isFullMatch = fulls.includes(indexCol)
+						<button
+							onClick={() => {
+								setGameStats({
+									completed: false,
+									correctGuessedAt: 0
+								})
+								generateNewRandomWord(mode)
+								setCurrentPosition({
+									col: 0,
+									row: 0
+								})
+							}}
+							type="button"
+							className="bg-none border-none cursor-pointer"
+						>
+							<img src={resetImg} className="w-15" alt="Button" />
+						</button>
 
-									return (
-										<td
-											key={`col-${indexCol}`}
-											className={cn("h-12 w-12 rounded-xl border-2 flex flex-row items-center justify-center"
-												, currentPosition.row === indexRow ? "bg-blue-400" : isFullMatch ? "bg-green-400" : isPartialMatch ? "bg-yellow-400" : "bg-gray-800"
-											)}>
-											<input
-												disabled={currentPosition.row !== indexRow}
-												value={col}
-												onKeyDown={(event) => {
-													if (event.key === "Backspace" || event.key === "Delete") {
-														const updatedRow = guesses[indexRow].map((prev, index) => index === indexCol ? "" : prev)
+					</section>
+				) : (
+					<table className="h-64 w-64 flex flex-col items-center justify-between gap-y-2">
+						{Object.values(guesses).map((row, indexRow) => {
 
-														setGuesses(prev => ({
-															...prev,
-															[indexRow]: updatedRow
-														}))
+							return (
+								<tr key={`row-${indexRow}`} className="flex flex-row items-center justify-between gap-x-2">
+									{row.map((col, indexCol) => {
+										const { fulls, partials } = currentPosition.row === indexRow ? { fulls: [], partials: [] } : getFeedback(indexRow)
+										const isPartialMatch = partials.includes(indexCol)
+										const isFullMatch = fulls.includes(indexCol)
 
-													}
+										return (
+											<td
+												key={`col-${indexCol}`}
+												className={cn("h-12 w-12 rounded-xl border-2 flex flex-row items-center justify-center",
+													currentPosition.row === indexRow ? "bg-blue-800" : isFullMatch ? "bg-green-800" : isPartialMatch ? "bg-yellow-800" : "bg-gray-800"
+												)}>
+												<input
+													disabled={currentPosition.row !== indexRow}
+													value={col}
+													onKeyDown={(event) => {
+														if (event.key === "Backspace" || event.key === "Delete") {
+															const updatedRow = guesses[indexRow].map((prev, index) => index === indexCol ? "" : prev)
 
-													if (event.key === "Backspace" || event.key === "ArrowLeft") {
-														setCurrentPosition({
-															row: indexRow,
-															col: Math.max(0, indexCol - 1)
-														})
-													}
-													if (event.key === "Delete" || event.key === "ArrowRight") {
-														setCurrentPosition({
-															row: indexRow,
-															col: Math.min(4, indexCol + 1)
-														})
-													}
-												}}
-												onChange={(event) => {
-													handleInput(event, indexRow, indexCol)
-												}}
-												title={isFullMatch ? "on spot" : isPartialMatch ? "letter is correct" : "no match"}
-												id={`frodle-input-row-${indexRow}-col-${indexCol}`}
-												className="min-h-full min-w-full flex flex-row items-center justify-center border-0 outline-0 text-center"
-											/>
-										</td>
-									)
-								})}
-							</tr>
-						)
-					})}
-				</table>
+															setGuesses(prev => ({
+																...prev,
+																[indexRow]: updatedRow
+															}))
+
+														}
+
+														if (event.key === "Backspace" || event.key === "ArrowLeft") {
+															setCurrentPosition({
+																row: indexRow,
+																col: Math.max(0, indexCol - 1)
+															})
+														}
+														if (event.key === "Delete" || event.key === "ArrowRight") {
+															setCurrentPosition({
+																row: indexRow,
+																col: Math.min(4, indexCol + 1)
+															})
+														}
+													}}
+													onChange={(event) => {
+														handleInput(event, indexRow, indexCol)
+													}}
+													title={isFullMatch ? "on spot" : isPartialMatch ? "letter is correct" : "no match"}
+													id={`frodle-input-row-${indexRow}-col-${indexCol}`}
+													className="min-h-full min-w-full flex flex-row items-center justify-center border-0 outline-0 text-center"
+												/>
+											</td>
+										)
+									})}
+								</tr>
+							)
+						})}
+					</table>
+				)}
 			</section>
 		</main>
 	)
 }
+
 
 function MentalMathGame({ params }: LaunchProps) {
 	const frameRef = useRef<number>(0)
@@ -794,7 +853,7 @@ function MentalMathGame({ params }: LaunchProps) {
 			</nav>
 
 			{timeLeft === 0 ? (
-				<section className="h-full w-full flex flex-col items-center justify-center p-4 gap-y-8 my-auto">
+				<section className="h-full w-full flex flex-col items-center justify-center p-4 gap-y-4 my-auto">
 					<h1 className="text-4xl font-black">Your score is {score}.</h1>
 
 					<button
