@@ -1,6 +1,6 @@
 import type React from "react";
 import { type ComponentType, useState } from "react";
-import convert from "convert-units";
+import convert, { type Unit } from "convert";
 
 type Utilities = "currencyConverter" | "unitConverter"
 interface UtilityStructure {
@@ -103,7 +103,7 @@ function Ftils() {
                         to
                     }
 
-                    handleUtility(payload, "currencyConverter")
+                    handleUtility(payload, "unitConverter")
                 }
                 return (
                     <form className="w-full flex flex-col gap-y-2" action="" onSubmit={handleSubmit}>
@@ -113,36 +113,29 @@ function Ftils() {
                         </div>
                         <div className="w-full flex flex-row items-center gap-x-2">
                             <label htmlFor="from">From:</label>
-                            <input placeholder="usd" className="p-1 border border-black" type="text" name="from" id="" />
+                            <input placeholder="seconds" className="p-1 border border-black" type="text" name="from" id="" />
                         </div>
                         <div className="w-full flex flex-row items-center gap-x-2">
                             <label htmlFor="to">To:</label>
-                            <input placeholder="npr" className="p-1 border border-black" type="text" name="to" id="" />
+                            <input placeholder="minutes" className="p-1 border border-black" type="text" name="to" id="" />
                         </div>
                         <button className="w-14 cursor-pointer" type="submit">Submit</button>
                     </form>
                 )
             },
             process: async ({ amount, from, to }: { amount: number, from: string, to: string }) => {
-                const normalFrom = from.trim().toUpperCase()
-                const normalTo = to.trim().toUpperCase()
+                const normalFrom = from.trim() as Unit
+                const normalTo = to.trim() as Unit
 
-                if (normalFrom === normalTo) {
-                    return {
-                        amount,
-                        to: normalTo
-                    }
-                }
-
-                const response = convert(amount).from(normalFrom).to(normalTo);
+                const response = convert(amount, normalFrom).to(normalTo);
 
                 return {
-                    amount: response, to: normalTo
+                    amount: response || 0, to: normalTo
                 }
             },
             output: ({ amount, to }: { amount: number, to: string }) => {
                 return (
-                    <p>{to} {amount}</p>
+                    <p>{amount} {to}</p>
                 )
             },
         },
