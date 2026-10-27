@@ -296,7 +296,6 @@ function FypeMaster({ params }: LaunchProps) {
 }
 
 function Frodle({ params }: LaunchProps) {
-	const structure = [5, 5, 5, 5, 5]
 	const [mode, setMode] = useState<"full-random-list" | "notes" | "shortlisted-word-list">("shortlisted-word-list")
 	const [randomWord, setRandomWord] = useState<string>("")
 	const [currentPosition, setCurrentPosition] = useState<{ row: number, col: number }>({
@@ -346,6 +345,33 @@ function Frodle({ params }: LaunchProps) {
 		setRandomWord(word.toUpperCase())
 
 		return word.toUpperCase()
+	}
+
+	function getFeedback(row: number) {
+		const guessWordArray = guesses[row]
+		const randomWordArray = randomWord.split("")
+
+		const partialCorrectColumn = new Set<number>([])
+		const fullCorrectColumn = new Set<number>([])
+
+		guessWordArray.forEach((guessLetter, guessIndex) => {
+			randomWordArray.map((randomLetter, randomIndex) => {
+				if (guessLetter !== randomLetter) return null
+
+				if (guessIndex === randomIndex) {
+					fullCorrectColumn.add(guessIndex)
+				} else {
+					partialCorrectColumn.add(guessIndex)
+				}
+
+				return guessIndex
+			})
+		})
+
+		return {
+			partials: [...partialCorrectColumn],
+			fulls: [...fullCorrectColumn]
+		}
 	}
 
 	useEffect(() => {
@@ -427,17 +453,24 @@ function Frodle({ params }: LaunchProps) {
 			</nav>
 			<section className="min-h-full min-w-full flex flex-row items-center justify-center">
 				<table className="h-64 w-64 flex flex-col items-center justify-between gap-y-2">
-					{structure.map((row, indexRow) => {
+					{Object.values(guesses).map((row, indexRow) => {
 
 						return (
 							<tr key={`row-${indexRow}`} className="flex flex-row items-center justify-between gap-x-2">
-								{Array.from({ length: row }).map((col, indexCol) => {
+								{row.map((col, indexCol) => {
+									const { fulls, partials } = currentPosition.row !== indexRow ? { fulls: [], partials: [] } : getFeedback(indexRow)
+									const isPartialMatch = partials.includes(indexCol)
+									const isFullMatch = fulls.includes(indexCol)
 
 									return (
-										<td key={`col-${indexCol}`} className="h-12 w-12 rounded-xl border-2 border-blue-500 flex flex-row items-center justify-center">
+										<td
+											key={`col-${indexCol}`}
+											className={cn("h-12 w-12 rounded-xl border-2 flex flex-row items-center justify-center"
+												, currentPosition.row === indexRow ? "bg-blue-400" : isFullMatch ? "bg-green-400" : isPartialMatch ? "bg-yellow-400" : "bg-gray-800"
+											)}>
 											<input
 												disabled={currentPosition.row !== indexRow}
-												value={guesses[indexRow][indexCol]}
+												value={col}
 												onKeyDown={(event) => {
 													if (event.key === "Backspace" || event.key === "Delete") {
 														const updatedRow = guesses[indexRow].map((prev, index) => index === indexCol ? "" : prev)
@@ -465,6 +498,7 @@ function Frodle({ params }: LaunchProps) {
 												onChange={(event) => {
 													handleInput(event, indexRow, indexCol)
 												}}
+												title={isFullMatch ? "on spot" : isPartialMatch ? "letter is correct" : "no match"}
 												id={`frodle-input-row-${indexRow}-col-${indexCol}`}
 												className="min-h-full min-w-full flex flex-row items-center justify-center border-0 outline-0 text-center"
 											/>
