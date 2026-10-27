@@ -83,7 +83,7 @@ function Ftils() {
 
     return (
         <main className="w-full h-full flex flex-col p-4">
-            <div>
+            <div className="mb-2">
                 Choose the utility: <select className="border-0 outline-0 cursor-pointer" id="" value={inUseUtility.name} onChange={(event) => {
                     const targetUtility = event.target.value as Utilities
                     setInUseUtility({
@@ -98,8 +98,14 @@ function Ftils() {
             <hr />
             <section className="flex flex-col my-4 gap-y-4">
                 <Component />
-                <hr />
-                {renderer}
+                <fieldset className="flex flex-row gap-2 items-center">
+                    <div className="flex-1 border-t border-white"></div>
+                    <span className="text-sm">Output</span>
+                    <div className="flex-1 border-t border-white"></div>
+                </fieldset>
+
+
+                    {renderer}
             </section>
         </main>
     )
