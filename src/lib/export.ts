@@ -1,7 +1,7 @@
 import JSZip from "jszip";
 import { type FileNode } from "#/store/fs.tsx";
 
-type ExportOptions = "zip" | "json";
+export type ExportOptions = "zip" | "json";
 
 const collectNodes = (
 	ids: Array<FileNode["id"]>,

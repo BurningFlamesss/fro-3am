@@ -8,7 +8,7 @@ import {
 	ContextMenuPortal,
 	ContextMenuTrigger,
 } from "#/components/ui/context-menu.tsx";
-import { Export } from "#/lib/export.ts";
+import { Export, type ExportOptions } from "#/lib/export.ts";
 import { FILE_ASSOCIATIONS } from "#/lib/fileAssociates.ts";
 import {
 	cn,

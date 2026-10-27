@@ -155,14 +155,19 @@ function Ftils() {
     return (
         <main className="w-full h-full flex flex-col p-4">
             <div className="mb-2">
-                Choose the utility: <select className="border-0 outline-0 cursor-pointer" id="" value={inUseUtility.name} onChange={(event) => {
-                    const targetUtility = event.target.value as Utilities
-                    setInUseUtility({
-                        name: targetUtility,
-                        component: utilityLookUp[targetUtility].input
-                    })
-                }}>
-                    {Object.keys(utilityLookUp).map((utility) => <option className="cursor-pointer" key={utility} value={utility}>{utility}</option>)}
+                Choose the utility:
+                <select
+                    className="border-0 outline-0 bg-transparent text-white text-sm cursor-pointer"
+                    id="utility"
+                    value={inUseUtility.name}
+                    onChange={(event) => {
+                        const targetUtility = event.target.value as Utilities
+                        setInUseUtility({
+                            name: targetUtility,
+                            component: utilityLookUp[targetUtility].input
+                        })
+                    }}>
+                    {Object.keys(utilityLookUp).map((utility) => <option className="text-black cursor-pointer" key={utility} value={utility}>{utility}</option>)}
                 </select>
             </div>
 
