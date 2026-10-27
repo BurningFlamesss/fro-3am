@@ -347,7 +347,9 @@ function Frominal() {
 			return (
 				<>
 					<p>Current Theme: {theme.name}</p>
+					<br />
 					<hr />
+					<br />
 					<p>Other Options:</p>
 					<ul>
 						{themeOptions.map(options => <li key={`Theme-${options}`}>{options}</li>)}
