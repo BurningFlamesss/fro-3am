@@ -397,15 +397,7 @@ function Frodle({ params }: LaunchProps) {
 			return
 		}
 
-		const { fulls } = getFeedback(currentPosition.row - 1)
-		if (fulls.length === 5) {
-			setGameStats({
-				completed: true,
-				correctGuessedAt: currentPosition.row
-			})
-		} else {
-			document.getElementById(`frodle-input-row-${currentPosition.row}-col-${currentPosition.col}`)?.focus()
-		}
+		document.getElementById(`frodle-input-row-${currentPosition.row}-col-${currentPosition.col}`)?.focus()
 	}, [currentPosition])
 
 	const handleInput = (event: React.ChangeEvent<HTMLInputElement>, indexRow: number, indexCol: number) => {
@@ -423,6 +415,17 @@ function Frodle({ params }: LaunchProps) {
 		}))
 
 		if (updatedRow.every(char => char !== "")) {
+			const { fulls } = getFeedback(indexRow)
+
+			if (fulls.length === 5) {
+				setGameStats({
+					completed: true,
+					correctGuessedAt: indexRow + 1
+				})
+
+				return
+			}
+
 			if (indexRow < 4) {
 				setCurrentPosition({
 					row: indexRow + 1,
@@ -430,7 +433,13 @@ function Frodle({ params }: LaunchProps) {
 				})
 
 				return
+			} else {
+				setGameStats({
+					completed: true,
+					correctGuessedAt: 0
+				})
 			}
+
 		} else if (indexCol < 4) {
 			const indexOfColWithEmptyCharacter = updatedRow.indexOf("")
 
@@ -439,20 +448,9 @@ function Frodle({ params }: LaunchProps) {
 				col: indexOfColWithEmptyCharacter
 			})
 
-		} else {
-			const { fulls } = getFeedback(4)
-			if (fulls.length === 5) {
-				setGameStats({
-					completed: true,
-					correctGuessedAt: 5
-				})
-			} else {
-				setGameStats({
-					completed: true,
-					correctGuessedAt: 0
-				})
-			}
+			return
 		}
+
 	}
 
 	return (
