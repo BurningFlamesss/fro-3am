@@ -310,7 +310,8 @@ function Frodle({ params }: LaunchProps) {
 		correctGuessedAt: 0,
 	})
 	const nodes = useFileSystemStore(state => state.nodes)
-	const [guesses, setGuesses] = useState<Record<number, Array<string>>>({
+
+	const createEmptyGuess = (): Record<number, Array<string>> => ({
 		0: ["", "", "", "", ""],
 		1: ["", "", "", "", ""],
 		2: ["", "", "", "", ""],
@@ -318,8 +319,11 @@ function Frodle({ params }: LaunchProps) {
 		4: ["", "", "", "", ""],
 	})
 
+	const [guesses, setGuesses] = useState<Record<number, Array<string>>>(createEmptyGuess)
+
 	function generateNewRandomWord(mode: "full-random-list" | "notes" | "shortlisted-word-list") {
 		let word: string = ""
+
 		switch (mode) {
 			case "shortlisted-word-list": {
 				const randomWordIndex = Math.floor(Math.random() * totalWordCount)
@@ -354,11 +358,10 @@ function Frodle({ params }: LaunchProps) {
 		return word.toUpperCase()
 	}
 
-	function getFeedback(row: number) {
-		const guessWordArray = guesses[row]
+	function getFeedback(guessWordArray: Array<string>) {
 		const randomWordArray = randomWord.split("")
 
-		if (!guessWordArray || !randomWordArray) {
+		if (!guessWordArray.length || !randomWordArray.length) {
 			return {
 				partials: [],
 				fulls: []
@@ -388,17 +391,30 @@ function Frodle({ params }: LaunchProps) {
 		}
 	}
 
+	function startNewGame(targetMode: "full-random-list" | "notes" | "shortlisted-word-list") {
+		generateNewRandomWord(targetMode)
+		setGuesses(createEmptyGuess)
+		setCurrentPosition({
+			col: 0,
+			row: 0
+		})
+		setGameStats({
+			completed: false,
+			correctGuessedAt: 0
+		})
+	}
+
 	useEffect(() => {
 		generateNewRandomWord(mode)
 	}, [])
 
 	useEffect(() => {
-		if (!currentPosition) {
+		if (gameStats.completed) {
 			return
 		}
 
 		document.getElementById(`frodle-input-row-${currentPosition.row}-col-${currentPosition.col}`)?.focus()
-	}, [currentPosition])
+	}, [currentPosition, gameStats.completed])
 
 	const handleInput = (event: React.ChangeEvent<HTMLInputElement>, indexRow: number, indexCol: number) => {
 		const letter = event.target.value?.at(-1)?.toUpperCase() || ""
@@ -415,7 +431,7 @@ function Frodle({ params }: LaunchProps) {
 		}))
 
 		if (updatedRow.every(char => char !== "")) {
-			const { fulls } = getFeedback(indexRow)
+			const { fulls } = getFeedback(updatedRow)
 
 			if (fulls.length === 5) {
 				setGameStats({
@@ -432,7 +448,6 @@ function Frodle({ params }: LaunchProps) {
 					col: 0
 				})
 
-				return
 			} else {
 				setGameStats({
 					completed: true,
@@ -440,15 +455,17 @@ function Frodle({ params }: LaunchProps) {
 				})
 			}
 
-		} else if (indexCol < 4) {
-			const indexOfColWithEmptyCharacter = updatedRow.indexOf("")
+			return
 
+		}
+
+		const indexOfColWithEmptyCharacter = updatedRow.indexOf("")
+
+		if (indexOfColWithEmptyCharacter !== -1) {
 			setCurrentPosition({
 				row: indexRow,
 				col: indexOfColWithEmptyCharacter
 			})
-
-			return
 		}
 
 	}
@@ -466,7 +483,7 @@ function Frodle({ params }: LaunchProps) {
 						onChange={(event) => {
 							const targetMode = event.target.value as "full-random-list" | "notes" | "shortlisted-word-list"
 							setMode(targetMode)
-							generateNewRandomWord(targetMode)
+							startNewGame(targetMode)
 						}}
 						className="border-0 outline-0 bg-transparent text-white text-xs cursor-pointer"
 					>
@@ -484,20 +501,12 @@ function Frodle({ params }: LaunchProps) {
 			</nav>
 			<section className="min-h-full min-w-full flex flex-row items-center justify-center">
 				{gameStats.completed ? (
-					<section className="h-full w-full flex flex-col items-center justify-center p-4 gap-y-4 my-auto">
+					<section className="h-full w-full flex flex-col items-center justify-center p-4 gap-y-4 my-auto text-center">
 						<h1 className="text-4xl font-black">{gameStats.correctGuessedAt ? `Yippee! You guessed the word "${randomWord}" in ${gameStats.correctGuessedAt} attempts` : `Sadly, You couldnot guess the word. The correct word was "${randomWord}"`}</h1>
 
 						<button
 							onClick={() => {
-								setGameStats({
-									completed: false,
-									correctGuessedAt: 0
-								})
-								generateNewRandomWord(mode)
-								setCurrentPosition({
-									col: 0,
-									row: 0
-								})
+								startNewGame(mode)
 							}}
 							type="button"
 							className="bg-none border-none cursor-pointer"
@@ -513,7 +522,7 @@ function Frodle({ params }: LaunchProps) {
 							return (
 								<tr key={`row-${indexRow}`} className="flex flex-row items-center justify-between gap-x-2">
 									{row.map((col, indexCol) => {
-										const { fulls, partials } = currentPosition.row === indexRow ? { fulls: [], partials: [] } : getFeedback(indexRow)
+										const { fulls, partials } = currentPosition.row === indexRow ? { fulls: [], partials: [] } : getFeedback(row)
 										const isPartialMatch = partials.includes(indexCol)
 										const isFullMatch = fulls.includes(indexCol)
 
