@@ -10,12 +10,12 @@ interface UtilityStructure {
 
 
 function Ftils() {
-    const handleUtility = (payload: any, target: Utilities) => {
+    const handleUtility = async (payload: any, target: Utilities) => {
         const targetUtility = utilityLookUp[target]
 
         if (targetUtility) {
-            const layer2Payload = targetUtility.process(payload)
-            const output = targetUtility.output(layer2Payload)
+            const layer2Payload = await targetUtility.process(payload)
+            const output = await targetUtility.output(layer2Payload)
             setRenderer(output)
         }
     }
@@ -42,24 +42,43 @@ function Ftils() {
                     <form className="w-full flex flex-col gap-y-2" action="" onSubmit={handleSubmit}>
                         <div className="w-full flex flex-row items-center gap-x-2">
                             <label htmlFor="amount">Amount:</label>
-                            <input placeholder="amount" className="p-1 border border-black" type="number" name="amount" id="" />
+                            <input placeholder="67" className="p-1 border border-black" type="number" name="amount" id="" />
                         </div>
                         <div className="w-full flex flex-row items-center gap-x-2">
                             <label htmlFor="currentCurrency">Current Currency:</label>
-                            <input placeholder="currentCurrency" className="p-1 border border-black" type="text" name="currentCurrency" id="" />
+                            <input placeholder="usd" className="p-1 border border-black" type="text" name="currentCurrency" id="" />
                         </div>
                         <div className="w-full flex flex-row items-center gap-x-2">
                             <label htmlFor="requiredCurrency">Required Currency:</label>
-                            <input placeholder="requiredCurrency" className="p-1 border border-black" type="text" name="requiredCurrency" id="" />
+                            <input placeholder="npr" className="p-1 border border-black" type="text" name="requiredCurrency" id="" />
                         </div>
                         <button className="w-14 cursor-pointer" type="submit">Submit</button>
                     </form>
                 )
             },
-            process: ({ amount, currentCurrency, requiredCurrency }: { amount: number, currentCurrency: string, requiredCurrency: string }) => {
+            process: async ({ amount, currentCurrency, requiredCurrency }: { amount: number, currentCurrency: string, requiredCurrency: string }) => {
+                const from = currentCurrency.trim().toUpperCase()
+                const to = requiredCurrency.trim().toUpperCase()
+
+                if (from === to) {
+                    return {
+                        amount,
+                        requiredCurrency
+                    }
+                }
+
+                const response = await fetch(
+                    `https://api.frankfurter.dev/v2/rate/${encodeURIComponent(from)}/${encodeURIComponent(to)}`
+                );
+
+                if (!response.ok) {
+                    throw new Error("could not fetch")
+                }
+
+                const data = await response.json()
 
                 return {
-                    amount: 0, requiredCurrency
+                    amount: amount * data.rate, requiredCurrency: to
                 }
             },
             output: ({ amount, requiredCurrency }: { amount: number, requiredCurrency: string }) => {
@@ -105,7 +124,7 @@ function Ftils() {
                 </fieldset>
 
 
-                    {renderer}
+                {renderer}
             </section>
         </main>
     )
