@@ -432,9 +432,17 @@ function SurfingView({ tab }: { tab: Tab }) {
 
 	if (tab.url.startsWith("fro://")) {
 		const nodeId = tab.url.replace("fro://", "")
-		const node = nodes[nodeId]
+		const node = nodes?.[nodeId]
 
-		if (node.type === "file") {
+		if (!node) {
+			return (
+				<div className="h-full w-full flex flex-col items-center justify-center gap-y-4">
+					<p>This node doesnot exists.</p>
+				</div>
+			)
+		}
+
+		if (node?.type === "file") {
 			return (
 				<p>{node.content}</p>
 			)
