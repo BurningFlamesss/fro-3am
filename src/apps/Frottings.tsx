@@ -3,8 +3,6 @@ import { cn } from "#/lib/utils.ts";
 import { useSettingStore } from "#/store/setting.tsx";
 import { backgrounds } from "#/constants/theme.tsx";
 
-
-
 function Frottings() {
 	const { backgroundImage, setBackgroundImage } = useSettingStore();
 	return (

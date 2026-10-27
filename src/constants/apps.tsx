@@ -9,6 +9,7 @@ import Frotore from "#/apps/Frotore.tsx";
 import Frottings from "#/apps/Frottings.tsx";
 import Frowser from "#/apps/Frowser.tsx";
 import Froxplorer from "#/apps/Froxplorer.tsx";
+import Ftils from "#/apps/Ftils.tsx";
 
 export const INITIAL_Z_INDEX = 1000;
 export const BACK_Z_INDEX = 0;
@@ -55,6 +56,7 @@ export type AppId =
 	| "music"
 	| "store"
 	| "launcher"
+	| "utils"
 	| `app_${string}`;
 
 export type WindowId = `${AppId}_${string}`;
@@ -150,6 +152,15 @@ export const Apps: Record<AppId, AppInstance> = {
 		isPinned: true,
 		theme: DEFAULT_THEME,
 		component: <Froncher windowId="" />,
+	},
+	utils: {
+		id: "utils",
+		name: "ftils",
+		title: "ftils",
+		logo: "/apps/Ftils.svg",
+		isPinned: true,
+		theme: DEFAULT_THEME,
+		component: <Ftils />,
 	},
 };
 

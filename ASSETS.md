@@ -35,6 +35,8 @@
 
 - Figma
 
+    <a target="_blank" href="https://icons8.com/icon/ntvu8WFpoWPt/full-tool-storage-box-">Full Tool Storage Box</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+
 - Svgrepo.com
 
     COLLECTION: Arcticons Thin Line Icons
