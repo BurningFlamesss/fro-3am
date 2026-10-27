@@ -23,6 +23,7 @@ import {
 	useBrowserStore,
 } from "#/store/browser.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
+import { useFileSystemStore } from "#/store/fs.tsx";
 
 const STATE_META: Record<
 	TabState,
@@ -68,7 +69,7 @@ const STATE_META: Record<
 };
 
 const isUrlLike = (value: string) =>
-	/^https?:\/\//i.test(value) || /^[\w-]+(\.[\w-]+)+(\/\S*)?$/i.test(value);
+	/^https?:\/\//i.test(value) || /^fro?:\/\//i.test(value) || /^[\w-]+(\.[\w-]+)+(\/\S*)?$/i.test(value);
 
 function SearchBar({
 	focused,
@@ -404,6 +405,7 @@ function ResultsView({
 
 function SurfingView({ tab }: { tab: Tab }) {
 	const theme = useSettingStore((state) => state.theme);
+	const nodes = useFileSystemStore(state => state.nodes)
 
 	const [canEmbed, setCanEmbed] = useState<boolean>(true);
 
@@ -426,6 +428,28 @@ function SurfingView({ tab }: { tab: Tab }) {
 
 	if (!tab.url || !tab.title) {
 		return null;
+	}
+
+	if (tab.url.startsWith("fro://")) {
+		const nodeId = tab.url.replace("fro://", "")
+		const node = nodes[nodeId]
+
+		if (node.type === "file") {
+			return (
+				<p>{node.content}</p>
+			)
+		} else {
+			return (
+				<ul>
+					{node.children?.map(child => {
+
+						return (
+							<li key={child}>child#{child}</li>
+						)
+					})}
+				</ul>
+			)
+		}
 	}
 
 	if (!canEmbed) {
@@ -610,7 +634,7 @@ function Frowser() {
 				url: navigating
 					? query.startsWith("http")
 						? query
-						: `https://${query}`
+						: query.startsWith("fro") ? query : `https://${query}`
 					: undefined,
 				state: "loading",
 			});
