@@ -18,6 +18,7 @@ function Home() {
 	const { backgroundImage } = useSettingStore();
 	const globalInstruction = useFaiStore((state) => state.globalInstruction);
 	const processes = useFaiStore((state) => state.processes);
+	const updateProcessStatus = useFaiStore((state) => state.updateProcessStatus);
 	const brightness = useSettingStore((state) => state.brightness);
 	const backgroundColor = brightness >= 50 ? "white" : "black";
 	const opacity = (Math.abs(brightness - 50) / 50) * 0.3;
@@ -55,30 +56,39 @@ function Home() {
 	}, [])
 
 	const { messages, sendMessage, isLoading } = useChat({
-		threadId: "somethjnig",
+		threadId: "something",
 		fetcher: (params) => getAIResponse({
 			data: {
+				messages: params.messages,
 				threadId: params.threadId,
 				key: "",
-				prompt: "",
-				scopes: []
+				prompt: globalInstruction,
+				scopes: ["global"]
 			}
 		}),
-		tools: []
+		tools: clientTools
 	})
 
 	useEffect(() => {
-		processes.forEach((process) => {
-			if (!process.status.includes("#")) return;
+		if (isLoading) return
 
-			const queueIndex = +process.status.replace("queue-#", "") as number;
+		const nextQueueIndex = processes.findIndex(process => process.status.startsWith("queue-#"))
 
-			if (!Number.isNaN(queueIndex)) {
-				sendMessage({
-					content: process.query,
-				});
-			}
-		});
+		if (nextQueueIndex === -1) return
+
+		updateProcessStatus(nextQueueIndex, "processing")
+
+		const process = processes[nextQueueIndex]
+
+		sendMessage({
+			metadata: {
+				role: "user"
+			},
+			content: process.query,
+		})
+			.then(() => updateProcessStatus(nextQueueIndex, "success"))
+			.catch(() => updateProcessStatus(nextQueueIndex, "error"))
+
 	}, []);
 
 	return (

@@ -1,10 +1,11 @@
-import { chat, toServerSentEventsResponse } from "@tanstack/ai";
+import { chat, toServerSentEventsResponse, type UIMessage } from "@tanstack/ai";
 import { openRouterText } from "@tanstack/ai-openrouter";
 import { createServerFn } from "@tanstack/react-start";
 
 export const getAIResponse = createServerFn({ method: "POST" })
 	.validator(
 		(data: {
+			messages: Array<UIMessage>;
 			threadId: string;
 			key: string;
 			prompt: string;

@@ -1,6 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 import React, { type Ref, useEffect, useRef, useState } from "react";
-import { themeBundle } from "#/constants/theme.tsx";
+import { backgrounds, themeBundle } from "#/constants/theme.tsx";
 import {
 	COMPLETED_MARKER,
 	formatEventRange, INCOMPLETE_MARKER,
@@ -68,6 +68,7 @@ function Frominal() {
 	const setBrightness = useSettingStore(state => state.setBrightness)
 	const theme = useSettingStore(state => state.theme)
 	const setTheme = useSettingStore(state => state.setTheme)
+	const backgroundImage = useSettingStore(state => state.backgroundImage)
 	const setBackgroundImage = useSettingStore(state => state.setBackgroundImage)
 	const [currentPath, setCurrentPath] = useState(rootId);
 	const { launch, launchables } = useLauncherStore();
@@ -124,6 +125,10 @@ function Frominal() {
 		refresh: "Refresh the OS",
 		geo: "Get latitude & longitude. Usage: `geo [--copy | --map]`",
 		clipboard: "Read and display the content in the clipboard",
+		"get.theme": "",
+		"set.theme": "",
+		"get.brightness": "",
+		"set.brightness": "",
 		"task.create": "Create a TASK. Usage: `task.create <TASK>`",
 		"task.read": "List all the TASK items",
 		"task.done": "Mark TASK as completed. Usage: `task.done <*INDICES>`",
@@ -359,6 +364,33 @@ function Frominal() {
 		},
 
 		"set.theme": (param) => {
+			const theme = param[0]
+
+			if (theme) {
+				setTheme(theme)
+			}
+		},
+
+		"get.background": () => {
+			const backgroundOptions = backgrounds.map(background => background.url)
+
+			return (
+				<>
+					<p>Current Theme: {backgroundImage.url}</p>
+					<br />
+					<hr />
+					<br />
+					<p>Other Options:</p>
+					<ul>
+						{backgroundOptions.map(options => <li key={`Background-${options}`}>{options}</li>)}
+						<li></li>
+						<li>Any URL</li>
+					</ul>
+				</>
+			)
+		},
+
+		"set.background": (param) => {
 			const theme = param[0]
 
 			if (theme) {

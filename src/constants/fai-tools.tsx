@@ -3,7 +3,7 @@ import z from "zod";
 
 export const terminalExecutions = toolDefinition({
     name: "terminal_tools_execution",
-    description: "",
+    description: ``,
     inputSchema: z.object({
         commands: z.array(z.string()).describe("")
     }),

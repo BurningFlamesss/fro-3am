@@ -5,18 +5,19 @@ export interface Process {
 	query: string;
 	scopes: Array<string>;
 	status:
-		| "processing"
-		| "error"
-		| "success"
-		| `queue-#${number}`
-		| "perform"
-		| "action-required";
+	| "processing"
+	| "error"
+	| "success"
+	| `queue-#${number}`
+	| "perform"
+	| "action-required";
 }
 
 interface FaiStore {
 	globalInstruction: string;
 	processes: Array<Process>;
 	addProcess: (process: Process) => void;
+	updateProcessStatus: (index: number, status: Process["status"]) => void;
 }
 
 export const useFaiStore = create<FaiStore>()(
@@ -27,5 +28,8 @@ export const useFaiStore = create<FaiStore>()(
 			set((state) => {
 				state.processes = [...new Set([...state.processes, process])];
 			}),
+		updateProcessStatus: (index, status) => set((state) => {
+			state.processes[index].status = status
+		})
 	})),
 );
