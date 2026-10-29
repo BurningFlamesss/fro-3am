@@ -1,3 +1,5 @@
+export const launchables_app_ids = ["app_not_found", "app_fypemaster", "app_frodle", "app_fentalMaths"]
+
 export const helpRegistry: Record<string, string> = {
     help: "Display all available command with their usage.",
     ls: "List folders and files in the current directory. Usage: `ls`",
@@ -6,7 +8,7 @@ export const helpRegistry: Record<string, string> = {
     mkdir: "Create one or more directories. Usage: `mkdir <*DIRECTORIES>`",
     rm: "Delete one or more files. Usage: `rm <*FILES>`",
     rmdir: "Delete one or more directories. Usage: `rmdir <*DIRECTORIES>`",
-    read: "Displays the content of a file. Usage: `read <FILE>`",
+    read: "Displays the content of a file or children of a folder. Usage: `read [<FILE> | <FOLDER>]`. No args targets the root folder.",
     edit: "Opens a file in the Frotes editor. Usage: `edit <FILE>`",
     write: "Overwrite the contents of a file. Usage: `write <FILE> <CONTENT>`",
     append:
@@ -38,11 +40,12 @@ export const helpRegistry: Record<string, string> = {
     "set.brightness": "Set the brightness in the OS. Usage: `set.brightness <0-100>`",
     "get.background": "Get the current background in use and all background options available in the OS. Usage: `get.background`",
     "set.background": "Set the background in the OS. Usage: `set.background <BACKGROUND> ['center' | 'left' | 'right']`",
-    "task.create": "Create a TASK. Usage: `task.create <TASK>`",
+    "task.add": "Create a TASK. Usage: `task.add <TASK>`",
     "task.read": "List all the TASK items",
     "task.done": "Mark TASK as completed. Usage: `task.done <*INDICES>`",
     "event.add":
         "Create an event. Usage: `event.add <TITLE> [@START] [--end@END] [+DURATION]`",
     "event.read": "List all calendar events",
     type: "Open FypeMaster launcher app for typing",
+    launch: `Launch different launchables from launcher. Usage: \`launch [${launchables_app_ids.join(" | ")}]\``
 };

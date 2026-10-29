@@ -275,11 +275,22 @@ function Frominal() {
 		},
 
 		read: (param) => {
-			const pathname = param[0].toLowerCase();
+			const pathname = param[0]?.toLowerCase();
 			const nodes = getChildren(currentPath);
 			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
 
-			if (!node) return "No such node exist"
+			if (!node) {
+				const rootChildren = getChildren("root")
+
+				return (
+					<>
+						<p>FOLDER: ROOT's children ids</p>
+						<ul>
+							{rootChildren?.map(child => <li key={child.id}>{child.id}</li>)}
+						</ul>
+					</>
+				)
+			}
 
 			if (node.type === "file") {
 				return node.content;
@@ -1033,6 +1044,18 @@ function Frominal() {
 				params,
 			});
 		},
+
+		launch: (params) => {
+			const targetLaunchable = launchables[params[0]]
+
+			if (targetLaunchable) {
+				launch(targetLaunchable, {
+					...params.splice(1)
+				})
+			} else {
+				launch(launchables.app_not_found)
+			}
+		}
 	};
 
 	const runCommand = async (input: string) => {
