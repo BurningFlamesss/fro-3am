@@ -242,6 +242,7 @@ function FaiPanel({ onClose }: { onClose: () => void }) {
 	}, [onClose]);
 
 	const handleProcess = async () => {
+		console.log("Handle Process was executed!!!")
 		addProcess({
 			query,
 			scopes: ["global"],

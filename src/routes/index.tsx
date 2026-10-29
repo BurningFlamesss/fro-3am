@@ -73,6 +73,8 @@ function Home() {
 	})
 
 	useEffect(() => {
+		console.log("Effect was also called!!!")
+
 		if (isLoading) return
 
 		const nextQueueIndex = processes.findIndex(process => process.status.startsWith("queue-#"))
@@ -82,6 +84,8 @@ function Home() {
 		updateProcessStatus(nextQueueIndex, "processing")
 
 		const process = processes[nextQueueIndex]
+
+		console.log("Inside Effect was also ran", processes)
 
 		sendMessage({
 			metadata: {

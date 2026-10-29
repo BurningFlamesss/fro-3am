@@ -15,11 +15,14 @@ export const getAIResponse = createServerFn({ method: "POST" })
 	)
 	.handler(async ({ data }) => {
 		try {
-			const apiKey = data.key ?? process.env.FAI_API_KEY;
+			console.log("getAIResponse called!!")
+			const apiKey = data.key || process.env.FAI_API_KEY;
 
 			if (!apiKey) {
 				throw new Error("Fai API key missing");
 			}
+
+			console.log("Inner getAIResponse called!!")
 
 			const stream = chat({
 				adapter: openRouterText("cohere/north-mini-code:free", {
@@ -30,6 +33,8 @@ export const getAIResponse = createServerFn({ method: "POST" })
 				tools: [terminalExecutions],
 				systemPrompts: data.prompt ? [data.prompt] : undefined,
 			})
+
+			console.log("Stream received:", stream)
 
 			return toServerSentEventsResponse(stream)
 		} catch (error) {
