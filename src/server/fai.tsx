@@ -1,3 +1,4 @@
+import { terminalExecutions } from "#/constants/fai-tools.tsx";
 import { chat, toServerSentEventsResponse, type UIMessage } from "@tanstack/ai";
 import { openRouterText } from "@tanstack/ai-openrouter";
 import { createServerFn } from "@tanstack/react-start";
@@ -22,9 +23,14 @@ export const getAIResponse = createServerFn({ method: "POST" })
 
 			const stream = chat({
 				adapter: openRouterText("google/gemma-4-26b-a4b-it:free"),
-				threadId: data.threadId
+				threadId: data.threadId,
+				messages: data.messages,
+				tools: [terminalExecutions],
+				systemPrompts: data.prompt ? [data.prompt] : undefined,
 			})
 
 			return toServerSentEventsResponse(stream)
-		} catch (error) { }
+		} catch (error) {
+			throw new Error(error)
+		}
 	});

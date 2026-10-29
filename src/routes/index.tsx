@@ -24,6 +24,7 @@ function Home() {
 	const opacity = (Math.abs(brightness - 50) / 50) * 0.3;
 	const setCommandExpressions = useTerminalStore(state => state.setCommandExpressions)
 	const openApp = useWindowStore(state => state.openApp)
+	const closeWindow = useWindowStore(state => state.closeWindow)
 
 	const clientTools = useMemo(() => [
 		terminalExecutions.client(async ({ commands }) => {
@@ -37,23 +38,25 @@ function Home() {
 				})
 			})
 		})
-	], [])
+	], [openApp, setCommandExpressions])
 
-	useEffect(() => {
-		let cancelled = false;
 
-		const execute = async () => {
-			if (cancelled) return;
+	// It is just a demo of how the execution pipeline of AI opening a shadow app and executing command takes place
+	// useEffect(() => {
+	// 	let cancelled = false;
 
-			// openApp("terminal", undefined, true)
-			// setCommandExpressions(["task.add Read book"])
-		}
-		void execute();
+	// 	const execute = async () => {
+	// 		if (cancelled) return;
 
-		return () => {
-			cancelled = true;
-		};
-	}, [])
+	// 		openApp("terminal", undefined, true)
+	// 		setCommandExpressions(["task.add Read book"])
+	// 	}
+	// 	void execute();
+
+	// 	return () => {
+	// 		cancelled = true;
+	// 	};
+	// }, [])
 
 	const { messages, sendMessage, isLoading } = useChat({
 		threadId: "something",
@@ -86,10 +89,18 @@ function Home() {
 			},
 			content: process.query,
 		})
-			.then(() => updateProcessStatus(nextQueueIndex, "success"))
+			.then(() => {
+				updateProcessStatus(nextQueueIndex, "success")
+				const currentWindows = useWindowStore.getState().windows;
+				Object.entries(currentWindows).forEach(([key, value]) => {
+					if (value?.shadow) {
+						closeWindow(value.id)
+					}
+				})
+			})
 			.catch(() => updateProcessStatus(nextQueueIndex, "error"))
 
-	}, []);
+	}, [isLoading, processes, sendMessage, updateProcessStatus, closeWindow]);
 
 	return (
 		<div
