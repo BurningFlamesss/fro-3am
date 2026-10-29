@@ -1,15 +1,16 @@
+import { useChat } from "@tanstack/ai-react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import MediaPlayerEngine from "#/components/MediaPlayerEngine.tsx";
 import Screen from "#/components/Screen.tsx";
 import Taskbar from "#/components/Taskbar.tsx";
 import WindowOverlays from "#/components/WindowOverlays.tsx";
+import { terminalExecutions } from "#/constants/fai-tools.tsx";
 import { getAIResponse } from "#/server/fai.tsx";
 import { type Process, useFaiStore } from "#/store/fai.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
-import { useChat } from "@tanstack/ai-react";
-import { useWindowStore } from "#/store/window.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
+import { useWindowStore } from "#/store/window.tsx";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -22,6 +23,20 @@ function Home() {
 	const opacity = (Math.abs(brightness - 50) / 50) * 0.3;
 	const setCommandExpressions = useTerminalStore(state => state.setCommandExpressions)
 	const openApp = useWindowStore(state => state.openApp)
+
+	const clientTools = useMemo(() => [
+		terminalExecutions.client(async ({ commands }) => {
+			return new Promise((resolve) => {
+				openApp("terminal", undefined, true)
+
+				setCommandExpressions(commands, (outputs) => {
+					resolve({
+						results: outputs
+					})
+				})
+			})
+		})
+	], [])
 
 	useEffect(() => {
 		let cancelled = false;
