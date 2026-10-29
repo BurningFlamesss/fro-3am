@@ -24,7 +24,7 @@ export const getAIResponse = createServerFn({ method: "POST" })
 			}
 
 			console.log("Inner getAIResponse called!!")
-			const adapter = createOpenRouterText("nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", apiKey)
+			const adapter = createOpenRouterText("cohere/north-mini-code:free", apiKey)
 
 			const stream = chat({
 				adapter: adapter,

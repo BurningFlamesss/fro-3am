@@ -243,7 +243,10 @@ function Frominal() {
 			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
 
 			if (node && node.type === "file") {
-				updateContent(node.id, node?.content + content.join(" "));
+				updateNode(node.id, `${node?.content}\n${content.join(" ").replace(/\\n/g, "\n")}`);
+				updateContent(node.id, `${node?.content}\n${content.join(" ").replace(/\\n/g, "\n")}`);
+			} else {
+				return <p className="text-red-500">Please use `cd` to jump to a folder containing the file</p>
 			}
 		},
 
@@ -270,7 +273,10 @@ function Frominal() {
 			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
 
 			if (node && node.type === "file") {
-				updateContent(node.id, content.join(" "));
+				updateNode(node.id, content.join(" ").replace(/\\n/g, "\n"))
+				updateContent(node.id, content.join(" ").replace(/\\n/g, "\n"));
+			} else {
+				return <p className="text-red-500">Please use `cd` to jump to a folder containing the file</p>
 			}
 		},
 
