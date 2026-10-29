@@ -22,7 +22,9 @@ export const getAIResponse = createServerFn({ method: "POST" })
 			}
 
 			const stream = chat({
-				adapter: openRouterText("google/gemma-4-26b-a4b-it:free"),
+				adapter: openRouterText("cohere/north-mini-code:free", {
+					serverURL: "https://openrouter.ai/api/v1"
+				}),
 				threadId: data.threadId,
 				messages: data.messages,
 				tools: [terminalExecutions],
@@ -31,6 +33,6 @@ export const getAIResponse = createServerFn({ method: "POST" })
 
 			return toServerSentEventsResponse(stream)
 		} catch (error) {
-			throw new Error(error)
+			throw new Error(error instanceof Error ? error.message : String(error))
 		}
 	});

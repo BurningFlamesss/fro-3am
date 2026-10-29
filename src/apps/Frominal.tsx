@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 import React, { type Ref, useEffect, useRef, useState } from "react";
+import { helpRegistry } from "#/constants/registry.tsx";
 import { backgrounds, themeBundle } from "#/constants/theme.tsx";
 import {
 	COMPLETED_MARKER,
@@ -90,53 +91,6 @@ function Frominal() {
 
 		return await handler(params);
 	}
-
-	const helpRegistry: Record<string, string> = {
-		help: "Display all available command with their usage.",
-		ls: "List folders and files in the current directory. Usage: `ls`",
-		cd: "Change current working directory. Usage: `cd <DIRECTORY>`",
-		touch: "Create one or more files. Usage: `touch <*FILES>`",
-		mkdir: "Create one or more directories. Usage: `mkdir <*DIRECTORIES>`",
-		rm: "Delete one or more files. Usage: `rm <*FILES>`",
-		rmdir: "Delete one or more directories. Usage: `rmdir <*DIRECTORIES>`",
-		read: "Displays the content of a file. Usage: `read <FILE>`",
-		edit: "Opens a file in the Frotes editor. Usage: `edit <FILE>`",
-		write: "Overwrite the contents of a file. Usage: `write <FILE> <CONTENT>`",
-		append:
-			"Append content to the end of the file. Usage `append <FILE> <CONTENT>`",
-		echo: "Print text to the terminal. Usage: `echo <TEXT>`",
-		ping: "Measure response time of the URL. Usage: `ping <URL>`",
-		clear: "Clear terminal history",
-		open: "Open one or more apps. Usage `open <*APPS>`",
-		pin: "Pin one or more apps to dock. Usage `pin <*APPS>`",
-		unpin: "Unpin one or more apps from dock. Usage `unpin <*APPS>`",
-		mem: "Show application statistics",
-		ps: "List running window and processes",
-		"process.terminate.all": "Terminates all the running processes",
-		"!!": "Re-run the previous command",
-		base64: "Encode text as Base64. Usage: `base64 <TEXT>`",
-		decode64: "Decode Base64 text. Usage: `decode64 <BASE64>`",
-		hash: "Generate a hash. Usage: `hash [--sha1 | --sha256 | --sha384 | --sha512] [--lenN, e.g. --len32] <TEXT>`",
-		calc: "Evaluate a mathematical expression. Usage `calc <MATHEXP>`",
-		random:
-			"Generate random number. Usage `random` | `random <END>` | `random <START> <END>`",
-		fetch: "Fetch URL contents and metadata. Usage: `fetch <*URLS>`",
-		note: "Create quick note. Usage: `note <TEXT>`",
-		refresh: "Refresh the OS",
-		geo: "Get latitude & longitude. Usage: `geo [--copy | --map]`",
-		clipboard: "Read and display the content in the clipboard",
-		"get.theme": "",
-		"set.theme": "",
-		"get.brightness": "",
-		"set.brightness": "",
-		"task.create": "Create a TASK. Usage: `task.create <TASK>`",
-		"task.read": "List all the TASK items",
-		"task.done": "Mark TASK as completed. Usage: `task.done <*INDICES>`",
-		"event.add":
-			"Create an event. Usage: `event.add <TITLE> [@START] [--end@END] [+DURATION]`",
-		"event.read": "List all calendar events",
-		type: "Open FypeMaster for typing",
-	};
 
 	const commands: Record<string, CommandHandler> = {
 		help: () => {
@@ -325,8 +279,19 @@ function Frominal() {
 			const nodes = getChildren(currentPath);
 			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
 
-			if (node && node.type === "file") {
+			if (!node) return "No such node exist"
+
+			if (node.type === "file") {
 				return node.content;
+			} else {
+				return (
+					<>
+						<p>FOLDER: {node.id}'s children ids</p>
+						<ul>
+							{node.children?.map(child => <li key={child}>{child}</li>)}
+						</ul>
+					</>
+				)
 			}
 		},
 
@@ -376,26 +341,33 @@ function Frominal() {
 
 			return (
 				<>
-					<p>Current Theme: {backgroundImage.url}</p>
+					<p>Current Background: {backgroundImage.url}</p>
 					<br />
 					<hr />
 					<br />
 					<p>Other Options:</p>
 					<ul>
 						{backgroundOptions.map(options => <li key={`Background-${options}`}>{options}</li>)}
-						<li></li>
+						<li>fro://URL</li>
 						<li>Any URL</li>
 					</ul>
 				</>
 			)
 		},
 
-		"set.background": (param) => {
-			const theme = param[0]
+		"set.background": (params) => {
+			let background = params[0]
+			const position = params[1] ?? "center"
 
-			if (theme) {
-				setTheme(theme)
+			if (!background) return
+
+			if (background.startsWith("fro://")) {
+				const id = background.replace("fro://", "")
+				const node = nodes[id]
+				background = node.type === "file" ? (node.content ?? backgroundImage.url) : backgroundImage.url
 			}
+
+			setBackgroundImage(background, position)
 		},
 
 		ping: async (params) => {
