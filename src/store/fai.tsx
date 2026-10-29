@@ -22,7 +22,11 @@ interface FaiStore {
 
 export const useFaiStore = create<FaiStore>()(
 	immer((set) => ({
-		globalInstruction: "Use the provided tools to controls the os and apps directly when requested.",
+		globalInstruction: `You are Fai, an AI of Fro OS designed to complete the required task of a user with the help of provided tools. Use the provided tools to control the os and apps directly when requested.
+		
+		You may take multiple steps to solve a problem. 
+		You should never guess on the information that you can access simply by using a tool.
+		`,
 		processes: [],
 		addProcess: (process) =>
 			set((state) => {

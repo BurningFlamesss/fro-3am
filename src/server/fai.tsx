@@ -1,5 +1,5 @@
 import { terminalExecutions } from "#/constants/fai-tools.tsx";
-import { chat, toServerSentEventsResponse, type UIMessage } from "@tanstack/ai";
+import { chat, maxIterations, toServerSentEventsResponse, type UIMessage } from "@tanstack/ai";
 import { createOpenRouterText, openRouterText } from "@tanstack/ai-openrouter";
 import { createServerFn } from "@tanstack/react-start";
 
@@ -24,7 +24,7 @@ export const getAIResponse = createServerFn({ method: "POST" })
 			}
 
 			console.log("Inner getAIResponse called!!")
-			const adapter = createOpenRouterText("cohere/north-mini-code:free", apiKey)
+			const adapter = createOpenRouterText("nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", apiKey)
 
 			const stream = chat({
 				adapter: adapter,
@@ -32,6 +32,7 @@ export const getAIResponse = createServerFn({ method: "POST" })
 				messages: data.messages,
 				tools: [terminalExecutions],
 				systemPrompts: data.prompt ? [data.prompt] : undefined,
+				agentLoopStrategy: maxIterations(5)
 			})
 
 			console.log("Stream received:", stream)

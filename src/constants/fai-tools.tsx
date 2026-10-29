@@ -8,7 +8,8 @@ export const terminalExecutions = toolDefinition({
     Available commands: 
     ${Object.entries(helpRegistry).map(([key, value]) => `${key}: ${value}`)}
 
-    Use these commands whenever necessary. Donot hesitate to use the information gaining commands like ls, read, task.read, mem, event.read, get.theme, get.brightness, get.background. But, be near 75% sure to execute any command which has potential to mutate something.
+    Use these commands whenever necessary. Donot hesitate to use the read based commands like ls, read, task.read, mem, event.read, get.theme, get.brightness, get.background.
+    But, be near 50% sure to execute any command which has potential to mutate something.
 
     NOTES:
     (1) Most of the commands has "Usage: " attached. Carefully observe which type of arguments they need.
