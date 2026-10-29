@@ -1,7 +1,8 @@
 import { terminalExecutions } from "#/constants/fai-tools.tsx";
 import { chat, toServerSentEventsResponse, type UIMessage } from "@tanstack/ai";
-import { openRouterText } from "@tanstack/ai-openrouter";
+import { createOpenRouterText, openRouterText } from "@tanstack/ai-openrouter";
 import { createServerFn } from "@tanstack/react-start";
+
 
 export const getAIResponse = createServerFn({ method: "POST" })
 	.validator(
@@ -23,11 +24,10 @@ export const getAIResponse = createServerFn({ method: "POST" })
 			}
 
 			console.log("Inner getAIResponse called!!")
+			const adapter = createOpenRouterText("cohere/north-mini-code:free", apiKey)
 
 			const stream = chat({
-				adapter: openRouterText("cohere/north-mini-code:free", {
-					serverURL: "https://openrouter.ai/api/v1"
-				}),
+				adapter: adapter,
 				threadId: data.threadId,
 				messages: data.messages,
 				tools: [terminalExecutions],
@@ -38,6 +38,8 @@ export const getAIResponse = createServerFn({ method: "POST" })
 
 			return toServerSentEventsResponse(stream)
 		} catch (error) {
-			throw new Error(error instanceof Error ? error.message : String(error))
+			const normalizeError = error instanceof Error ? error.message : String(error)
+			console.error("AI Server Error: ", normalizeError)
+			throw new Error(normalizeError)
 		}
 	});

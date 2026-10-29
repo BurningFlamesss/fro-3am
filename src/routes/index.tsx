@@ -81,16 +81,17 @@ function Home() {
 
 		if (nextQueueIndex === -1) return
 
+		const process = processes[nextQueueIndex]
+
 		updateProcessStatus(nextQueueIndex, "processing")
 
-		const process = processes[nextQueueIndex]
 
 		console.log("Inside Effect was also ran", processes)
 
 		sendMessage({
-			metadata: {
-				role: "user"
-			},
+			// metadata: {
+			// 	role: "user"
+			// },
 			content: process.query,
 		})
 			.then(() => {
