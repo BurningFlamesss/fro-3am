@@ -22,7 +22,7 @@ interface FaiStore {
 
 export const useFaiStore = create<FaiStore>()(
 	immer((set) => ({
-		globalInstruction: "",
+		globalInstruction: "Use the provided tools to controls the os and apps directly when requested.",
 		processes: [],
 		addProcess: (process) =>
 			set((state) => {
