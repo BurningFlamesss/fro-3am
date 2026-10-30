@@ -1,4 +1,4 @@
-# Fro (Frocus OS)
+# Fro (Froc.us OS)
 
 ![Status Version](https://img.shields.io/badge/Status-Live-blue.svg)
 ![Status Version](https://img.shields.io/badge/Type-Web_OS-087f8d)
@@ -8,7 +8,7 @@
 
 Frocus is a productivity system that helps user live a life user always wanted to live. Frocus aims at delivering the most productive ecosystem to the user to stop them from procastinating. Among, the ecosystem;
 
-FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get to use features like Task system, Event management system, Note system, Productive Pomodoro sessions, Motivating Quotes, Weather insights to plan physical schedules (like touching grass, gym, exercise, jogging), Music app for listening to calm and peaceful music while working, Filesystem to organize notes, works, files, musics, code files, Browser for searching anything (and getting AI summary, Images, and Best links) as well as browsing productive sites (like wikipedia, gutenberg, desmos, zenpen, excalidraw, etc), calculator for calculating simple arithmetics to complex trigonometric functions (with keyboard shortcuts & memory), Terminal for fast operations (for devs), Launcher for customizations.
+FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get to use features like Task system, Event management system, Note system, Productive Pomodoro sessions, Motivating Quotes, Weather insights to plan physical schedules (like touching grass, gym, exercise, jogging), Music app for listening to calm and peaceful music while working, Filesystem to organize notes, works, files, musics, code files, Browser for searching anything (and getting AI summary, Images, and Best links) as well as browsing productive sites (like wikipedia, gutenberg, desmos, zenpen, excalidraw, etc), calculator for calculating simple arithmetics to complex trigonometric functions (with keyboard shortcuts & memory), Terminal for fast operations (for devs), Launcher for customizations, Utils for daily-life utilities, Frays as a mean of partner for you when you feel alone, Games for you to enjoy, Theme for vibe, Panels for quick controls, Fai for automating tasks, Scripts (in the form of Fromine file) for autonomous tasks and many more.
 
 ## Demo
 
@@ -25,9 +25,13 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 - Shadcn
 - Mathjs
 - React (Youtube, Markdown, Dropzone)
-- Chrono-node & ms
+- Chrono-node, ms, date-fns
 - Tavily
 - ffmpeg
+- Convert
+- Openrouter (Adapter)
+- Jszip
+
 
 ## Apps 
 
@@ -55,13 +59,13 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 
 Addition of new command includes:
 
-get.brightness - 	Get the current brightness of the OS. Usage: `get.brightness`
-set.brightness -	Set the brightness in the OS. Usage: `set.brightness <0-100>`
-get.theme -     	Get the current theme in use and all theme options available in the OS. Usage: `get.theme`
-set.theme -     	Set the theme in the OS. Usage: `set.theme <THEME>`
-get.background - 	Get the current background in use and all background options available in the OS. Usage: `get.background`
-set.background -	Set the background in the OS. Usage: `set.background <BACKGROUND> ['center' | 'left' | 'right']`
-launch -        	Launch different launchables from launcher. Usage: `launch [app_not_found | app_fypemaster | app_frodle | app_fentalMaths]`
+- get.brightness - 	Get the current brightness of the OS. Usage: `get.brightness`
+- set.brightness -	Set the brightness in the OS. Usage: `set.brightness <0-100>`
+- get.theme -     	Get the current theme in use and all theme options available in the OS. Usage: `get.theme`
+- set.theme -     	Set the theme in the OS. Usage: `set.theme <THEME>`
+- get.background - 	Get the current background in use and all background options available in the OS. Usage: `get.background`
+- set.background -	Set the background in the OS. Usage: `set.background <BACKGROUND> ['center' | 'left' | 'right']`
+- launch -        	Launch different launchables from launcher. Usage: `launch [app_not_found | app_fypemaster | app_frodle | app_fentalMaths]`
 
 and, mutation on the filesystem commands (cd, mkdir, touch, rm, rmdir, read, edit, write, append) to support path resolver i.e. composite paths like /notes/physics.frote, and also made some of them have UI feedback to give any response.
 
@@ -241,6 +245,19 @@ Step 5 (Optional):
 - Goto src/widgets or src/apps to create own widget or application and then,
 - Register that in /src/constants/widgets and /src/constants/widgetsAppDefinition (for widgets) or /src/constants/apps (for application),
 2. Else, you can also goto /src/store/launcher to add your Froncher compatible application.
+
+
+## Inspiration
+
+I donot know the exact time but I was very excited when I created my first ecommerce website before the teacher taught a chapter `ecommerce websites` in computer science. My brother heard about this and he called me to say that `Linus Torvald` made Linux at very young age so try building that.
+
+I got really excited just to realise that building an Operating System from scartch is a very tough thing to pull off by a solo developer. Thus, I completely rejected that advice and continued upgrading myself in terms of Web Knowledge.
+
+After two years, I finally got enough skills, but didnot thought of making anything like WebOS until I got a slack ping from Stardance and I came across a challenge called build your webos. I went through the guide and it felt so basic for me. Then, I thought to complete my dream, and worked almost 72 hours over the past 3 months to build V1 of FRO OS and submitted to Macondo to receive huge funding in form of hardware grant and Meta quest 3 grant.
+
+Then, after a month, I came across 3am and thought of making the FRO OS have multiple themes, AI functionality, Exporting the file/folder functionality, Daily utilities, My own `fro://`, My own games `Frodle` and `FentalMaths`, and ultimate sync between widgets to enable a productive mode in my life that makes FRO OS unique from any ordinary WebOS. I am quite surprise that I worked nearly 37 hours across 1-2 weeks.
+
+At last, I really want to thank you my brother, Stardance, Macondo, and 3am for making me motivated on working in my dream project.
 
 ## AI Declarations
 
