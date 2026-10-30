@@ -47,7 +47,8 @@ function Task() {
 			}
 			return { text: trimmed, completed: false, linked, priority };
 		})
-		.filter((item) => item.text.length > 0);
+		.filter((item) => item.text.length > 0)
+		.sort((a, b) => a.priority - b.priority);
 
 	const buildContent = (items: typeof taskItems) =>
 		items
