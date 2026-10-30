@@ -35,13 +35,9 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 
 1. Frotes (Tab system, Task system, Markdown support, Multi-Tab, Storage system)
 
-*(TODO):* Shortcuts, FrokerLinks
-
 <img width="764" height="514" alt="image" src="https://github.com/user-attachments/assets/e6cfc13d-2753-484e-934a-44c965d90bad" />
 
 2. Frottings (for Wallpaper change)
-
-*(TODO):* UI
 
 <img width="767" height="510" alt="image" src="https://github.com/user-attachments/assets/41a3ae59-cc2f-4d2d-881f-bb97b3b12eb3" />
 
@@ -71,8 +67,6 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 
 8. Frotore (Add more widget instances)
 
-*(TODO):* Community-Driven
-
 <img width="755" height="504" alt="image" src="https://github.com/user-attachments/assets/c11542f2-f001-4ae3-8f10-c038fa8e6017" />
 
 9. Froxplorer (Create, Read, Update, Delete, Drag n Drop, Upload, Move, Add to desktop, the files, folders, and open or edit their content)
@@ -83,9 +77,9 @@ FRO OS is a WebOS that anyone with Desktop/Laptop/Bigger Device can use and get 
 
 10. Froncher (Launch any App, or Games (Supports HTML, CSS, JS and even some APIS via file with .html extension in Froxplorer))
 
-*(TODO):* FroLanguage Support
-
 <img width="759" height="499" alt="image" src="https://github.com/user-attachments/assets/aafe0c2e-41da-4a3e-94f5-d51df123979b" />
+
+11. Ftils (Contains many daily life utilities like currency converter, units converter)
 
 ---
 
@@ -153,13 +147,13 @@ Frays are the pet/companions for you. Frays that are trying to be your friend fr
 
 ## Fai (Fro AI)
 
-Fai is magic that makes Fro-OS to "First WebOS to name its AI as Fai"
+Fai is magic that makes Fro-OS to "First WebOS to name its AI as Fai". Fai works seemlessly and can perform almost any task that can be done via the use of frominal (terminal). Trust me you can do so many things with it, like creating a folder and adding individual files with the added content to it.
 
 ## Get started with contribution
 
 Step 1: Clone
 ```bash
-git clone https://github.com/BurningFlamesss/fro
+git clone https://github.com/BurningFlamesss/fro-3am
 ```
 
 Step 2: Install deps
@@ -185,4 +179,4 @@ Step 5 (Optional):
 
 - *(Please see AI Declarations at README-from-old-ship-at-macondo.md for any AI usages done on previous ship)*
 - `Rendered fewer hooks than expected. This may be caused by an accidental early return statement` due to the fact that I mistakenly spelt the intended useWidgetAppsStore as usewidgetAppsStore which doesnot fit under the react hook and thus getting the issue. Eventually used AI to fix that which took almost 8 minutes (I get this time by the fact that I started opencode when 1 hour was looged today, and stopped when it was done at 1 hour 8 minutes).
-- `/src/constants/words.tsx`. I used AI to create a list of words with their frequency and difficulties and copy pasted them in the file so that Frodle can use the random word from there. (Only the words are from AI)
+- `/src/constants/words.tsx`. I used AI to create a list of words with their frequency and difficulties and copy pasted them in the file so that Frodle can use the random word from there. (Only the words, frequency and difficulty labels are from AI)

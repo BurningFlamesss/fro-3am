@@ -4,22 +4,13 @@
 
 # Music
 
-- chosic.com
+- YouTube.com
 
-    Spring Flowers by Keys of Moon | https://soundcloud.com/keysofmoon
-    Music promoted by https://www.chosic.com/free-music/all/
-    Creative Commons CC BY 4.0
-    https://creativecommons.org/licenses/by/4.0/
+    https://www.youtube.com/@CozyCottage6
 
-    Feel Good by MusicbyAden | https://soundcloud.com/musicbyaden
-    Music promoted by https://www.chosic.com/free-music/all/
-    Creative Commons CC BY-SA 3.0
-    https://creativecommons.org/licenses/by-sa/3.0/
- 
-    Adrift Among Infinite Stars by Scott Buckley | www.scottbuckley.com.au
-    Music promoted by https://www.chosic.com/free-music/all/
-    Creative Commons CC BY 4.0
-    https://creativecommons.org/licenses/by/4.0/
+- Cover Image: Pixabay  
+
+    Image by <a href="https://pixabay.com/users/suju-foto-165106/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=10520325">Susanne Jutzeler</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=10520325">Pixabay</a>
 
 # Quotes
 

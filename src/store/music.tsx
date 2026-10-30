@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
+import { extractYouTubeId } from "#/apps/Frosic.tsx";
 
 export interface Track {
 	id: string;
@@ -55,9 +56,17 @@ interface MusicState {
 let audioElement: HTMLAudioElement | null = null;
 
 const initialMusicState = () => ({
-	tracks: [] as Track[],
+	tracks: [{
+		id: crypto.randomUUID(),
+		artist: "Inaudio",
+		cover: "https://cdn.pixabay.com/photo/2026/10/12/19/35/19-35-26-904_1280.jpg",
+		src: "https://www.youtube.com/watch?v=vuPhCSunt5U",
+		type: "youtube",
+		title: "Horror",
+		youtubeId: extractYouTubeId("https://www.youtube.com/watch?v=vuPhCSunt5U")
+	}] as Track[],
 	currentIndex: 0,
-	isPlaying: false,
+	isPlaying: true,
 	volume: 1,
 	muted: false,
 	repeat: false,

@@ -20,7 +20,7 @@ import {
 import { cn } from "#/lib/utils";
 import { useMusicStore } from "#/store/music";
 
-function extractYouTubeId(url: string): string | null {
+export function extractYouTubeId(url: string): string | null {
 	const patterns = [
 		/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
 		/(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]{11})/,
