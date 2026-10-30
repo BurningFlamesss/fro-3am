@@ -92,6 +92,35 @@ function Frominal() {
 		return await handler(params);
 	}
 
+	const resolvePath = (pathString: string) => {
+		let targetId = pathString.startsWith("/") ? rootId : currentPath
+		const segments = pathString.split("/").filter(Boolean)
+
+		for (let index = 0; index < segments.length; index++) {
+			const segment = segments[index].toLowerCase()
+
+			if (segment === ".") continue
+
+			if (segment === "..") {
+				const currentTarget = Object.values(nodes).find(node => node.id === targetId)
+
+				if (currentTarget?.parentId) {
+					targetId = currentTarget.parentId
+				}
+				continue
+			}
+
+			const children = getChildren(targetId)
+			const found = children.find(child => child.name.toLowerCase() === segment)
+
+			if (!found) return null
+
+			targetId = found.id
+		}
+
+		return Object.values(nodes).find(node => node.id === targetId)
+	}
+
 	const commands: Record<string, CommandHandler> = {
 		help: () => {
 			return (
@@ -238,13 +267,16 @@ function Frominal() {
 
 		append: (params) => {
 			const [filename, ...content] = params;
-			const pathname = filename.toLowerCase();
-			const nodes = getChildren(currentPath);
-			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
+			const node = resolvePath(filename)
 
 			if (node && node.type === "file") {
-				updateNode(node.id, `${node?.content}\n${content.join(" ").replace(/\\n/g, "\n")}`);
-				updateContent(node.id, `${node?.content}\n${content.join(" ").replace(/\\n/g, "\n")}`);
+				const newContent = content.join(" ").replace(/\\n/g, "\n")
+				const updatedContent = node.content ? `${node?.content}\n${newContent}` : newContent
+
+				updateNode(node.id, updatedContent);
+				updateContent(node.id, updatedContent);
+
+				return <p>Appended to {node.name}</p>
 			} else {
 				return <p className="text-red-500">Please use `cd` to jump to a folder containing the file</p>
 			}
