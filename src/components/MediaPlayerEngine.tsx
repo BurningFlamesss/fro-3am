@@ -1,3 +1,5 @@
+// Used AI to fix the issue of music not being played automatically
+
 import { useEffect, useRef } from "react";
 import YouTube from "react-youtube";
 import { useMusicStore } from "#/store/music";
@@ -8,6 +10,7 @@ function MediaPlayerEngine() {
 	const youTubePlayerRef = useRef<YouTube>(null);
 	const timeUpdateIntervalRef = useRef<NodeJS.Timeout>(null);
 	const previousMusicWindowCountRef = useRef(0);
+	const youTubeReadyRef = useRef(false);
 
 	const track = useMusicStore((state) => state.tracks[state.currentIndex]);
 	const isYouTubeTrack = track?.type === "youtube";
@@ -89,16 +92,41 @@ function MediaPlayerEngine() {
 	useEffect(() => {
 		const audio = audioElementRef.current;
 		if (!audio || isYouTubeTrack) return;
+
+		audio.muted = muted;
+		audio.volume = volume;
+
 		if (isPlaying) {
 			audio.play().catch((err) => {
-				if (err.name === "NotAllowedError") {
-					setPlaying(false)
+				if (err?.name === "NotAllowedError") {
+					setPlaying(false);
 				}
 			});
 		} else {
 			audio.pause();
 		}
-	}, [isPlaying, isYouTubeTrack]);
+	}, [isPlaying, isYouTubeTrack, muted, volume, setPlaying]);
+
+	useEffect(() => {
+		if (!isYouTubeTrack) return;
+		const player = youTubePlayerRef.current?.internalPlayer;
+		if (!player) return;
+
+		player.setVolume(muted ? 0 : volume * 100);
+
+		if (isPlaying) {
+			const maybePromise = player.playVideo();
+			if (maybePromise && typeof maybePromise.catch === "function") {
+				maybePromise.catch((err: { name?: string }) => {
+					if (err?.name === "NotAllowedError") {
+						setPlaying(false);
+					}
+				});
+			}
+		} else {
+			player.pauseVideo();
+		}
+	}, [isYouTubeTrack, isPlaying, muted, volume, track?.id, setPlaying]);
 
 	useEffect(() => {
 		if (!isYouTubeTrack || !youTubePlayerRef.current?.internalPlayer) return;
@@ -116,21 +144,11 @@ function MediaPlayerEngine() {
 					});
 				}
 			} catch {
-				// ignored
+				/* ignored */
 			}
 		}, 1000);
 		return () => clearInterval(timeUpdateIntervalRef.current);
 	}, [isYouTubeTrack, isPlaying, track?.id]);
-
-	useEffect(() => {
-		if (isYouTubeTrack && youTubePlayerRef.current?.internalPlayer) {
-			youTubePlayerRef.current.internalPlayer.setVolume(
-				muted ? 0 : volume * 100,
-			);
-		} else if (audioElementRef.current) {
-			audioElementRef.current.volume = muted ? 0 : volume;
-		}
-	}, [volume, muted, isYouTubeTrack]);
 
 	useEffect(() => {
 		if (!muted) return;
@@ -140,7 +158,6 @@ function MediaPlayerEngine() {
 		};
 
 		document.addEventListener("pointerdown", unmute, { once: true });
-		
 		return () => document.removeEventListener("pointerdown", unmute);
 	}, [muted]);
 
@@ -163,7 +180,7 @@ function MediaPlayerEngine() {
 						width: 1,
 						height: 1,
 						playerVars: {
-							autoplay: isPlaying ? 1 : 0,
+							autoplay: 0,        // ← force 0; React drives playback
 							controls: 0,
 							disablekb: 1,
 							origin: window.location.origin,
@@ -171,6 +188,7 @@ function MediaPlayerEngine() {
 						},
 					}}
 					onReady={(event) => {
+						youTubeReadyRef.current = true;
 						setYouTubePlayerAPI({
 							playVideo: () => event.target.playVideo(),
 							pauseVideo: () => event.target.pauseVideo(),
@@ -178,10 +196,22 @@ function MediaPlayerEngine() {
 								event.target.seekTo(seconds, allowSeekAhead),
 							getCurrentTime: () => event.target.getCurrentTime(),
 							getDuration: () => event.target.getDuration(),
+							setVolume: (value) => event.target.setVolume(value),
 						});
+
 						event.target.setVolume(muted ? 0 : volume * 100);
 						if (isPlaying) {
-							event.target.playVideo()
+							const maybePromise = event.target.playVideo();
+							if (
+								maybePromise &&
+								typeof maybePromise.catch === "function"
+							) {
+								maybePromise.catch((err: { name?: string }) => {
+									if (err?.name === "NotAllowedError") {
+										setPlaying(false);
+									}
+								});
+							}
 						}
 					}}
 					onEnd={() => {

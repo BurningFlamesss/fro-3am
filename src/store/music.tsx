@@ -21,6 +21,7 @@ interface YouTubePlayerAPI {
 	seekTo: (seconds: number, allowSeekAhead: boolean) => void;
 	getCurrentTime: () => number;
 	getDuration: () => number;
+	setVolume: (volume: number) => void;
 }
 
 interface MusicState {
@@ -202,7 +203,13 @@ export const useMusicStore = create<MusicState>()(
 
 			setMuted: (muted) => {
 				const state = get();
-				if (audioElement) audioElement.volume = muted ? 0 : state.volume;
+				if (audioElement) {
+					audioElement.muted = muted;
+					audioElement.volume = state.volume;
+				}
+				if (state.youTubePlayerAPI) {
+					state.youTubePlayerAPI.setVolume(muted ? 0 : state.volume * 100);
+				}
 				set((draft) => {
 					draft.muted = muted;
 				});
@@ -281,7 +288,6 @@ export const useMusicStore = create<MusicState>()(
 				tracks: state.tracks,
 				currentIndex: state.currentIndex,
 				volume: state.volume,
-				muted: state.muted,
 				repeat: state.repeat,
 			}),
 		},
