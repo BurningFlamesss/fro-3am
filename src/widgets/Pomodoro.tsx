@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { COMPLETED_MARKER, cn, decodeHiddenInformation, disguishHiddenInformation, formatTime, INCOMPLETE_MARKER, TASK_TAB_ID } from "#/lib/utils.ts";
 import { useCalendarStore } from "#/store/calendar.tsx";
@@ -13,7 +14,6 @@ import resetImg from "../../public/widgets/pomodoro/reset.png";
 import workGif from "../../public/widgets/pomodoro/work.gif";
 import workBtn from "../../public/widgets/pomodoro/work.png";
 import workBtnClicked from "../../public/widgets/pomodoro/work-clicked.png";
-import { format } from "date-fns";
 
 const cheerMessages = [
 	"Stay Frokused",
@@ -84,7 +84,13 @@ function Pomodoro() {
 	const frokAudioRef = useRef<HTMLAudioElement | null>(null);
 	const endTimeRef = useRef<number>(0);
 	const animationFrameRef = useRef<number>(0);
-	const totalDurationRef = useRef<number>(DEFAULT_WORK_TIME);
+	const totalDurationRef = useRef<{
+		total: number;
+		start: number;
+	}>({
+		total: DEFAULT_WORK_TIME,
+		start: DEFAULT_WORK_TIME
+	});
 
 	useEffect(() => {
 		frokAudioRef.current = new Audio(frokSound);
@@ -141,9 +147,10 @@ function Pomodoro() {
 				setIsRunning(false);
 				setImage(playImg);
 				setGifImage(idleGif);
-				setTimeLeft(totalDurationRef.current);
+				setTimeLeft(totalDurationRef.current.total);
 
-				const startTime = format(Date.now() - ((totalDurationRef.current - timeLeft) * 1000), "yyyy-MM-dd'T'HH:mm")
+				const passedTime = totalDurationRef.current.start
+				const startTime = format(Date.now() - (passedTime * 1000), "yyyy-MM-dd'T'HH:mm")
 				const endTime = format(new Date(), "yyyy-MM-dd'T'HH:mm")
 
 				addEvent({
@@ -153,6 +160,8 @@ function Pomodoro() {
 					end: new Date(endTime).toISOString(),
 					color: "#ff0000"
 				})
+
+				totalDurationRef.current.start = totalDurationRef.current.total
 
 				frokAudioRef.current?.play().catch(() => { });
 			}
@@ -176,7 +185,10 @@ function Pomodoro() {
 		setImage(playImg);
 
 		const newDuration = breakMode ? DEFAULT_BREAK_TIME : DEFAULT_WORK_TIME;
-		totalDurationRef.current = newDuration;
+		totalDurationRef.current = {
+			start: newDuration,
+			total: newDuration
+		};
 		setTimeLeft(newDuration);
 	};
 
@@ -189,7 +201,7 @@ function Pomodoro() {
 			setIsRunning(false);
 			setGifImage(idleGif);
 			setImage(playImg);
-			const passedTime = totalDurationRef.current - timeLeft
+			const passedTime = totalDurationRef.current.start - timeLeft
 			const startTime = format(Date.now() - (passedTime * 1000), "yyyy-MM-dd'T'HH:mm")
 			const endTime = format(new Date(), "yyyy-MM-dd'T'HH:mm")
 
@@ -201,7 +213,7 @@ function Pomodoro() {
 				color: "#ff0000"
 			})
 
-			totalDurationRef.current = timeLeft
+			totalDurationRef.current.start = timeLeft
 		}
 
 	};
@@ -213,7 +225,10 @@ function Pomodoro() {
 		const [parsedMinute, parsedSecond] = [parseInt(minuteHand, 10), parseInt(secondHand, 10)]
 		const [minute, second] = [Number.isNaN(parsedMinute) ? isBreak ? 5 : 25 : parsedMinute, Number.isNaN(parsedSecond) ? 0 : parsedSecond]
 		const newDuration = (minute * 60) + second;
-		totalDurationRef.current = newDuration;
+		totalDurationRef.current = {
+			start: newDuration,
+			total: newDuration
+		};
 		setTimeLeft(newDuration);
 	}
 
@@ -225,7 +240,10 @@ function Pomodoro() {
 		const [parsedMinute, parsedSecond] = [parseInt(minuteHand, 10), parseInt(secondHand, 10)]
 		const [minute, second] = [Number.isNaN(parsedMinute) ? isBreak ? 5 : 25 : parsedMinute, Number.isNaN(parsedSecond) ? 0 : parsedSecond]
 		const newDuration = (minute * 60) + second;
-		totalDurationRef.current = newDuration;
+		totalDurationRef.current = {
+			start: newDuration,
+			total: newDuration
+		};
 		setTimeLeft(newDuration);
 	}
 
