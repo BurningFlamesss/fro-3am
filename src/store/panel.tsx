@@ -1,4 +1,3 @@
-import type { id } from "zod/locales";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
@@ -6,6 +5,7 @@ export interface PanelNotification {
 	id: string;
 	type: "ai" | "event";
 	silent: boolean;
+	hidden: boolean;
 	title: string;
 	description: string;
 	at: number;

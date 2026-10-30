@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { X } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import {
 	FaBackwardFast,
 	FaBatteryThreeQuarters,
@@ -28,6 +29,7 @@ import { type FileNode, useFileSystemStore } from "#/store/fs.tsx";
 import { useLauncherStore } from "#/store/launcher.tsx";
 import { useMusicStore } from "#/store/music.tsx";
 import { useNoteStore } from "#/store/note.tsx";
+import { type PanelNotification, usePanelStore } from "#/store/panel.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { findAppWindows, useWindowStore } from "#/store/window.tsx";
@@ -41,11 +43,13 @@ import {
 } from "./ui/context-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import WindowThumbnail from "./WindowThumbnail";
-import { usePanelStore, type PanelNotification } from "#/store/panel.tsx";
 
 function MiscellaneousPanel({ onClose, panelNotifications }: { onClose: () => void, panelNotifications: Array<PanelNotification> }) {
 	const theme = useSettingStore((state) => state.theme);
 	const updatePanelNotification = usePanelStore(state => state.updatePanelNotification)
+
+	console.log("Notifications: ", panelNotifications)
+	const eligibleNotifications = panelNotifications.filter(notification => !notification.hidden)
 
 	useEffect(() => {
 		const handleKey = (e: KeyboardEvent) => {
@@ -71,20 +75,36 @@ function MiscellaneousPanel({ onClose, panelNotifications }: { onClose: () => vo
 				<div
 					className={cn("w-75 rounded-2xl overflow-hidden", theme.colourScheme)}
 				>
-					{panelNotifications.map(notification => {
+					{eligibleNotifications.length > 0 ? eligibleNotifications.map(notification => {
 						const imageSrc = notification.type === "ai" ? "/fai.png" : notification.type === "event" ? "/apps/Calendar.svg" : "/apps/Explorer.svg"
 						const imageLabel = notification.type === "ai" ? "Fai" : notification.type === "event" ? "Calendar" : "System"
-						return (
-							<section key={notification.id}>
-								<span className="flex flex-row items-center justify-center gap-2">
-									<img className="w-8 h-8" src={imageSrc} alt="" /> {imageLabel}
-								</span>
-								<h2>{notification.title}</h2>
 
-								<p>{notification.description}</p>
+						return (
+							<section key={notification.id} className="flex flex-col gap-y-2 px-2 py-6 group/notification">
+								<div className="flex flex-row items-center justify-between">
+									<span className="flex gap-2">
+										<img className="w-6 h-6" src={imageSrc} alt="" /> {imageLabel}
+									</span>
+									<span className="group-hover/notification:flex hidden">
+										<X onClick={() => {
+											updatePanelNotification(notification.id, {
+												hidden: true
+											})
+										}} className="w-4 h-4 text-white cursor-pointer hover:text-red-400" />
+									</span>
+								</div>
+								<div className={cn(theme.colourScheme, "rounded-xl p-2")}>
+									<h2 className="text-lg font-medium">{notification.title}</h2>
+
+									<p>{notification.description}</p>
+								</div>
 							</section>
 						)
-					})}
+					}) : (
+						<section className="h-full w-full flex items-center justify-center text-white">
+							No Notifications
+						</section>
+					)}
 				</div>
 			</div>
 		</div>

@@ -110,6 +110,7 @@ function Home() {
 					title: "Complete the task",
 					description: `"${process.query}" is successfully completed.`,
 					type: "ai",
+					hidden: false,
 					at: Date.now()
 				})
 			})
@@ -122,6 +123,7 @@ function Home() {
 					title: "Error occured",
 					description: `"${process.query}" is not completed due to an unknown error.`,
 					type: "ai",
+					hidden: false,
 					at: Date.now()
 				})
 			})
