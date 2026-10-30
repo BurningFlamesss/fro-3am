@@ -302,6 +302,7 @@ export const START_HIDING_PATTERN = "{_<<hide>>_}";
 export const END_HIDING_PATTERN = "{_</</hide>>_}";
 export const COMPLETED_MARKER = "[x]";
 export const INCOMPLETE_MARKER = "[ ]";
+export const TASK_TAB_ID = "user-task.todo";
 
 export function getStartAndEndOfHiddenPattern(text: string) {
 	if (

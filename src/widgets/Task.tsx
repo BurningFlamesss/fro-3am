@@ -1,10 +1,8 @@
+import { Delete, Link } from "lucide-react";
 import { Checkbox } from "#/components/ui/checkbox.tsx";
-import { cn, COMPLETED_MARKER, decodeHiddenInformation, disguishHiddenInformation, END_HIDING_PATTERN, getStartAndEndOfHiddenPattern, INCOMPLETE_MARKER, START_HIDING_PATTERN } from "#/lib/utils.ts";
+import { COMPLETED_MARKER, cn, decodeHiddenInformation, disguishHiddenInformation, END_HIDING_PATTERN, getStartAndEndOfHiddenPattern, INCOMPLETE_MARKER, START_HIDING_PATTERN, TASK_TAB_ID } from "#/lib/utils.ts";
 import { useNoteStore } from "#/store/note.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
-import { Delete, Link } from "lucide-react";
-
-export const TASK_TAB_ID = "user-task.todo";
 
 function Task() {
 	const { tabs, addTab, updateContent } = useNoteStore();
@@ -17,10 +15,13 @@ function Task() {
 		.split("\n")
 		.map((line) => {
 			const trimmed = line.trim();
-			let linked: boolean = false
+			let linked: string = ""
+
 			const hiddenText = decodeHiddenInformation(trimmed)
 
-			if (hiddenText?.includes("linked")) linked = true
+			if (hiddenText?.includes("linked")) {
+				linked = hiddenText.replace("linked-to-", "")
+			}
 
 			if (trimmed.startsWith(COMPLETED_MARKER)) {
 				return {
@@ -55,7 +56,7 @@ function Task() {
 		if (!taskTab) {
 			addTab("Tasks", `${INCOMPLETE_MARKER} ${trimmed}`, TASK_TAB_ID, "todo");
 		} else {
-			const newItems = [...taskItems, { text: trimmed, completed: false, linked: false }];
+			const newItems = [...taskItems, { text: trimmed, completed: false, linked: "" }];
 			const newContent = buildContent(newItems);
 			updateContent(TASK_TAB_ID, newContent);
 		}
@@ -74,9 +75,22 @@ function Task() {
 
 		const { startIndexOfStartPattern } = getStartAndEndOfHiddenPattern(taskItems[index].text)
 
-		const updatedItems = taskItems.map((item, i) =>
-			i === index ? { ...item, text: item.linked ? item.text.slice(0, startIndexOfStartPattern) : `${item.text} ${START_HIDING_PATTERN}linked${END_HIDING_PATTERN}`, linked: !item.linked } : item,
-		);
+		const updatedItems = taskItems.map((item, i) => {
+			if (i !== index) {
+				return item
+			}
+
+			let linkedTo: string = ""
+
+			if (!item.linked) {
+				linkedTo = prompt("Where do you want to link the task? (work/break)") ?? ""
+			}
+
+			const linked = item.linked ? "" : `linked-to-${linkedTo}`
+			const text = item.linked ? item.text.slice(0, startIndexOfStartPattern) : `${item.text} ${START_HIDING_PATTERN}${linked}${END_HIDING_PATTERN}`
+
+			return { ...item, text, linked }
+		});
 		const newContent = buildContent(updatedItems);
 		updateContent(TASK_TAB_ID, newContent);
 	};

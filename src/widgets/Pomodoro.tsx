@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { cn, formatTime } from "#/lib/utils.ts";
+import { cn, formatTime, TASK_TAB_ID } from "#/lib/utils.ts";
+import { useSettingStore } from "#/store/setting.tsx";
 import breakGif from "../../public/widgets/pomodoro/break.gif";
 import breakBtn from "../../public/widgets/pomodoro/break.png";
 import breakBtnClicked from "../../public/widgets/pomodoro/break-clicked.png";
@@ -10,7 +11,7 @@ import resetImg from "../../public/widgets/pomodoro/reset.png";
 import workGif from "../../public/widgets/pomodoro/work.gif";
 import workBtn from "../../public/widgets/pomodoro/work.png";
 import workBtnClicked from "../../public/widgets/pomodoro/work-clicked.png";
-import { useSettingStore } from "#/store/setting.tsx";
+import { useNoteStore } from "#/store/note.tsx";
 
 const cheerMessages = [
 	"Stay Frokused",
@@ -30,8 +31,13 @@ const breakMessages = [
 
 function Pomodoro() {
 	const theme = useSettingStore((state) => state.theme)
+	const taskTab = useNoteStore(state => state.tabs.find(tab => tab.id === TASK_TAB_ID))
+		const content = taskTab?.content ?? "";
+
+
 	const [timeLeft, setTimeLeft] = useState<number>(25 * 60);
 	const [isRunning, setIsRunning] = useState<boolean>(false);
+	const [workingFor, setWorkingFor] = useState<string>("");
 	const [isBreak, setIsBreak] = useState<boolean>(false);
 	const [encouragement, setEncouragement] = useState<string>("");
 
@@ -102,7 +108,7 @@ function Pomodoro() {
 				setGifImage(idleGif);
 				setTimeLeft(totalDurationRef.current);
 
-				frokAudioRef.current?.play().catch(() => {});
+				frokAudioRef.current?.play().catch(() => { });
 			}
 		};
 
