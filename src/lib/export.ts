@@ -31,19 +31,23 @@ const collectNodes = (
 	return all;
 };
 
-const relativePath = (node: FileNode, roots: Set<string>, all: Array<FileNode>) => {
+const relativePath = (
+	node: FileNode,
+	roots: Set<string>,
+	nodes: Record<string, FileNode>,
+) => {
 	const parts = [];
-	let current = node;
+	let current: FileNode | undefined = node;
 
 	while (current) {
-		parts.unshift(node.name);
+		parts.unshift(current.name);
 
-		if (roots.has(current.id)) break
+		if (roots.has(current.id)) break;
 
-		current = current?.parentId ? all?.[current.parentId] : undefined
+		current = current?.parentId ? nodes?.[current.parentId] : undefined;
 	}
 
-	return parts.join("/")
+	return parts.join("/");
 };
 
 const download = (blob: Blob, fileName: string) => {
@@ -73,8 +77,7 @@ export async function Export(
 
 			// add files to zip and download
 			for (const node of all) {
-				const path = relativePath(node, roots, all);
-				console.log("Path: ", path)
+				const path = relativePath(node, roots, nodes);
 
 				switch (node.type) {
 					case "folder":
