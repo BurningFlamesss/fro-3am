@@ -16,28 +16,33 @@ function Task() {
 		.map((line) => {
 			const trimmed = line.trim();
 			let linked: string = ""
+			let priority: number = 0
 
 			const hiddenText = decodeHiddenInformation(trimmed)
 
-			if (hiddenText?.includes("linked")) {
-				linked = hiddenText.replace("linked-to-", "")
+			if (hiddenText) {
+				const segments = hiddenText.split(",")
+				linked = (segments.find(segment => segment.startsWith("linked-to=")) ?? "").replace("linked-to=", "")
+				priority = +(segments.find(segment => segment.startsWith("priority=")) ?? "").replace("priority=", "")
 			}
 
 			if (trimmed.startsWith(COMPLETED_MARKER)) {
 				return {
 					text: trimmed.slice(COMPLETED_MARKER.length).trim(),
 					completed: true,
-					linked
+					linked, 
+					priority
 				};
 			}
 			if (trimmed.startsWith(INCOMPLETE_MARKER)) {
 				return {
 					text: trimmed.slice(INCOMPLETE_MARKER.length).trim(),
 					completed: false,
-					linked
+					linked, 
+					priority
 				};
 			}
-			return { text: trimmed, completed: false, linked };
+			return { text: trimmed, completed: false, linked, priority };
 		})
 		.filter((item) => item.text.length > 0);
 
@@ -81,13 +86,16 @@ function Task() {
 			}
 
 			let linkedTo: string = ""
+			let priority: number = 0
 
 			if (!item.linked) {
 				linkedTo = prompt("Where do you want to link the task? (work/break)") ?? ""
+				priority = +(prompt("What should be the priority of the task? (0-9)") ?? 0)
 			}
 
-			const linked = item.linked ? "" : `linked-to-${linkedTo}`
-			const text = item.linked ? item.text.slice(0, startIndexOfStartPattern) : `${item.text} ${START_HIDING_PATTERN}${linked}${END_HIDING_PATTERN}`
+
+			const linked = item.linked ? "" : `linked-to=${linkedTo}`
+			const text = item.linked ? item.text.slice(0, startIndexOfStartPattern) : `${item.text} ${START_HIDING_PATTERN}${linked},priority=${priority}${END_HIDING_PATTERN}`
 
 			return { ...item, text, linked }
 		});
