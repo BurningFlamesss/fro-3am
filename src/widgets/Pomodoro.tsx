@@ -179,20 +179,22 @@ function Pomodoro() {
 			}}
 		>
 			<div className="flex flex-col items-center justify-between w-full h-full py-4 px-2 box-border">
-				<div className="flex justify-center m-0 gap-2">
+				<div className="w-3/4 px-4 flex m-0 gap-2">
 					<button
-						className="bg-none border-none cursor-pointer"
+						className={cn("border border-red-500 rounded-sm cursor-pointer flex-1 h-10 text-2xl flex justify-center items-center", isBreak ? "bg-none" : "bg-red-200")}
 						type="button"
 						onClick={() => switchMode(false)}
 					>
-						<img src={workButtonImage} alt="Work" />
+						<span className="relative top-1.5">Work</span>
+					{/* <img src={workButtonImage} alt="Work" /> */}
 					</button>
 					<button
-						className="bg-none border-none cursor-pointer"
+						className={cn("border border-red-500 rounded-sm cursor-pointer flex-1 h-10 text-2xl flex justify-center items-center", isBreak ? "bg-red-200" : "bg-none")}
 						type="button"
 						onClick={() => switchMode(true)}
-					>
-						<img src={breakButtonImage} alt="Break" />
+						>
+						<span className="relative top-1.5">Break</span>
+						{/* <img src={breakButtonImage} alt="Break" /> */}
 					</button>
 				</div>
 
@@ -205,7 +207,9 @@ function Pomodoro() {
 					{encouragement}
 				</p>
 
-				<h1 className="text-6xl m-0">{formatTime(timeLeft)}</h1>
+				<div className="m-0">
+					<input className="text-6xl w-57 " type="text" value={formatTime(timeLeft)} />
+				</div>
 
 				<img src={gifImage} className="h-25" alt="Timer Status" />
 
