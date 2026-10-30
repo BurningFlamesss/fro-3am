@@ -65,7 +65,7 @@ function MediaPlayerEngine() {
 		const onEnded = () => {
 			if (repeat) {
 				audio.currentTime = 0;
-				audio.play().catch(() => {});
+				audio.play().catch(() => { });
 			} else {
 				nextTrack();
 			}
@@ -90,7 +90,11 @@ function MediaPlayerEngine() {
 		const audio = audioElementRef.current;
 		if (!audio || isYouTubeTrack) return;
 		if (isPlaying) {
-			audio.play().catch(() => {});
+			audio.play().catch((err) => {
+				if (err.name === "NotAllowedError") {
+					setPlaying(false)
+				}
+			});
 		} else {
 			audio.pause();
 		}
@@ -128,6 +132,18 @@ function MediaPlayerEngine() {
 		}
 	}, [volume, muted, isYouTubeTrack]);
 
+	useEffect(() => {
+		if (!muted) return;
+
+		const unmute = () => {
+			useMusicStore.getState().setMuted(false);
+		};
+
+		document.addEventListener("pointerdown", unmute, { once: true });
+		
+		return () => document.removeEventListener("pointerdown", unmute);
+	}, [muted]);
+
 	return (
 		<div
 			style={{
@@ -164,7 +180,9 @@ function MediaPlayerEngine() {
 							getDuration: () => event.target.getDuration(),
 						});
 						event.target.setVolume(muted ? 0 : volume * 100);
-						if (isPlaying) event.target.playVideo();
+						if (isPlaying) {
+							event.target.playVideo()
+						}
 					}}
 					onEnd={() => {
 						if (repeat) {

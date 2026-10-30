@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
 import { extractYouTubeId } from "#/apps/Frosic.tsx";
+import { createDebouncedStorage } from "#/lib/debounced-storage.ts";
 
 export interface Track {
 	id: string;
@@ -68,7 +68,7 @@ const initialMusicState = () => ({
 	currentIndex: 0,
 	isPlaying: true,
 	volume: 1,
-	muted: false,
+	muted: true,
 	repeat: false,
 	currentTime: 0,
 	duration: 0,
@@ -135,7 +135,7 @@ export const useMusicStore = create<MusicState>()(
 					if (state.isPlaying) {
 						audioElement.pause();
 					} else {
-						audioElement.play().catch(() => {});
+						audioElement.play().catch(() => { });
 					}
 				}
 				set((draft) => {
@@ -151,7 +151,7 @@ export const useMusicStore = create<MusicState>()(
 						? state.youTubePlayerAPI.playVideo()
 						: state.youTubePlayerAPI.pauseVideo();
 				} else if (audioElement) {
-					playing ? audioElement.play().catch(() => {}) : audioElement.pause();
+					playing ? audioElement.play().catch(() => { }) : audioElement.pause();
 				}
 				set((draft) => {
 					draft.isPlaying = playing;
