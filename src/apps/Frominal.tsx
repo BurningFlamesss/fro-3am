@@ -213,10 +213,32 @@ function Frominal() {
 				return;
 			}
 
-			params.forEach((param) => {
-				let { name, extension } = parseFileName(param);
+			return params.map((param) => {
+				const segments = param.split("/")
+				const fileName = segments.pop() ?? ""
+
+				const parentPath = segments.join("/")
+				let target = currentPath
+
+				if (parentPath) {
+					const parent = resolvePath(parentPath)
+
+					if (!parent) {
+						return <p key={param} className="text-red-500">Directory not found: {parentPath}</p>
+					}
+
+					if (parent.type !== "folder") {
+						return <p key={param} className="text-red-500">Not a Directory: {parentPath}</p>
+					}
+
+					target = parent?.id
+				}
+
+				let { name, extension } = parseFileName(fileName);
 				extension = extension ? extension : "frote";
-				createNode(currentPath, `${name}.${extension}`, "file");
+				createNode(target, `${name}.${extension}`, "file");
+
+				return <p key={param}>Successfully!!! created {fileName} at {parentPath}</p>
 			});
 		},
 
@@ -236,11 +258,9 @@ function Frominal() {
 				return;
 			}
 
-			const nodes = getChildren(currentPath);
-
 			params.forEach((param) => {
 				param = param.toLowerCase();
-				const node = nodes.find((node) => node.name.toLowerCase() === param);
+				const node = resolvePath(param)
 
 				if (node && node.type === "file") {
 					deleteNode(node.id);
@@ -253,11 +273,9 @@ function Frominal() {
 				return;
 			}
 
-			const nodes = getChildren(currentPath);
-
 			params.forEach((param) => {
 				param = param.toLowerCase();
-				const node = nodes.find((node) => node.name.toLowerCase() === param);
+				const node = resolvePath(param)
 
 				if (node && node.type === "folder") {
 					deleteNode(node.id); // Since, this is already recursive, I don't need to implement it again
