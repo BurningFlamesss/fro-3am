@@ -1,4 +1,5 @@
 import JSZip from "jszip";
+import { ParenthesisNode } from "mathjs";
 import { type FileNode } from "#/store/fs.tsx";
 
 export type ExportOptions = "zip" | "json";
@@ -30,6 +31,21 @@ const collectNodes = (
 	return all;
 };
 
+const relativePath = (node: FileNode, roots: Set<string>, all: Array<FileNode>) => {
+	const parts = [];
+	let current = node;
+
+	while (current) {
+		parts.unshift(node.name);
+
+		if (roots.has(current.id)) break
+
+		current = current?.parentId ? all?.[current.parentId] : undefined
+	}
+
+	return parts.join("/")
+};
+
 const download = (blob: Blob, fileName: string) => {
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement("a");
@@ -57,6 +73,22 @@ export async function Export(
 
 			// add files to zip and download
 			for (const node of all) {
+				const path = relativePath(node, roots, all);
+				console.log("Path: ", path)
+
+				switch (node.type) {
+					case "folder":
+						zip.folder(path);
+						break;
+
+					case "file":
+						zip.file(path, node.content ?? "");
+						break;
+
+					default:
+						zip.file(path, node.content ?? "");
+						break;
+				}
 			}
 
 			const blob = await zip.generateAsync({ type: "blob" });

@@ -4,5 +4,5 @@
 3. Productivity/Mind games (DONE)
 4. Full AI enabled system (DONE)
 5. Ability to export files to their real OS
-6. Synchronization between widgets (I donot see any implications of this except sync between events, task and pomodoro)
+6. Synchronization between widgets (DONE)
 7. Maybe something more goofy?
