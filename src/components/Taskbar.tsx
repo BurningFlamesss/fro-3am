@@ -48,7 +48,6 @@ function MiscellaneousPanel({ onClose, panelNotifications }: { onClose: () => vo
 	const theme = useSettingStore((state) => state.theme);
 	const updatePanelNotification = usePanelStore(state => state.updatePanelNotification)
 
-	console.log("Notifications: ", panelNotifications)
 	const eligibleNotifications = panelNotifications.filter(notification => !notification.hidden)
 
 	useEffect(() => {
@@ -113,6 +112,7 @@ function MiscellaneousPanel({ onClose, panelNotifications }: { onClose: () => vo
 
 function MediaPanel({ onClose }: { onClose: () => void }) {
 	const theme = useSettingStore((state) => state.theme);
+	const openApp = useWindowStore(state => state.openApp)
 	const brightness = useSettingStore((state) => state.brightness);
 	const setBrightness = useSettingStore((state) => state.setBrightness);
 	const [coverImageSource, setCoverImageSource] = useState("");
@@ -199,23 +199,23 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 			) : null}
 			<div className="absolute bottom-0 right-0 mr-25 mb-20 h-80 flex">
 				<div
-					className={cn("w-75 rounded-2xl overflow-hidden", theme.colourScheme)}
+					className={cn("w-75 rounded-2xl overflow-hidden flex flex-col justify-between", theme.colourScheme)}
 				>
-					<div className="w-full px-4 py-4 grid grid-cols-3 grid-rows-2">
-						{[0, 1, 2, 3, 4, 5].map((ctrlOptions) => {
-							return <div key={ctrlOptions}>{ctrlOptions}</div>;
+					<div className="w-full h-1/2 px-4 py-4 grid grid-cols-3 grid-rows-2 gap-x-2 gap-y-2">
+						{["F", "R", "O", "C", "U", "S"].map((ctrlOptions) => {
+							return <div className="border border-red-500 bg-red-200 flex items-center justify-center rounded-xl" key={ctrlOptions}>{ctrlOptions}</div>;
 						})}
 					</div>
-					<div className="w-full px-4 flex flex-col items-center justify-center">
+					<div className="w-full px-4 flex flex-col items-center justify-center gap-y-4">
 						<div className="w-full flex items-center gap-1">
 							<button
 								onClick={() => { }}
 								className="cursor-pointer text-white/60 hover:text-white"
 							>
 								{brightness === 0 ? (
-									<TbSunLow size={14} />
+									<TbSunLow size={18} />
 								) : (
-									<TbSunHighFilled size={14} />
+									<TbSunHighFilled size={18} />
 								)}
 							</button>
 							<input
@@ -227,7 +227,7 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 								onChange={(event) =>
 									setBrightness(parseFloat(event.target.value))
 								}
-								className="w-12 h-1 accent-white/60 cursor-pointer"
+								className="w-full h-2 accent-white/60 cursor-pointer"
 							/>
 						</div>
 						<div className="w-full flex items-center gap-1">
@@ -236,9 +236,9 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 								className="cursor-pointer text-white/60 hover:text-white"
 							>
 								{musicStore.muted || musicStore.volume === 0 ? (
-									<FaVolumeXmark size={14} />
+									<FaVolumeXmark size={18} />
 								) : (
-									<FaVolumeHigh size={14} />
+									<FaVolumeHigh size={18} />
 								)}
 							</button>
 							<input
@@ -250,13 +250,15 @@ function MediaPanel({ onClose }: { onClose: () => void }) {
 								onChange={(event) =>
 									musicStore.setVolume(parseFloat(event.target.value))
 								}
-								className="w-12 h-1 accent-white/60 cursor-pointer"
+								className="w-full h-2 accent-white/60 cursor-pointer"
 							/>
 						</div>
 					</div>
-					<div className="w-full flex flex-row justify-between px-4">
-						<FaBatteryThreeQuarters />
-						<img src="/apps/Settings.svg" className="w-4" alt="" />
+					<div className="w-full flex flex-row justify-between px-4 pb-4">
+						<FaBatteryThreeQuarters className="text-white" />
+						<button type="button" onClick={() => openApp("settings")} className="cursor-pointer">
+							<img src="/apps/Settings.svg" className="w-4" alt="" />
+						</button>
 					</div>
 				</div>
 			</div>
