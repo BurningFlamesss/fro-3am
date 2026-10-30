@@ -3,6 +3,6 @@
 2. Community based apps & widgets (Not yet)
 3. Productivity/Mind games (DONE)
 4. Full AI enabled system (DONE)
-5. Ability to export files to their real OS
+5. Ability to export files to their real OS (DONE)
 6. Synchronization between widgets (DONE)
-7. Maybe something more goofy?
+7. Maybe something more goofy? (DONE)

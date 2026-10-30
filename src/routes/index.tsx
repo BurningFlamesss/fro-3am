@@ -8,6 +8,7 @@ import WindowOverlays from "#/components/WindowOverlays.tsx";
 import { terminalExecutions } from "#/constants/fai-tools.tsx";
 import { getAIResponse } from "#/server/fai.tsx";
 import { type Process, useFaiStore } from "#/store/fai.tsx";
+import { usePanelStore } from "#/store/panel.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
 import { useTerminalStore } from "#/store/terminal.tsx";
 import { useWindowStore } from "#/store/window.tsx";
@@ -102,8 +103,28 @@ function Home() {
 						closeWindow(value.id)
 					}
 				})
+				usePanelStore.getState().addPanelNotification({
+					id: crypto.randomUUID(),
+					read: false,
+					silent: true,
+					title: "Complete the task",
+					description: `"${process.query}" is successfully completed.`,
+					type: "ai",
+					at: Date.now()
+				})
 			})
-			.catch(() => updateProcessStatus(nextQueueIndex, "error"))
+			.catch(() => {
+				updateProcessStatus(nextQueueIndex, "error")
+				usePanelStore.getState().addPanelNotification({
+					id: crypto.randomUUID(),
+					read: false,
+					silent: true,
+					title: "Error occured",
+					description: `"${process.query}" is not completed due to an unknown error.`,
+					type: "ai",
+					at: Date.now()
+				})
+			})
 
 	}, [isLoading, processes, sendMessage, updateProcessStatus, closeWindow]);
 

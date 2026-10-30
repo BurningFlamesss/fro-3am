@@ -41,9 +41,11 @@ import {
 } from "./ui/context-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import WindowThumbnail from "./WindowThumbnail";
+import { usePanelStore, type PanelNotification } from "#/store/panel.tsx";
 
-function MiscellaneousPanel({ onClose }: { onClose: () => void }) {
+function MiscellaneousPanel({ onClose, panelNotifications }: { onClose: () => void, panelNotifications: Array<PanelNotification> }) {
 	const theme = useSettingStore((state) => state.theme);
+	const updatePanelNotification = usePanelStore(state => state.updatePanelNotification)
 
 	useEffect(() => {
 		const handleKey = (e: KeyboardEvent) => {
@@ -68,7 +70,22 @@ function MiscellaneousPanel({ onClose }: { onClose: () => void }) {
 			>
 				<div
 					className={cn("w-75 rounded-2xl overflow-hidden", theme.colourScheme)}
-				></div>
+				>
+					{panelNotifications.map(notification => {
+						const imageSrc = notification.type === "ai" ? "/fai.png" : notification.type === "event" ? "/apps/Calendar.svg" : "/apps/Explorer.svg"
+						const imageLabel = notification.type === "ai" ? "Fai" : notification.type === "event" ? "Calendar" : "System"
+						return (
+							<section key={notification.id}>
+								<span className="flex flex-row items-center justify-center gap-2">
+									<img className="w-8 h-8" src={imageSrc} alt="" /> {imageLabel}
+								</span>
+								<h2>{notification.title}</h2>
+
+								<p>{notification.description}</p>
+							</section>
+						)
+					})}
+				</div>
 			</div>
 		</div>
 	);
@@ -532,6 +549,7 @@ function Taskbar() {
 		unpinApp,
 	} = useWindowStore();
 	const theme = useSettingStore((state) => state.theme);
+	const panelNotifications = usePanelStore(state => state.panelNotifications)
 	const [dateTimeData, setDateTimeData] = useState(() => getDateTime());
 	const [searchPanelTriggered, setSearchPanelTriggered] =
 		useState<boolean>(false);
@@ -621,6 +639,7 @@ function Taskbar() {
 			{miscellaneousPanelTriggered && (
 				<MiscellaneousPanel
 					onClose={() => setMiscellaneousPanelTriggered(false)}
+					panelNotifications={panelNotifications}
 				/>
 			)}
 			<footer
