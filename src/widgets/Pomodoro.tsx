@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { COMPLETED_MARKER, cn, decodeHiddenInformation, disguishHiddenInformation, formatTime, INCOMPLETE_MARKER, TASK_TAB_ID } from "#/lib/utils.ts";
+import { useCalendarStore } from "#/store/calendar.tsx";
 import { useNoteStore } from "#/store/note.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
 import breakGif from "../../public/widgets/pomodoro/break.gif";
@@ -12,6 +13,7 @@ import resetImg from "../../public/widgets/pomodoro/reset.png";
 import workGif from "../../public/widgets/pomodoro/work.gif";
 import workBtn from "../../public/widgets/pomodoro/work.png";
 import workBtnClicked from "../../public/widgets/pomodoro/work-clicked.png";
+import { format } from "date-fns";
 
 const cheerMessages = [
 	"Stay Frokused",
@@ -34,6 +36,8 @@ const DEFAULT_BREAK_TIME = 5 * 60
 
 function Pomodoro() {
 	const theme = useSettingStore((state) => state.theme)
+	const addEvent = useCalendarStore(state => state.addEvent);
+
 	const taskTab = useNoteStore(state => state.tabs.find(tab => tab.id === TASK_TAB_ID))
 	const content = taskTab?.content ?? "";
 	const eligibleTaskItems = content
@@ -65,8 +69,6 @@ function Pomodoro() {
 		})
 		.filter((item) => item?.linked)
 		.sort((a, b) => a.priority - b.priority);
-
-	console.log("Eligible task items: ", eligibleTaskItems)
 
 	const [timeLeft, setTimeLeft] = useState<number>(DEFAULT_WORK_TIME);
 	const [isRunning, setIsRunning] = useState<boolean>(false);
@@ -141,6 +143,17 @@ function Pomodoro() {
 				setGifImage(idleGif);
 				setTimeLeft(totalDurationRef.current);
 
+				const startTime = format(Date.now() - ((totalDurationRef.current - timeLeft) * 1000), "yyyy-MM-dd'T'HH:mm")
+				const endTime = format(new Date(), "yyyy-MM-dd'T'HH:mm")
+
+				addEvent({
+					id: crypto.randomUUID(),
+					title: workingFor ? workingFor : isBreak ? "Casual Break" : "Casual Work",
+					start: new Date(startTime).toISOString(),
+					end: new Date(endTime).toISOString(),
+					color: "#ff0000"
+				})
+
 				frokAudioRef.current?.play().catch(() => { });
 			}
 		};
@@ -176,7 +189,21 @@ function Pomodoro() {
 			setIsRunning(false);
 			setGifImage(idleGif);
 			setImage(playImg);
+			const passedTime = totalDurationRef.current - timeLeft
+			const startTime = format(Date.now() - (passedTime * 1000), "yyyy-MM-dd'T'HH:mm")
+			const endTime = format(new Date(), "yyyy-MM-dd'T'HH:mm")
+
+			addEvent({
+				id: crypto.randomUUID(),
+				title: workingFor ? workingFor : isBreak ? "Casual Break" : "Casual Work",
+				start: new Date(startTime).toISOString(),
+				end: new Date(endTime).toISOString(),
+				color: "#ff0000"
+			})
+
+			totalDurationRef.current = timeLeft
 		}
+
 	};
 
 	const handleTimeChange = (event: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
@@ -219,7 +246,7 @@ function Pomodoro() {
 						onClick={() => switchMode(false)}
 					>
 						{isBreak ? (<span className="relative top-1.5 text-2xl">Work</span>) : (
-							<select className="border-none outline-none text-sm relative top-0.5">
+							<select onChange={event => setWorkingFor(event.target.value)} className="border-none outline-none text-sm relative top-0.5">
 								{eligibleTaskItems.map(item => {
 									if (item.linked === "break") return null
 
@@ -240,7 +267,7 @@ function Pomodoro() {
 						onClick={() => switchMode(true)}
 					>
 						{isBreak ? (
-							<select className="border-none outline-none text-sm relative top-0.5">
+							<select onChange={event => setWorkingFor(event.target.value)} className="border-none outline-none text-sm relative top-0.5">
 								{eligibleTaskItems.map(item => {
 									if (item.linked === "work") return null
 
