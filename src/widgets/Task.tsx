@@ -21,16 +21,19 @@ function Task() {
 			const hiddenText = decodeHiddenInformation(trimmed)
 
 			if (hiddenText) {
-				const segments = hiddenText.split(",")
+				const segments = hiddenText.split(",").map(segment => segment.trim())
 				linked = (segments.find(segment => segment.startsWith("linked-to=")) ?? "").replace("linked-to=", "")
-				priority = +(segments.find(segment => segment.startsWith("priority=")) ?? "").replace("priority=", "")
+				const priorityString = (segments.find(segment => segment.startsWith("priority=")) ?? "").replace("priority=", "")
+
+				const parsed = parseInt(priorityString, 10)
+				priority = Number.isNaN(parsed) ? 0 : parsed
 			}
 
 			if (trimmed.startsWith(COMPLETED_MARKER)) {
 				return {
 					text: trimmed.slice(COMPLETED_MARKER.length).trim(),
 					completed: true,
-					linked, 
+					linked,
 					priority
 				};
 			}
@@ -38,7 +41,7 @@ function Task() {
 				return {
 					text: trimmed.slice(INCOMPLETE_MARKER.length).trim(),
 					completed: false,
-					linked, 
+					linked,
 					priority
 				};
 			}
@@ -61,7 +64,7 @@ function Task() {
 		if (!taskTab) {
 			addTab("Tasks", `${INCOMPLETE_MARKER} ${trimmed}`, TASK_TAB_ID, "todo");
 		} else {
-			const newItems = [...taskItems, { text: trimmed, completed: false, linked: "" }];
+			const newItems = [...taskItems, { text: trimmed, completed: false, linked: "", priority: 0 }];
 			const newContent = buildContent(newItems);
 			updateContent(TASK_TAB_ID, newContent);
 		}
@@ -97,7 +100,7 @@ function Task() {
 			const linked = item.linked ? "" : `linked-to=${linkedTo}`
 			const text = item.linked ? item.text.slice(0, startIndexOfStartPattern) : `${item.text} ${START_HIDING_PATTERN}${linked},priority=${priority}${END_HIDING_PATTERN}`
 
-			return { ...item, text, linked }
+			return { ...item, text, linked, priority }
 		});
 		const newContent = buildContent(updatedItems);
 		updateContent(TASK_TAB_ID, newContent);
@@ -127,6 +130,7 @@ function Task() {
 			/>
 			{taskItems.map((task, index) => (
 				<li
+					title={`Linked to: ${task.linked ? task.linked : "None"}, Priority: ${task.priority}`}
 					key={`widget-task-${index}`}
 					className="flex justify-between items-center group/task"
 				>

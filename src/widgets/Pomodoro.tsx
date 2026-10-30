@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { cn, formatTime, TASK_TAB_ID } from "#/lib/utils.ts";
+import { cn, decodeHiddenInformation, formatTime, TASK_TAB_ID } from "#/lib/utils.ts";
+import { useNoteStore } from "#/store/note.tsx";
 import { useSettingStore } from "#/store/setting.tsx";
 import breakGif from "../../public/widgets/pomodoro/break.gif";
 import breakBtn from "../../public/widgets/pomodoro/break.png";
@@ -11,7 +12,6 @@ import resetImg from "../../public/widgets/pomodoro/reset.png";
 import workGif from "../../public/widgets/pomodoro/work.gif";
 import workBtn from "../../public/widgets/pomodoro/work.png";
 import workBtnClicked from "../../public/widgets/pomodoro/work-clicked.png";
-import { useNoteStore } from "#/store/note.tsx";
 
 const cheerMessages = [
 	"Stay Frokused",
@@ -32,8 +32,31 @@ const breakMessages = [
 function Pomodoro() {
 	const theme = useSettingStore((state) => state.theme)
 	const taskTab = useNoteStore(state => state.tabs.find(tab => tab.id === TASK_TAB_ID))
-		const content = taskTab?.content ?? "";
+	const content = taskTab?.content ?? "";
+	const eligibleTaskItems = content
+		.split("\n")
+		.map((line) => {
+			const trimmed = line.trim();
+			let linked: string = ""
+			let priority: number = 0
 
+			const hiddenText = decodeHiddenInformation(trimmed)
+
+			if (hiddenText) {
+				const segments = hiddenText.split(",").map(segment => segment.trim())
+				linked = (segments.find(segment => segment.startsWith("linked-to=")) ?? "").replace("linked-to=", "")
+				const priorityString = (segments.find(segment => segment.startsWith("priority=")) ?? "").replace("priority=", "")
+
+				const parsed = parseInt(priorityString, 10)
+				priority = Number.isNaN(parsed) ? 0 : parsed
+			}
+
+			return { text: trimmed, completed: false, linked, priority };
+		})
+		.filter((item) => item?.linked)
+		.sort((a, b) => a.priority - b.priority);
+
+	console.log("Eligible task items: ", eligibleTaskItems)
 
 	const [timeLeft, setTimeLeft] = useState<number>(25 * 60);
 	const [isRunning, setIsRunning] = useState<boolean>(false);
