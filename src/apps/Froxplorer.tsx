@@ -575,16 +575,6 @@ function Froxplorer({ windowId }: { windowId: string }) {
 					})}
 				</span>
 				<div className="flex ml-auto gap-2">
-					<button
-						type="button"
-						onClick={(e) => {
-							e.stopPropagation();
-							alert("Wingardium Leviosa");
-						}}
-						className="text-xs p-1 rounded cursor-pointer"
-					>
-						Fai
-					</button>
 					{selectedIds.length > 0 ? (
 						<>
 							<button
