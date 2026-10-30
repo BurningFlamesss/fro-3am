@@ -247,9 +247,31 @@ function Frominal() {
 				return;
 			}
 
-			params.forEach((param) => {
-				const { name } = parseFileName(param);
-				createNode(currentPath, name, "folder");
+			return params.map((param) => {
+				const segments = param.split("/")
+				const folderName = segments.pop() ?? ""
+
+				const parentPath = segments.join("/")
+				let target = currentPath
+
+				if (parentPath) {
+					const parent = resolvePath(parentPath)
+
+					if (!parent) {
+						return <p key={param} className="text-red-500">Directory not found: {parentPath}</p>
+					}
+
+					if (parent.type !== "folder") {
+						return <p key={param} className="text-red-500">Not a Directory: {parentPath}</p>
+					}
+
+					target = parent?.id
+				}
+
+				const { name } = parseFileName(folderName);
+				createNode(target, name, "folder");
+
+				return <p key={param}>Successfully!!! created {folderName} at {parentPath}</p>
 			});
 		},
 
@@ -302,8 +324,7 @@ function Frominal() {
 
 		edit: (param) => {
 			const pathname = param[0].toLowerCase();
-			const nodes = getChildren(currentPath);
-			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
+			const node = resolvePath(pathname)
 
 			if (node && node.type === "file") {
 				const tab = tabs.find((tab) => tab.id === node.id);
@@ -318,9 +339,8 @@ function Frominal() {
 
 		write: (params) => {
 			const [filename, ...content] = params;
-			const pathname = filename.toLowerCase();
-			const nodes = getChildren(currentPath);
-			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
+			const node = resolvePath(filename)
+
 
 			if (node && node.type === "file") {
 				updateNode(node.id, content.join(" ").replace(/\\n/g, "\n"))
@@ -332,8 +352,7 @@ function Frominal() {
 
 		read: (param) => {
 			const pathname = param[0]?.toLowerCase();
-			const nodes = getChildren(currentPath);
-			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
+			const node = resolvePath(pathname)
 
 			if (!node) {
 				const rootChildren = getChildren("root")
@@ -959,6 +978,7 @@ function Frominal() {
 
 			return <p>Marked {numbers.join(", ")} as done.</p>;
 		},
+		
 		"event.add": async (params) => {
 			if (!params.length) {
 				return (
