@@ -190,6 +190,18 @@ function Pomodoro() {
 		setTimeLeft(newDuration);
 	}
 
+	const handleTimeChangeWithPrompt = (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+		const timeString = prompt("Enter the time you want to use in the format MINUTE:SECOND, eg. (1:30): ") ?? ""
+
+		const timeHand = timeString.split(":")
+		const [minuteHand, secondHand] = timeHand
+		const [parsedMinute, parsedSecond] = [parseInt(minuteHand, 10), parseInt(secondHand, 10)]
+		const [minute, second] = [Number.isNaN(parsedMinute) ? isBreak ? 5 : 25 : parsedMinute, Number.isNaN(parsedSecond) ? 0 : parsedSecond]
+		const newDuration = (minute * 60) + second;
+		totalDurationRef.current = newDuration;
+		setTimeLeft(newDuration);
+	}
+
 	return (
 		<main
 			className={cn("w-full min-h-full flex items-center justify-center box-border text-center retro-font", theme.colourScheme, "border-0")}
@@ -254,7 +266,7 @@ function Pomodoro() {
 				</p>
 
 				<div className="m-0">
-					<input onChange={(event) => handleTimeChange(event)} className="text-6xl w-57 border-none outline-none caret-red-400" type="text" value={formatTime(timeLeft)} />
+					<input onDoubleClick={(event) => handleTimeChangeWithPrompt(event)} onChange={(event) => handleTimeChange(event)} className="text-6xl w-57 border-none outline-none caret-red-400" type="text" value={formatTime(timeLeft)} />
 				</div>
 
 				<img src={gifImage} className="h-25" alt="Timer Status" />
