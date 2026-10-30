@@ -107,8 +107,8 @@ export const useBrowserStore = create<BrowserStore>()(
 			},
 		],
 		suggestions: [
-			{ icon: PiGlobeDuotone, text: "frocus.tech" },
-			{ icon: PiGlobeDuotone, text: "time.is" },
+			{ icon: PiGlobeDuotone, text: "www.froc.us" },
+			{ icon: PiGlobeDuotone, text: "fro://notes" },
 		],
 		tabs: [default_tab],
 		currentTabId: "1",

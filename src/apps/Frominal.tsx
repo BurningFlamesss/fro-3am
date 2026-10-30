@@ -202,8 +202,7 @@ function Frominal() {
 			}
 
 			const pathname = param[0].toLowerCase();
-			const nodes = getChildren(currentPath);
-			const node = nodes.find((node) => node.name.toLowerCase() === pathname);
+			const node = resolvePath(pathname)
 
 			setCurrentPath(node?.id ?? currentPath);
 		},
@@ -978,7 +977,7 @@ function Frominal() {
 
 			return <p>Marked {numbers.join(", ")} as done.</p>;
 		},
-		
+
 		"event.add": async (params) => {
 			if (!params.length) {
 				return (

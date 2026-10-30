@@ -640,9 +640,11 @@ function Frowser() {
 				title: query,
 				query: navigating ? undefined : query,
 				url: navigating
-					? query.startsWith("http")
+					? /^https?:\/\//i.test(query)
 						? query
-						: query.startsWith("fro") ? query : `https://${query}`
+						: /^fro:\/\//i.test(query)
+							? query
+							: `https://${query}`
 					: undefined,
 				state: "loading",
 			});
